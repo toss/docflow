@@ -1,0 +1,122 @@
+[
+  {
+    "text": "cli",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "Configuration",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Config",
+            "link": "/en/reference/cli/Configuration/Config.md"
+          }
+        ]
+      },
+      {
+        "text": "Generator",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "GeneratedDoc",
+            "link": "/en/reference/cli/Generator/GeneratedDoc.md"
+          },
+          {
+            "text": "GeneratorConfig",
+            "link": "/en/reference/cli/Generator/GeneratorConfig.md"
+          },
+          {
+            "text": "MarkdownDocument",
+            "link": "/en/reference/cli/Generator/MarkdownDocument.md"
+          },
+          {
+            "text": "MarkdownGenerator",
+            "link": "/en/reference/cli/Generator/MarkdownGenerator.md"
+          },
+          {
+            "text": "MarkdownSection",
+            "link": "/en/reference/cli/Generator/MarkdownSection.md"
+          }
+        ]
+      },
+      {
+        "text": "Manifest",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "SidebarItem",
+            "link": "/en/reference/cli/Manifest/SidebarItem.md"
+          }
+        ]
+      },
+      {
+        "text": "Parser",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "DeclarationKind",
+            "link": "/en/reference/cli/Parser/DeclarationKind.md"
+          },
+          {
+            "text": "ExampleData",
+            "link": "/en/reference/cli/Parser/ExampleData.md"
+          },
+          {
+            "text": "ExportDeclaration",
+            "link": "/en/reference/cli/Parser/ExportDeclaration.md"
+          },
+          {
+            "text": "ParameterData",
+            "link": "/en/reference/cli/Parser/ParameterData.md"
+          },
+          {
+            "text": "ParsedJSDoc",
+            "link": "/en/reference/cli/Parser/ParsedJSDoc.md"
+          },
+          {
+            "text": "ReturnData",
+            "link": "/en/reference/cli/Parser/ReturnData.md"
+          },
+          {
+            "text": "SeeData",
+            "link": "/en/reference/cli/Parser/SeeData.md"
+          },
+          {
+            "text": "StandardizedFilePath",
+            "link": "/en/reference/cli/Parser/StandardizedFilePath.md"
+          },
+          {
+            "text": "TargetWithJSDoc",
+            "link": "/en/reference/cli/Parser/TargetWithJSDoc.md"
+          },
+          {
+            "text": "ThrowsData",
+            "link": "/en/reference/cli/Parser/ThrowsData.md"
+          },
+          {
+            "text": "TypedefData",
+            "link": "/en/reference/cli/Parser/TypedefData.md"
+          },
+          {
+            "text": "VersionData",
+            "link": "/en/reference/cli/Parser/VersionData.md"
+          }
+        ]
+      },
+      {
+        "text": "Plugin",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Plugin",
+            "link": "/en/reference/cli/Plugin/Plugin.md"
+          },
+          {
+            "text": "PluginContext",
+            "link": "/en/reference/cli/Plugin/PluginContext.md"
+          }
+        ]
+      }
+    ]
+  }
+]

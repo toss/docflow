@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
+
+    "experimentalDecorators": true,
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "ESNext", "ESNext.AsyncIterable"],
+    "target": "ESNext",
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "allowJs": false,
+    "skipLibCheck": true
+  }
+}

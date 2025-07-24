@@ -1,0 +1,52 @@
+{
+  "name": "docflow",
+  "type": "module",
+  "version": "0.0.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./cli": "./dist/cli.js",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "bin": "./dist/cli.js",
+  "scripts": {
+    "prepack": "yarn build",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "lint": "eslint ."
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.15.1",
+    "yarn": ">=4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@types/eslint": "^9",
+    "@types/eslint__js": "^8.42.3",
+    "@types/minimatch": "^5.1.2",
+    "@types/node": "^20.11.24",
+    "eslint": "^9.9.1",
+    "tsdown": "^0.12.9",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.4.0",
+    "vitest": "^2.1.9"
+  },
+  "dependencies": {
+    "clipanion": "^4.0.0-rc.4",
+    "comment-parser": "^1.4.1",
+    "enquirer": "^2.4.1",
+    "es-toolkit": "^1.39.5",
+    "minimatch": "^10.0.3",
+    "tmp-promise": "^3.0.3",
+    "ts-morph": "^22.0.0",
+    "unconfig": "^0.3.11",
+    "zod": "^3.22.4"
+  }
+}
