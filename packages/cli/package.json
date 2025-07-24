@@ -1,7 +1,7 @@
 {
   "name": "docflow",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "exports": {
     ".": "./dist/index.js",
     "./cli": "./dist/cli.js",
@@ -19,7 +19,8 @@
     "lint": "eslint ."
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "engines": {
     "node": ">=22.15.1",
@@ -48,5 +49,9 @@
     "ts-morph": "^22.0.0",
     "unconfig": "^0.3.11",
     "zod": "^3.22.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/toss/docflow"
   }
 }

@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Version v0.0.0
+## Version v0.0.1
 
 Released on July 22nd, 2025.
 
