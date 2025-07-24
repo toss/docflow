@@ -8,16 +8,14 @@ export default defineConfig({
   locales: {
     root: {
       label: "한국어",
+      link: "/ko/",
       ...ko,
-      link: "/ko",
     },
+
     en: {
       label: "English",
+      link: "/en/",
       ...en,
-      link: "/en",
     },
-  },
-  rewrites: {
-    "/ko": "/",
   },
 });

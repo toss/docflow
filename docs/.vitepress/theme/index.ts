@@ -1,7 +1,8 @@
 // https://vitepress.dev/guide/custom-theme
-import { h } from "vue";
 import type { Theme } from "vitepress";
 import DefaultTheme from "vitepress/theme";
+import { h } from "vue";
+import { fixLangLinks } from "../libs/fixLangLinks.mts";
 import "./style.css";
 
 export default {
@@ -11,5 +12,11 @@ export default {
       // https://vitepress.dev/guide/extending-default-theme#layout-slots
     });
   },
-  enhanceApp({ app, router, siteData }) {},
+  enhanceApp({ app, router, siteData }) {
+    if (typeof window === "undefined") return;
+    fixLangLinks();
+    router.onAfterRouteChanged = () => {
+      fixLangLinks();
+    };
+  },
 } satisfies Theme;
