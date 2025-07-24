@@ -1,11 +1,11 @@
 import { type DefaultTheme, defineConfig } from "vitepress";
-import { sortByText } from "./libs/sortByText.mts";
 import koReferenceManifest from "../ko/reference/manifest.json";
 import { offCollapsed } from "./libs/offCollapsed.mts";
+import { sortByText } from "./libs/sortByText.mts";
 
 export const ko = defineConfig({
   lang: "ko",
-  description: "주석만으로 문서를 작성하는 문서 자동화 도구",
+  description: "JSDoc 기반 라이브러리 문서 자동화 도구",
 
   themeConfig: {
     nav: nav(),
