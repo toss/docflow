@@ -4,10 +4,10 @@ English | [한국어](https://github.com/toss/docflow/blob/main/README-ko_kr.md)
 
 Docflow is a TypeScript-first documentation generator that automatically creates API documentation from JSDoc comments.
 
-- Docflow automatically generates comprehensive documentation from JSDoc comments, supporting essential tags like [@public](https://docflow.dev/reference/public), [@category](https://docflow.dev/reference/category), and [@example](https://docflow.dev/reference/example).
-- Designed with AI integration in mind, Docflow can [generate complete JSDoc comments](https://docflow.dev/features/ai-generation) for your functions with a single `@generate` tag.
-- Docflow provides [accurate TypeScript type extraction](https://docflow.dev/features/typescript), ensuring your documentation always matches your actual code signatures.
-- Docflow includes a powerful plugin system, allowing you to generate documentation for [VitePress](https://docflow.dev/plugins/vitepress), [Docusaurus](https://docflow.dev/plugins/docusaurus), [Nextra](https://docflow.dev/plugins/nextra), and more.
+- Docflow automatically generates comprehensive documentation from JSDoc comments, supporting essential tags like `@public`, `@category`, and `@example`.
+- Designed with AI integration in mind, Docflow can [generate complete JSDoc comments](https://docflow.slash.page/en/command/generate.html) for your functions with a single `@generate` tag.
+- Docflow provides accurate TypeScript type extraction, ensuring your documentation always matches your actual code signatures.
+- Docflow includes a powerful plugin system, allowing you to generate documentation for [VitePress](https://vitepress.dev/), [Docusaurus](https://docusaurus.io/), [Nextra](https://nextra.site/), and more.
 
 ## Examples
 

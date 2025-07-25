@@ -4,10 +4,10 @@
 
 Docflow는 JSDoc 주석으로부터 API 문서를 자동으로 생성하는 TypeScript 우선 문서화 도구에요.
 
-- Docflow는 [@public](https://docflow.dev/reference/public), [@category](https://docflow.dev/reference/category), [@example](https://docflow.dev/reference/example) 같은 필수 태그를 지원하며, JSDoc 주석에서 포괄적인 문서를 자동으로 생성해요.
-- AI 통합을 염두에 두고 설계된 Docflow는 단일 `@generate` 태그로 함수에 대한 [완전한 JSDoc 주석을 생성](https://docflow.dev/features/ai-generation)할 수 있어요.
-- Docflow는 [정확한 TypeScript 타입 추출](https://docflow.dev/features/typescript)을 제공해서 문서가 항상 실제 코드 시그니처와 일치하도록 보장해요.
-- Docflow는 플러그인 시스템을 포함해서 [VitePress](https://docflow.dev/plugins/vitepress), [Docusaurus](https://docflow.dev/plugins/docusaurus), [Nextra](https://docflow.dev/plugins/nextra) 등의 문서를 생성할 수 있어요.
+- Docflow는 `@public`, `@category`, `@example` 같은 필수 태그를 지원하며, JSDoc 주석에서 포괄적인 문서를 자동으로 생성해요.
+- AI 통합을 염두에 두고 설계된 Docflow는 단일 `@generate` 태그로 함수에 대한 [완전한 JSDoc 주석을 생성](https://docflow.slash.page/ko/command/generate.html)할 수 있어요.
+- Docflow는 정확한 TypeScript 타입 추출을 제공해서 문서가 항상 실제 코드 시그니처와 일치하도록 보장해요.
+- Docflow는 플러그인 시스템을 포함해서 [VitePress](https://vitepress.dev/), [Docusaurus](https://docusaurus.io/), [Nextra](https://nextra.site/) 등의 문서를 생성할 수 있어요.
 
 ## 예제
 
