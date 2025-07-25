@@ -24,7 +24,7 @@ npx vitepress init
 │  my-library // Enter the title of your documentation site
 │
 ◇  Site description:
-│  This this is my-library // Feel free to enter a description for your documentation site
+│  This is my-library // Feel free to enter a description for your documentation site
 │
 ◇  Theme:
 │  Default Theme // Feel free to choose a theme
