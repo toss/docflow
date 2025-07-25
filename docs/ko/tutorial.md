@@ -28,7 +28,7 @@ npx vitepress init
 │  my-library // 문서 사이트의 제목을 입력해주세요
 │
 ◇  Site description:
-│  This this is my-library // 문서 사이트의 설명을 자유롭게 입력해주세요
+│  This is my-library // 문서 사이트의 설명을 자유롭게 입력해주세요
 │
 ◇  Theme:
 │  Default Theme // 테마를 자유롭게 선택해주세요
