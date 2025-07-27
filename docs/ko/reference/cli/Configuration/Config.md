@@ -14,7 +14,7 @@ Docflow의 설정 타입이에요. 프로젝트 설정, 명령어 설정, 플러
 type Config = z.infer<typeof configSchema>;
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
