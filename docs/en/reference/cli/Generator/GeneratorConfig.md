@@ -24,7 +24,7 @@ interface GeneratorConfig { name: string; projectRoot: string; labels?: {
   }; signatureLanguage?: string }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

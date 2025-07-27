@@ -17,7 +17,7 @@ interface MarkdownGenerator { generate(jsDocData: ParsedJSDoc, sourcePath?: stri
   ): GeneratedDoc }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

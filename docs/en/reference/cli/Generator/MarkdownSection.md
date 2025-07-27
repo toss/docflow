@@ -14,7 +14,7 @@ Interface representing a section of a Markdown document.
 interface MarkdownSection { type: MarkdownSectionType; content: string }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

@@ -14,7 +14,7 @@ Represents the parsed result of @param tags in JSDoc.
 interface ParameterData { name: string; type: string; description: string; required: boolean; defaultValue?: string; nested?: ParameterData[] }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

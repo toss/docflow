@@ -14,7 +14,7 @@ Structure representing a complete Markdown document with optional frontmatter an
 interface MarkdownDocument { frontmatter?: Record<string, unknown>; sections: MarkdownSection[] }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
