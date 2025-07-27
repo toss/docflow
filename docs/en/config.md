@@ -166,8 +166,8 @@ workspace: {
 // Filters as follows:
 // ✅ packages/core -> included
 // ✅ packages/ui -> included
+// ✅ apps/web -> included
 // ❌ packages/internal-utils -> excluded
-// ❌ apps/web -> excluded (not in include)
 ```
 
 ## commands.build Configuration
