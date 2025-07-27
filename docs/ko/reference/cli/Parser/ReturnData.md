@@ -14,7 +14,7 @@ JSDoc에서 @returns 태그를 파싱한 결과를 나타내요. 함수의 반�
 interface ReturnData { type: string; name?: string; description: string; properties?: PropertyData[] }
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

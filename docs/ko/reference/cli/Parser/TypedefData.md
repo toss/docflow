@@ -14,7 +14,7 @@ JSDoc에서 @typedef 태그를 파싱한 결과를 나타내요. 사용자 정�
 interface TypedefData { name: string; type: string; description: string; properties: PropertyData[] }
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
