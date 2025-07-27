@@ -14,7 +14,7 @@ Type for Docflow configuration files. Includes project settings, command setting
 type Config = z.infer<typeof configSchema>;
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
