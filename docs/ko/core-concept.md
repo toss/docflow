@@ -38,7 +38,7 @@ Docflow는 일관된 문서 생성을 위해 표준화된 JSDoc 템플릿을 사
 /**
  * @public
  * @kind function
- * @category ath
+ * @category Math
  * @name calculateArea
  * @signature
  * ```typescript
