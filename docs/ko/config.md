@@ -118,8 +118,8 @@ project: {
 // 다음과 같이 필터링:
 // ✅ packages/core -> 포함
 // ✅ packages/ui -> 포함
+// ✅ apps/web -> 포함
 // ❌ packages/internal-utils -> 제외
-// ❌ apps/web -> 제외 (include에 없음)
 ```
 
 ## commands.build 설정
