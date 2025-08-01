@@ -77,7 +77,7 @@ Docflow의 설정은 명령어마다 구체적으로 구성할 수 있어요. �
 ```js
 {
   project: {
-    root: process.cwd(); // 현재 디렉토리
+    root: process.cwd() // 현재 디렉토리
   }
 }
 ```
@@ -89,7 +89,7 @@ Docflow의 설정은 명령어마다 구체적으로 구성할 수 있어요. �
 ```js
 {
   project: {
-    packageManager: "yarn"; // "yarn" | "pnpm" | "npm"
+    packageManager: "yarn" // "yarn" | "pnpm" | "npm"
   }
 }
 ```
@@ -134,7 +134,7 @@ project: {
 {
   commands: {
     build: {
-      outputDir: "docs/references"; // 기본값
+      outputDir: "docs/references" // 기본값
     }
   }
 }
@@ -270,7 +270,7 @@ docs/
 {
   commands: {
     check: {
-      entryPoints: ["src/index.ts", "src/api.ts"]; // 선택사항
+      entryPoints: ["src/index.ts", "src/api.ts"] // 선택사항
     }
   }
 }
@@ -338,7 +338,7 @@ generate 명령어는 `@generate` 태그가 있는 함수에 대해 AI를 활용
         },
       }),
     },
-  ];
+  ]
 }
 ```
 

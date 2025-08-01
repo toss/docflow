@@ -112,7 +112,7 @@ Sets the root directory of the project. This becomes the reference point for all
 ```js
 {
   project: {
-    root: process.cwd(); // Current directory
+    root: process.cwd() // Current directory
   }
 }
 ```
@@ -124,7 +124,7 @@ Specifies the package manager to use. This changes how workspaces are detected.
 ```js
 {
   project: {
-    packageManager: "yarn"; // "yarn" | "pnpm" | "npm"
+    packageManager: "yarn" // "yarn" | "pnpm" | "npm"
   }
 }
 ```
@@ -182,7 +182,7 @@ The directory where generated documentation will be saved. All Markdown files ar
 {
   commands: {
     build: {
-      outputDir: "docs/references"; // default value
+      outputDir: "docs/references" // default value
     }
   }
 }
@@ -318,7 +318,7 @@ Specifies entry points for documentation validation.
 {
   commands: {
     check: {
-      entryPoints: ["src/index.ts", "src/api.ts"]; // optional
+      entryPoints: ["src/index.ts", "src/api.ts"] // optional
     }
   }
 }
@@ -393,7 +393,7 @@ Configure plugins that customize document generation methods or add new output f
         customOption: "value",
       },
     },
-  ];
+  ]
 }
 ```
 
