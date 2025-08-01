@@ -14,7 +14,7 @@ interface TargetWithJSDoc extends ExportDeclaration {
 }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

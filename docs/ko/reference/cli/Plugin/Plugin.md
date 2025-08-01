@@ -20,7 +20,7 @@ interface Plugin { name: string; hooks: {
   } }
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

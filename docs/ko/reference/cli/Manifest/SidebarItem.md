@@ -14,7 +14,7 @@ sourcePath: "packages/cli/src/commands/build/manifest/manifest.ts"
 interface SidebarItem { text: string; link?: string; items?: SidebarItem[]; collapsed?: boolean }
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

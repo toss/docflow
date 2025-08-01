@@ -17,7 +17,7 @@ interface MarkdownGenerator { generate(jsDocData: ParsedJSDoc, sourcePath?: stri
   ): GeneratedDoc }
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

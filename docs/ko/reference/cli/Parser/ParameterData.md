@@ -14,7 +14,7 @@ JSDoc에서 @param 태그를 파싱한 결과를 나타내요.
 interface ParameterData { name: string; type: string; description: string; required: boolean; defaultValue?: string; nested?: ParameterData[] }
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

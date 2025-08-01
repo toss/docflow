@@ -20,7 +20,7 @@ interface Plugin { name: string; hooks: {
   } }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

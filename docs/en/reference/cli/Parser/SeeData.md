@@ -14,7 +14,7 @@ Represents the parsed result of @see tags in JSDoc. Used to provide references t
 interface SeeData { reference: string; description?: string }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

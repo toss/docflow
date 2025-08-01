@@ -14,7 +14,7 @@ Represents the parsed result of JSDoc templates used in Docflow.
 interface ParsedJSDoc { name?: string; description?: string; category?: string; kind?: string; signature?: string; deprecated?: string; examples?: ExampleData[]; parameters?: ParameterData[]; returns?: ReturnData; throws?: ThrowsData[]; typedef?: TypedefData[]; see?: SeeData[]; version?: VersionData[] }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

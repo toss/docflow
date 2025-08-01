@@ -14,7 +14,7 @@ Markdown 문서의 섹션을 나타내는 인터페이스에요.
 interface MarkdownSection { type: MarkdownSectionType; content: string }
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
