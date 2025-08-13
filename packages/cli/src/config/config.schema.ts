@@ -13,7 +13,8 @@ export const configSchema = z.object({
         .describe("Package patterns to include in build"),
       exclude: z
         .array(z.string())
-        .describe("Package patterns to exclude from build"),
+        .describe("Package patterns to exclude from build")
+        .default([]),
     }),
   }),
   commands: z.object({
