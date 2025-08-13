@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { loadPlugins } from "../../plugins/load-plugins.js";
 import { createE2EWorkspace, E2EWorkspace } from "../utils/create-e2e-workspace.js";
-import { Config } from "../../config/config.schema.js";
+import { configSchema } from "../../config/config.schema.js";
 import { SidebarItem } from "../../commands/build/manifest/manifest.js";
 import { MOCK_CONFIG } from "../__mock__/config.mock.js";
 
@@ -31,7 +31,7 @@ export default {
 `
     );
 
-    const config: Config = {
+    const config = configSchema.parse({
       ...MOCK_CONFIG,
       project: {
         ...MOCK_CONFIG.project,
@@ -44,7 +44,7 @@ export default {
             (await import(`${workspace.root}/my-plugin.js`)).default,
         },
       ],
-    };
+    });
 
     const plugins = await loadPlugins(config);
 
@@ -70,7 +70,7 @@ export const myNamedPlugin = {
 `
     );
 
-    const config: Config = {
+    const config = configSchema.parse({
       ...MOCK_CONFIG,
       project: {
         ...MOCK_CONFIG.project,
@@ -83,7 +83,7 @@ export const myNamedPlugin = {
             (await import(`${workspace.root}/named-plugin.js`)).myNamedPlugin,
         },
       ],
-    };
+    });
 
     const plugins = await loadPlugins(config);
 
@@ -94,7 +94,7 @@ export const myNamedPlugin = {
 
   it("should load inline plugin", async () => {
     const workspace = await createE2EWorkspace();
-    const config: Config = {
+    const config = configSchema.parse({
       ...MOCK_CONFIG,
       project: {
         ...MOCK_CONFIG.project,
@@ -113,7 +113,7 @@ export const myNamedPlugin = {
           }),
         },
       ],
-    };
+    });
 
     const plugins = await loadPlugins(config);
 
@@ -124,14 +124,14 @@ export const myNamedPlugin = {
 
   it("should handle empty plugin list", async () => {
     const workspace = await createE2EWorkspace();
-    const config: Config = {
+    const config = configSchema.parse({
       ...MOCK_CONFIG,
       project: {
         ...MOCK_CONFIG.project,
         root: workspace.root,
       },
       plugins: [],
-    };
+    });
 
     const plugins = await loadPlugins(config);
 
@@ -140,7 +140,7 @@ export const myNamedPlugin = {
 
   it("should throw error for missing plugin file", async () => {
     const workspace = await createE2EWorkspace();
-    const config: Config = {
+    const config = configSchema.parse({
       ...MOCK_CONFIG,
       project: {
         ...MOCK_CONFIG.project,
@@ -153,7 +153,7 @@ export const myNamedPlugin = {
             (await import(`${workspace.root}/nonexistent.js`)).default,
         },
       ],
-    };
+    });
 
     await expect(loadPlugins(config)).rejects.toThrow(
       "Failed to load plugin 'missing-plugin'"
@@ -162,7 +162,7 @@ export const myNamedPlugin = {
 
   it("should throw error for plugin without path or hooks", async () => {
     const workspace = await createE2EWorkspace();
-    const config: Config = {
+    const config = configSchema.parse({
       ...MOCK_CONFIG,
       project: {
         ...MOCK_CONFIG.project,
@@ -174,7 +174,7 @@ export const myNamedPlugin = {
           plugin: null as unknown as () => Promise<unknown>,
         },
       ],
-    };
+    });
 
     await expect(loadPlugins(config)).rejects.toThrow(
       "pluginConfig.plugin is not a function"
@@ -190,7 +190,7 @@ export default "not a plugin object";
 `
     );
 
-    const config: Config = {
+    const config = configSchema.parse({
       ...MOCK_CONFIG,
       project: {
         ...MOCK_CONFIG.project,
@@ -203,7 +203,7 @@ export default "not a plugin object";
             (await import(`${workspace.root}/invalid-plugin.js`)).default,
         },
       ],
-    };
+    });
 
     await expect(loadPlugins(config)).rejects.toThrow(
       "did not return a valid plugin object"

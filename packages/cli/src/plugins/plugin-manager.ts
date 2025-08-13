@@ -4,7 +4,7 @@ import { MarkdownGenerator } from "../core/types/generator.types.js";
 import { createVitePressPlugin } from "./builtin/vitepress-plugin.js";
 import path from "path";
 
-import { Config } from "../config/config.schema.js";
+import { ResolvedConfig } from "../config/config.schema.js";
 
 export class PluginManager {
   private plugins: Plugin[] = [];
@@ -32,7 +32,7 @@ export class PluginManager {
     }, manifest);
   }
 
-  getGenerator(config: Config): MarkdownGenerator {
+  getGenerator(config: ResolvedConfig): MarkdownGenerator {
     const generatorConfig = config.commands.build.generator;
 
     if (generatorConfig.name === "vitepress") {

@@ -13,7 +13,8 @@ export const configSchema = z.object({
         .describe("Package patterns to include in build"),
       exclude: z
         .array(z.string())
-        .describe("Package patterns to exclude from build"),
+        .describe("Package patterns to exclude from build")
+        .default([]),
     }),
   }),
   commands: z.object({
@@ -58,4 +59,6 @@ export const configSchema = z.object({
  * @param {function} plugins.plugin Factory function that returns plugin instance
  * @param {object} [plugins.options] Plugin options
  */
-export type Config = z.infer<typeof configSchema>;
+export type Config = z.input<typeof configSchema>;
+
+export type ResolvedConfig = z.output<typeof configSchema>;
