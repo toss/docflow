@@ -17,7 +17,8 @@ export async function loadConfig(rootPath: string) {
       {
         files: "package.json",
         extensions: [],
-        rewrite: (pkg: any) => pkg?.[MODULE_NAME],
+        rewrite: (pkg: PackageJson & Record<string, unknown>) =>
+          pkg?.[MODULE_NAME],
       },
     ],
   });
