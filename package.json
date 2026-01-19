@@ -9,6 +9,7 @@
     "lint": "yarn workspaces foreach -ptR --from 'packages/*' run lint",
     "typecheck": "yarn workspaces foreach -ptR --from 'packages/*' run typecheck",
     "build": "yarn workspaces foreach -ptR --from 'packages/*' run build",
+    "test": "yarn workspaces foreach -ptR --from 'packages/*' run test",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish"
   },

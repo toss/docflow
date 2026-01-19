@@ -15,7 +15,8 @@
     "prepack": "yarn build",
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
+    "test": "vitest run src/tests --exclude 'src/tests/e2e'",
+    "test:e2e": "vitest run src/tests/e2e",
     "lint": "eslint ."
   },
   "files": [
