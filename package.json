@@ -6,7 +6,9 @@
     "docs"
   ],
   "scripts": {
-    "lint": "eslint ."
+    "lint": "yarn workspaces foreach -ptR --from 'packages/*' run lint",
+    "typecheck": "yarn workspaces foreach -ptR --from 'packages/*' run typecheck",
+    "build": "yarn workspaces foreach -ptR --from 'packages/*' run build",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish"
   },
