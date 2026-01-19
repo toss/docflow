@@ -1,4 +1,5 @@
 {
+  "name": "docflow-docs",
   "private": true,
   "packageManager": "yarn@4.9.1",
   "scripts": {
