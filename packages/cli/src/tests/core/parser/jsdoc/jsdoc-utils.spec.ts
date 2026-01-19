@@ -5,7 +5,10 @@ import {
 } from "../../../../core/parser/jsdoc/jsdoc-utils.js";
 import { getTsProject } from "../../../../core/get-ts-project.js";
 import { getTsConfigPath } from "../../../../core/get-ts-config-path.js";
-import { createE2EWorkspace, E2EWorkspace } from "../../../utils/create-e2e-workspace.js";
+import {
+  createE2EWorkspace,
+  E2EWorkspace,
+} from "../../../utils/create-e2e-workspace.js";
 
 describe("jsdoc-utils", () => {
   let workspace: E2EWorkspace;
@@ -67,8 +70,6 @@ describe("jsdoc-utils", () => {
     it("should handle different tag names", async () => {
       const workspace = await createE2EWorkspace();
       const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
-      const project = getTsProject(tsConfigPath);
-
       await workspace.write(
         "packages/core/src/test-tags.ts",
         `
@@ -80,7 +81,7 @@ describe("jsdoc-utils", () => {
 export function testFunction() {
   return true;
 }
-      `,
+      `
       );
 
       const updatedProject = getTsProject(tsConfigPath);

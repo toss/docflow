@@ -1,11 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { parseJSDoc } from "../../../../core/parser/jsdoc/parse-jsdoc.js";
-import { JSDocParser } from "../../../../core/parser/jsdoc/jsdoc-parser.js";
-import { ExportDeclaration } from "../../../../core/types/parser.types.js";
-import { getTsProject } from "../../../../core/get-ts-project.js";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getTsConfigPath } from "../../../../core/get-ts-config-path.js";
+import { getTsProject } from "../../../../core/get-ts-project.js";
+import { JSDocParser } from "../../../../core/parser/jsdoc/jsdoc-parser.js";
+import { parseJSDoc } from "../../../../core/parser/jsdoc/parse-jsdoc.js";
 import { getExportedDeclarationsBySourceFile } from "../../../../core/parser/source/get-exported-declarations-by-sourcefile.js";
-import { createE2EWorkspace, E2EWorkspace } from "../../../utils/create-e2e-workspace.js";
+import {
+  createE2EWorkspace,
+  E2EWorkspace,
+} from "../../../utils/create-e2e-workspace.js";
 
 describe("parseJSDoc", () => {
   let workspace: E2EWorkspace;
@@ -29,7 +31,7 @@ describe("parseJSDoc", () => {
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(mathFile!);
     const addExport = exportDeclarations.find(
-      (exp) => exp.symbolName === "add",
+      (exp) => exp.symbolName === "add"
     );
 
     expect(addExport).toBeDefined();
@@ -54,7 +56,7 @@ describe("parseJSDoc", () => {
 export function minimalJSDoc(x: number): number {
   return x * 2;
 }
-    `,
+    `
     );
 
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
@@ -66,7 +68,7 @@ export function minimalJSDoc(x: number): number {
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(testFile!);
     const minimalExport = exportDeclarations.find(
-      (exp) => exp.symbolName === "minimalJSDoc",
+      (exp) => exp.symbolName === "minimalJSDoc"
     );
 
     expect(minimalExport).toBeDefined();
@@ -90,7 +92,7 @@ export function minimalJSDoc(x: number): number {
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(mathFile!);
     const addExport = exportDeclarations.find(
-      (exp) => exp.symbolName === "add",
+      (exp) => exp.symbolName === "add"
     );
 
     expect(addExport).toBeDefined();
@@ -117,7 +119,7 @@ export function minimalJSDoc(x: number): number {
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(mathFile!);
     const addExport = exportDeclarations.find(
-      (exp) => exp.symbolName === "add",
+      (exp) => exp.symbolName === "add"
     );
 
     expect(addExport).toBeDefined();
@@ -139,7 +141,7 @@ export function minimalJSDoc(x: number): number {
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(mathFile!);
     const addExport = exportDeclarations.find(
-      (exp) => exp.symbolName === "add",
+      (exp) => exp.symbolName === "add"
     );
 
     expect(addExport).toBeDefined();
@@ -162,7 +164,7 @@ export function minimalJSDoc(x: number): number {
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(mathFile!);
     const addExport = exportDeclarations.find(
-      (exp) => exp.symbolName === "add",
+      (exp) => exp.symbolName === "add"
     );
 
     expect(addExport).toBeDefined();
@@ -186,7 +188,7 @@ export function minimalJSDoc(x: number): number {
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(mathFile!);
     const multiplyExport = exportDeclarations.find(
-      (exp) => exp.symbolName === "multiply",
+      (exp) => exp.symbolName === "multiply"
     );
 
     expect(multiplyExport).toBeDefined();

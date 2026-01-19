@@ -2,7 +2,10 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { isExportSourceFile } from "../../../../core/parser/source/is-export-source-file.js";
 import { getTsProject } from "../../../../core/get-ts-project.js";
 import { getTsConfigPath } from "../../../../core/get-ts-config-path.js";
-import { createE2EWorkspace, E2EWorkspace } from "../../../utils/create-e2e-workspace.js";
+import {
+  createE2EWorkspace,
+  E2EWorkspace,
+} from "../../../utils/create-e2e-workspace.js";
 
 describe("isExportSourceFile", () => {
   let workspace: E2EWorkspace;
@@ -41,7 +44,6 @@ describe("isExportSourceFile", () => {
 
   it("should return false for files without exports", async () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
-    const project = getTsProject(tsConfigPath);
 
     await workspace.write(
       "packages/core/src/no-exports.ts",
@@ -51,7 +53,7 @@ function internalFunction() {
 }
 
 const internalVariable = "test";
-    `,
+    `
     );
 
     const updatedProject = getTsProject(tsConfigPath);
