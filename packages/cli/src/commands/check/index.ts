@@ -30,40 +30,44 @@ export class CheckCommand extends Command {
       console.log(`📝 ${pkg.name} processing...`);
 
       const packagePath = path.resolve(projectConfig.root, pkg.location);
-      const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
-      const project = getTsProject(tsConfigPath);
+      try {
+        const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
+        const project = getTsProject(tsConfigPath);
 
-      const entryPoints =
-        checkConfig.entryPoints ?? getPackageEntryPoints(packagePath);
+        const entryPoints =
+          checkConfig.entryPoints ?? getPackageEntryPoints(packagePath);
 
-      const sourceFiles = project.getSourceFiles();
-      const entryPointFiles = sourceFiles.filter((file) => {
-        const filePath = file.getFilePath();
-        return entryPoints.some((entryPoint) => filePath.includes(entryPoint));
-      });
-
-      const exportSourceFiles = entryPointFiles.filter(isExportSourceFile);
-      const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(
-        getExportedDeclarationsBySourceFile
-      );
-      const excludeBarrelReExport = excludeBarrelReExports(
-        exportDeclarationsBySourceFiles
-      );
-      const missingJSDocExports = excludeBarrelReExport.filter((target) => {
-        return !hasJSDocTag(target.declaration, "public");
-      });
-
-      if (missingJSDocExports.length > 0) {
-        console.log(`❌ ${pkg.name} has missing JSDoc:`);
-        missingJSDocExports.forEach((exportInfo) => {
-          const relativePath = path.relative(
-            projectConfig.root,
-            exportInfo.filePath
-          );
-          console.log(`  - ${relativePath}:${exportInfo.symbolName}`);
+        const sourceFiles = project.getSourceFiles();
+        const entryPointFiles = sourceFiles.filter((file) => {
+          const filePath = file.getFilePath();
+          return entryPoints.some((entryPoint) => filePath.includes(entryPoint));
         });
-      } else {
-        console.log(`✅ ${pkg.name} has JSDoc for all exports`);
+
+        const exportSourceFiles = entryPointFiles.filter(isExportSourceFile);
+        const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(
+          getExportedDeclarationsBySourceFile
+        );
+        const excludeBarrelReExport = excludeBarrelReExports(
+          exportDeclarationsBySourceFiles
+        );
+        const missingJSDocExports = excludeBarrelReExport.filter((target) => {
+          return !hasJSDocTag(target.declaration, "public");
+        });
+
+        if (missingJSDocExports.length > 0) {
+          console.log(`❌ ${pkg.name} has missing JSDoc:`);
+          missingJSDocExports.forEach((exportInfo) => {
+            const relativePath = path.relative(
+              projectConfig.root,
+              exportInfo.filePath
+            );
+            console.log(`  - ${relativePath}:${exportInfo.symbolName}`);
+          });
+        } else {
+          console.log(`✅ ${pkg.name} has JSDoc for all exports`);
+        }
+      } catch (error) {
+        console.error(`Failed to check ${pkg.name}: ${error instanceof Error ? error.message : String(error)}`);
       }
     }
 
