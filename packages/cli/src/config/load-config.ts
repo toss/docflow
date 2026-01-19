@@ -17,6 +17,7 @@ export async function loadConfig(rootPath: string) {
       {
         files: "package.json",
         extensions: [],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         rewrite: (pkg: any) => pkg?.[MODULE_NAME],
       },
     ],

@@ -1,104 +1,106 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import {
-  createE2EWorkspace,
-  E2EWorkspace,
-} from "../utils/create-e2e-workspace.js";
-import { YarnPackageManager } from "../../package-manager/package-managers/yarn-package-manager.js";
+import { execSync } from "child_process";
+import { describe, expect, it } from "vitest";
 import { NpmPackageManager } from "../../package-manager/package-managers/npm-package-manager.js";
 import { PnpmPackageManager } from "../../package-manager/package-managers/pnpm-package-manager.js";
+import { YarnPackageManager } from "../../package-manager/package-managers/yarn-package-manager.js";
 import { isTargetPackage } from "../../package-manager/utils/is-target-package.js";
-import { execSync } from "child_process";
+import { createE2EWorkspace } from "../utils/create-e2e-workspace.js";
 
 describe("PackageManager integration", () => {
-  let workspace: E2EWorkspace;
-
-  beforeEach(async () => {
-    workspace = await createE2EWorkspace();
-  });
-
-  afterEach(async () => {
-    await workspace.cleanup();
-  });
-
   it("YarnPackageManager should parse workspaces correctly", async () => {
-    const yarn = new YarnPackageManager(workspace.root);
-    const result = yarn.getPackages();
+    const workspace = await createE2EWorkspace({ packageManager: "yarn" });
+    try {
+      const yarn = new YarnPackageManager(workspace.root);
+      const result = yarn.getPackages();
 
-    expect(result).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          name: "@libs/core",
-          location: "packages/core",
-        }),
-        expect.objectContaining({
-          name: "@libs/math",
-          location: "packages/math",
-        }),
-        expect.objectContaining({
-          name: "@libs/types",
-          location: "packages/types",
-        }),
-        expect.objectContaining({
-          name: "@libs/utils",
-          location: "packages/utils",
-        }),
-      ])
-    );
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: "@libs/core",
+            location: "packages/core",
+          }),
+          expect.objectContaining({
+            name: "@libs/math",
+            location: "packages/math",
+          }),
+          expect.objectContaining({
+            name: "@libs/types",
+            location: "packages/types",
+          }),
+          expect.objectContaining({
+            name: "@libs/utils",
+            location: "packages/utils",
+          }),
+        ])
+      );
+    } finally {
+      await workspace.cleanup();
+    }
   });
 
   it("NpmPackageManager should parse workspaces correctly", async () => {
-    execSync("npm install", { stdio: "ignore", cwd: workspace.root });
+    const workspace = await createE2EWorkspace({ packageManager: "npm" });
+    try {
+      execSync("npm install", { stdio: "ignore", cwd: workspace.root });
 
-    const npm = new NpmPackageManager(workspace.root);
-    const result = npm.getPackages();
+      const npm = new NpmPackageManager(workspace.root);
+      const result = npm.getPackages();
 
-    expect(result).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          name: "@libs/core",
-          location: "packages/core",
-        }),
-        expect.objectContaining({
-          name: "@libs/math",
-          location: "packages/math",
-        }),
-        expect.objectContaining({
-          name: "@libs/types",
-          location: "packages/types",
-        }),
-        expect.objectContaining({
-          name: "@libs/utils",
-          location: "packages/utils",
-        }),
-      ])
-    );
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: "@libs/core",
+            location: "packages/core",
+          }),
+          expect.objectContaining({
+            name: "@libs/math",
+            location: "packages/math",
+          }),
+          expect.objectContaining({
+            name: "@libs/types",
+            location: "packages/types",
+          }),
+          expect.objectContaining({
+            name: "@libs/utils",
+            location: "packages/utils",
+          }),
+        ])
+      );
+    } finally {
+      await workspace.cleanup();
+    }
   });
 
   it("PnpmPackageManager should parse workspaces correctly", async () => {
-    await workspace.write(
-      "pnpm-workspace.yaml",
-      "packages:\n  - 'packages/*'\n"
-    );
+    const workspace = await createE2EWorkspace({ packageManager: "pnpm" });
+    try {
+      await workspace.write(
+        "pnpm-workspace.yaml",
+        "packages:\n  - 'packages/*'\n"
+      );
 
-    const pnpm = new PnpmPackageManager(workspace.root);
-    const result = pnpm.getPackages();
+      const pnpm = new PnpmPackageManager(workspace.root);
+      const result = pnpm.getPackages();
 
-    expect(result).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          name: "@libs/core",
-        }),
-        expect.objectContaining({
-          name: "@libs/math",
-        }),
-        expect.objectContaining({
-          name: "@libs/types",
-        }),
-        expect.objectContaining({
-          name: "@libs/utils",
-        }),
-      ])
-    );
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: "@libs/core",
+          }),
+          expect.objectContaining({
+            name: "@libs/math",
+          }),
+          expect.objectContaining({
+            name: "@libs/types",
+          }),
+          expect.objectContaining({
+            name: "@libs/utils",
+          }),
+        ])
+      );
+    } finally {
+      await workspace.cleanup();
+    }
   });
 });
 

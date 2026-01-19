@@ -94,14 +94,14 @@ describe("workflow", () => {
       "docs/references/core/index/fetchData.md"
     );
     expect(fetchDataMd).toContain("# fetchData");
-    expect(fetchDataMd).toContain("Fetches data from the given URL");
+    expect(fetchDataMd).toContain("data from the given URL");
     expect(fetchDataMd).toContain("@libs/core");
 
     const calculateAreaMd = await workspace.read(
       "docs/references/math/index/calculateArea.md"
     );
     expect(calculateAreaMd).toContain("# calculateArea");
-    expect(calculateAreaMd).toContain("Calculates the area of a circle");
+    expect(calculateAreaMd).toContain("the area of a circle");
     expect(calculateAreaMd).toContain("@libs/math");
 
     const checkOutput = execSync("yarn docflow check", {

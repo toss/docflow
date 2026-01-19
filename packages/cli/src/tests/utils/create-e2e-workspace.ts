@@ -13,9 +13,11 @@ export type E2EWorkspace = TestWorkspace;
 
 export async function createE2EWorkspace(options?: {
   installDependencies?: boolean;
+  packageManager?: "yarn" | "pnpm" | "npm";
 }): Promise<TestWorkspace> {
   const workspace = await createTestWorkspace();
   const root = path.resolve(process.cwd());
+  const packageManager = options?.packageManager ?? "yarn";
 
   await workspace.write("tsconfig.json", {
     compilerOptions: {
@@ -34,11 +36,23 @@ export async function createE2EWorkspace(options?: {
     exclude: ["node_modules", "dist"],
   });
 
+  const packageManagerField = (() => {
+    switch (packageManager) {
+      case "yarn":
+        return "yarn@4.9.1";
+      case "pnpm":
+        return "pnpm@9.15.4";
+      default:
+        return undefined;
+    }
+  })();
+
   await workspace.write("package.json", {
     name: "test-workspace",
     version: "1.0.0",
     private: true,
     workspaces: ["packages/*"],
+    ...(packageManagerField ? { packageManager: packageManagerField } : {}),
     devDependencies: {
       docflow: `file:${root}`,
       typescript: "^5.0.0",

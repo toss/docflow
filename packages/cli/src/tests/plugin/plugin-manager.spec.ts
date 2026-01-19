@@ -1,11 +1,6 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { PluginManager } from "../../plugins/plugin-manager.js";
-import { Plugin } from "../../plugins/types/plugin.types.js";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { SidebarItem } from "../../commands/build/manifest/manifest.js";
 import { loadConfig } from "../../config/load-config.js";
-import { createE2EWorkspace, E2EWorkspace } from "../utils/create-e2e-workspace.js";
-import { Config } from "../../config/config.schema.js";
-import { MockPlugins } from "../utils/plugin-mocks.js";
 import {
   GeneratedDoc,
   MarkdownDocument,
@@ -14,8 +9,14 @@ import {
 import {
   ParsedJSDoc,
   StandardizedFilePath,
-  TargetWithJSDoc,
 } from "../../core/types/parser.types.js";
+import { PluginManager } from "../../plugins/plugin-manager.js";
+import { Plugin } from "../../plugins/types/plugin.types.js";
+import {
+  createE2EWorkspace,
+  E2EWorkspace,
+} from "../utils/create-e2e-workspace.js";
+import { MockPlugins } from "../utils/plugin-mocks.js";
 
 describe("PluginManager", () => {
   it("should register single plugin", () => {
@@ -93,7 +94,7 @@ describe("PluginManager", () => {
     });
 
     it("should return custom generator from plugin", async () => {
-      let config = await loadConfig(workspace.root);
+      const config = await loadConfig(workspace.root);
       const manager = new PluginManager();
 
       const mockGenerator: MarkdownGenerator = {
@@ -133,7 +134,7 @@ describe("PluginManager", () => {
     });
 
     it("should throw error for unknown generator", async () => {
-      let config = await loadConfig(workspace.root);
+      const config = await loadConfig(workspace.root);
       const manager = new PluginManager();
 
       config.commands.build.generator.name = "unknown-generator";
@@ -144,7 +145,7 @@ describe("PluginManager", () => {
     });
 
     it("should list available generators in error message", async () => {
-      let config = await loadConfig(workspace.root);
+      const config = await loadConfig(workspace.root);
       const manager = new PluginManager();
 
       const plugin1: Plugin = {
@@ -189,7 +190,7 @@ describe("PluginManager", () => {
     });
 
     it("should work with plugin that doesn't provide generator", async () => {
-      let config = await loadConfig(workspace.root);
+      const config = await loadConfig(workspace.root);
       const manager = new PluginManager();
 
       const plugin: Plugin = {
@@ -209,11 +210,11 @@ describe("PluginManager", () => {
     });
 
     it("should generate and serialize with custom generator", async () => {
-      let config = await loadConfig(workspace.root);
+      const config = await loadConfig(workspace.root);
       const manager = new PluginManager();
 
       const mockGenerator: MarkdownGenerator = {
-        generateDocs: (_: TargetWithJSDoc, __: string): GeneratedDoc => ({
+        generateDocs: (): GeneratedDoc => ({
           filePath: "" as StandardizedFilePath,
           content: "",
           relativePath: "",

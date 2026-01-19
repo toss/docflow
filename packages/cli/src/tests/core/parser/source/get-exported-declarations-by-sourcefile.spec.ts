@@ -2,7 +2,10 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { getExportedDeclarationsBySourceFile } from "../../../../core/parser/source/get-exported-declarations-by-sourcefile.js";
 import { getTsProject } from "../../../../core/get-ts-project.js";
 import { getTsConfigPath } from "../../../../core/get-ts-config-path.js";
-import { createE2EWorkspace, E2EWorkspace } from "../../../utils/create-e2e-workspace.js";
+import {
+  createE2EWorkspace,
+  E2EWorkspace,
+} from "../../../utils/create-e2e-workspace.js";
 
 describe("getExportedDeclarationsBySourceFile", () => {
   let workspace: E2EWorkspace;
@@ -47,7 +50,7 @@ describe("getExportedDeclarationsBySourceFile", () => {
     const exportDeclarations = getExportedDeclarationsBySourceFile(mathFile!);
 
     const addDeclaration = exportDeclarations.find(
-      (decl) => decl.symbolName === "add",
+      (decl) => decl.symbolName === "add"
     );
     expect(addDeclaration).toBeDefined();
     expect(addDeclaration!.kind).toBe("function");
@@ -59,7 +62,6 @@ describe("getExportedDeclarationsBySourceFile", () => {
   it("should handle files with no exports", async () => {
     const workspace = await createE2EWorkspace();
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
-    const project = getTsProject(tsConfigPath);
 
     await workspace.write(
       "packages/core/src/no-exports.ts",
@@ -69,7 +71,7 @@ function internalFunction() {
 }
 
 const internalVariable = "test";
-    `,
+    `
     );
 
     const updatedProject = getTsProject(tsConfigPath);
@@ -80,7 +82,7 @@ const internalVariable = "test";
     expect(noExportsFile).toBeDefined();
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(
-      noExportsFile!,
+      noExportsFile!
     );
     expect(exportDeclarations).toHaveLength(0);
   });
@@ -117,10 +119,10 @@ const internalVariable = "test";
     const exportDeclarations = getExportedDeclarationsBySourceFile(mathFile!);
 
     const withJSDoc = exportDeclarations.filter(
-      (decl) => decl.jsDoc !== undefined,
+      (decl) => decl.jsDoc !== undefined
     );
     const withoutJSDoc = exportDeclarations.filter(
-      (decl) => decl.jsDoc === undefined,
+      (decl) => decl.jsDoc === undefined
     );
 
     expect(withJSDoc.length).toBeGreaterThan(0);
