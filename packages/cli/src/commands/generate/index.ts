@@ -20,7 +20,7 @@ export class GenerateCommand extends Command {
   static paths = [[`generate`]];
 
   async execute(): Promise<number> {
-    const { projectConfig, generateConfig, targetPackages } =
+    const { projectConfig, projectRoot, generateConfig, targetPackages } =
       await loadContext();
     if (!generateConfig) {
       console.error("❌ not found generate config");
@@ -40,7 +40,7 @@ export class GenerateCommand extends Command {
       console.log(`📝 ${pkg.name} processing...`);
 
       try {
-        const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
+        const tsConfigPath = getTsConfigPath(projectRoot, pkg.location);
         const project = getTsProject(tsConfigPath);
         const projectSourceFiles = project.getSourceFiles();
 
@@ -151,6 +151,7 @@ async function loadContext() {
 
   return {
     projectConfig,
+    projectRoot,
     generateConfig,
     packages,
     targetPackages,

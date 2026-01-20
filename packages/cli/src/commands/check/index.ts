@@ -16,7 +16,7 @@ export class CheckCommand extends Command {
   static paths = [[`check`]];
 
   async execute(): Promise<number> {
-    const { checkConfig, projectConfig, targetPackages } = await loadContext();
+    const { checkConfig, projectConfig, projectRoot, targetPackages } = await loadContext();
 
     if (targetPackages.length === 0) {
       printNoPackagesFound(
@@ -30,9 +30,9 @@ export class CheckCommand extends Command {
     for (const pkg of targetPackages) {
       console.log(`📝 ${pkg.name} processing...`);
 
-      const packagePath = path.resolve(projectConfig.root, pkg.location);
+      const packagePath = path.resolve(projectRoot, pkg.location);
       try {
-        const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
+        const tsConfigPath = getTsConfigPath(projectRoot, pkg.location);
         const project = getTsProject(tsConfigPath);
 
         const entryPoints =
@@ -98,6 +98,7 @@ async function loadContext() {
   return {
     checkConfig,
     projectConfig,
+    projectRoot,
     targetPackages,
   };
 }

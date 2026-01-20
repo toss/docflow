@@ -24,6 +24,7 @@ export class BuildCommand extends Command {
   async execute(): Promise<number> {
     const {
       projectConfig,
+      projectRoot,
       buildConfig,
       targetPackages,
       parser,
@@ -47,7 +48,7 @@ export class BuildCommand extends Command {
       console.log(`📝 ${pkg.name} processing...`);
 
       try {
-        const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
+        const tsConfigPath = getTsConfigPath(projectRoot, pkg.location);
         const project = getTsProject(tsConfigPath);
         const projectSourceFiles = project.getSourceFiles();
 
@@ -149,11 +150,12 @@ async function loadContext() {
     pluginManager,
   });
 
-  const outputDir = path.resolve(projectConfig.root, buildConfig.outputDir);
+  const outputDir = path.resolve(projectRoot, buildConfig.outputDir);
 
   return {
     buildConfig,
     projectConfig,
+    projectRoot,
     parser,
     generator,
     targetPackages,
