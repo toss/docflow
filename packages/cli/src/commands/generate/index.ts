@@ -14,6 +14,7 @@ import { ExportDeclaration } from "../../core/types/parser.types.js";
 import { Package } from "../../package-manager/types/package-manager.type.js";
 import { Project } from "ts-morph";
 import path from "path";
+import { getWorkingDirectory } from "../../utils/get-working-directory.js";
 
 export class GenerateCommand extends Command {
   static paths = [[`generate`]];
@@ -124,7 +125,7 @@ export class GenerateCommand extends Command {
 }
 
 async function loadContext() {
-  const root = process.cwd();
+  const root = getWorkingDirectory();
   const config = await loadConfig(root);
   const projectRoot = path.resolve(root, config.project.root);
   const generateConfig = config.commands?.generate;

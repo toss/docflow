@@ -10,6 +10,7 @@ import { excludeBarrelReExports } from "../../core/parser/source/exclude-barrel-
 import { hasJSDocTag } from "../../core/parser/jsdoc/jsdoc-utils.js";
 import { getPackageEntryPoints } from "../../core/entry-point.js";
 import path from "path";
+import { getWorkingDirectory } from "../../utils/get-working-directory.js";
 
 export class CheckCommand extends Command {
   static paths = [[`check`]];
@@ -76,7 +77,7 @@ export class CheckCommand extends Command {
 }
 
 async function loadContext() {
-  const root = process.cwd();
+  const root = getWorkingDirectory();
   const config = await loadConfig(root);
   const projectRoot = path.resolve(root, config.project.root);
   const projectConfig = config.project;
