@@ -1,13 +1,14 @@
-import { JSDoc } from "ts-morph";
 import * as commentParser from "comment-parser";
+import { isEmpty } from "es-toolkit/compat";
+import { JSDoc } from "ts-morph";
 import {
-  ParsedJSDoc,
+  ExampleData,
   ParameterData,
+  ParsedJSDoc,
   ReturnData,
+  SeeData,
   ThrowsData,
   TypedefData,
-  ExampleData,
-  SeeData,
   VersionData,
 } from "../../types/parser.types.js";
 
@@ -140,28 +141,63 @@ export class JSDocParser {
     paramMap: Map<string, ParameterData>,
     parameters: ParameterData[],
   ): void {
-    const parts = param.name.split(".");
-    const parentName = parts[0];
-    if (!parentName) return;
-
-    let parent = paramMap.get(parentName);
-
-    if (!parent) {
-      parent = {
-        name: parentName,
-        type: "Object",
-        description: "",
-        required: true,
-        defaultValue: undefined,
-        nested: [],
-      };
-      paramMap.set(parentName, parent);
-      parameters.push(parent);
+    const [rootName, ...nestedPath] = param.name.split(".");
+    if (rootName == null || isEmpty(nestedPath)) {
+      return;
     }
 
-    const nestedParam = { ...param, name: parts.slice(1).join(".") };
-    parent.nested = parent.nested || [];
-    parent.nested.push(nestedParam);
+    const existingRoot = paramMap.get(rootName);
+    const rootParam = existingRoot ?? this.createPlaceholderObjectParam(rootName);
+    if (existingRoot == null) {
+      paramMap.set(rootName, rootParam);
+      parameters.push(rootParam);
+    }
+
+    this.insertParamAtPath({
+      into: rootParam.nested ?? [],
+      path: nestedPath,
+      param,
+    });
+  }
+
+  private insertParamAtPath({ into, path, param }: {
+    into: ParameterData[];
+    path: string[];
+    param: ParameterData;
+  }): void {
+    const [currentSegment, ...remainingPath] = path;
+    if (currentSegment == null) {
+      return;
+    }
+
+    if (isEmpty(remainingPath)) {
+      into.push({ ...param, name: currentSegment, nested: [] });
+
+      return;
+    }
+
+    const existingChild = into.find((n) => n.name === currentSegment);
+    const child = existingChild ?? this.createPlaceholderObjectParam(currentSegment);
+    if (existingChild == null) {
+      into.push(child);
+    }
+
+    this.insertParamAtPath({
+      into: child.nested ?? [],
+      path: remainingPath,
+      param,
+    });
+  }
+
+  private createPlaceholderObjectParam(name: string): ParameterData {
+    return {
+      name,
+      type: "Object",
+      description: "",
+      required: true,
+      defaultValue: undefined,
+      nested: [],
+    };
   }
 
   private extractReturns(block: commentParser.Block): ReturnData | undefined {
