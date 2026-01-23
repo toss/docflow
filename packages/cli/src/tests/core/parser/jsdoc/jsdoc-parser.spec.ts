@@ -261,6 +261,45 @@ export function processOptions(options: { name: string; age: number; active?: bo
       expect(result.parameters?.[0].nested?.[2].defaultValue).toBe("true");
     });
 
+    it("should parse deeply nested parameter properties (3+ levels)", () => {
+      const sourceFile = project.createSourceFile(
+        "test.ts",
+        `
+/**
+ * @param {Object} config - Configuration object
+ * @param {Object} config.database - Database settings
+ * @param {Object} config.database.connection - Connection settings
+ * @param {string} config.database.connection.host - Database host
+ * @param {number} config.database.connection.port - Database port
+ * @param {string} config.database.name - Database name
+ */
+export function configure(config: any): void {
+  // implementation
+}
+        `
+      );
+
+      const func = sourceFile.getFunction("configure")!;
+      const jsDoc = func.getJsDocs()[0]!;
+
+      const result = parser.parse(jsDoc);
+
+      expect(result.parameters).toMatchObject([
+        {
+          name: "config",
+          nested: [
+            {
+              name: "database",
+              nested: [
+                { name: "connection", nested: [{ name: "host" }, { name: "port" }] },
+                { name: "name" },
+              ],
+            },
+          ],
+        },
+      ]);
+    });
+
     it("should handle JSDoc without any documentation", () => {
       const result = parser.parse(null as unknown as JSDoc);
 
