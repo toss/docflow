@@ -14,6 +14,15 @@ import {
 
 const LANGUAGE = "tsx";
 
+const EMPTY_PARSED_JSDOC: ParsedJSDoc = {
+  examples: [],
+  parameters: [],
+  throws: [],
+  typedef: [],
+  see: [],
+  version: [],
+};
+
 export class JSDocParser {
   parse(jsDoc: JSDoc): ParsedJSDoc {
     if (!jsDoc) {
@@ -52,14 +61,7 @@ export class JSDocParser {
   }
 
   private createEmptyJSDocData(): ParsedJSDoc {
-    return {
-      examples: [],
-      parameters: [],
-      throws: [],
-      typedef: [],
-      see: [],
-      version: [],
-    };
+    return EMPTY_PARSED_JSDOC;
   }
 
   private extractDescription(block: commentParser.Block): string | undefined {

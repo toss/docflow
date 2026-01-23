@@ -1,4 +1,7 @@
 import { Node, JSDocableNode, JSDoc } from "ts-morph";
+import { flatMap } from "es-toolkit";
+import { isEmpty } from "es-toolkit/compat";
+import { ParameterData } from "../../types/parser.types.js";
 
 export function hasJSDocTag(node: Node, tagName: string): boolean {
   const jsDocableNode = getJSDocableNode(node);
@@ -38,4 +41,19 @@ function getJSDocableNode(node: Node): JSDocableNode | undefined {
   }
 
   return undefined;
+}
+
+export function getJSDocParameterNames(parameters: ParameterData[]): string[] {
+  const collectNames = (params: ParameterData[], prefix = ""): string[] => {
+    return flatMap(params, (param) => {
+      const fullName = isEmpty(prefix) ? param.name : `${prefix}.${param.name}`;
+
+      return [
+        fullName,
+        ...(param.nested != null ? collectNames(param.nested, fullName) : []),
+      ];
+    });
+  };
+
+  return collectNames(parameters);
 }
