@@ -60,5 +60,10 @@ function createValidator(node: Node) {
   //   return new EnumValidator(node, parsedJSDoc);
   // }
 
+
+  // if (Node.isClassDeclaration(node)) {
+  //   return new ClassValidator(node, parsedJSDoc);
+  // }
+
   return undefined;
 }
