@@ -2,8 +2,8 @@ import { Node } from 'ts-morph';
 import { JSDocParser } from '../../../core/parser/jsdoc/jsdoc-parser.js';
 import { getJSDoc } from '../../../core/parser/jsdoc/jsdoc-utils.js';
 import { ParsedJSDoc } from '../../../core/types/parser.types.js';
-import { ClassValidator } from './validator/class-validator.js';
 import { FunctionValidator } from './validator/function-validator.js';
+import { InterfaceValidator } from './validator/interface-validator.js';
 
 
 export function validate(node: Node) {
@@ -34,10 +34,6 @@ function createValidator(node: Node) {
     return new FunctionValidator(node, parsedJSDoc);
   }
 
-  if (Node.isClassDeclaration(node)) {
-    return new ClassValidator(node, parsedJSDoc);
-  }
-
   if (Node.isVariableDeclaration(node)) {
     const initializer = node.getInitializer();
 
@@ -51,10 +47,10 @@ function createValidator(node: Node) {
     // }
   }
 
-  // TODO: 
-  // if (Node.isInterfaceDeclaration(node)) {
-  //   return new InterfaceValidator(node, parsedJSDoc);
-  // }
+
+  if (Node.isInterfaceDeclaration(node)) {
+    return new InterfaceValidator(node, parsedJSDoc);
+  }
 
   // if (Node.isTypeAliasDeclaration(node)) {
   //   return new TypeAliasValidator(node, parsedJSDoc);
