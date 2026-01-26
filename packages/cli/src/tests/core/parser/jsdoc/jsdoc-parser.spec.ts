@@ -290,10 +290,7 @@ export function configure(config: any): void {
           nested: [
             {
               name: "database",
-              nested: [
-                { name: "connection", nested: [{ name: "host" }, { name: "port" }] },
-                { name: "name" },
-              ],
+              nested: [{ name: "connection", nested: [{ name: "host" }, { name: "port" }] }, { name: "name" }],
             },
           ],
         },
