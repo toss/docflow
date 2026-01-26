@@ -1,8 +1,8 @@
 import { execSync } from "child_process";
-import { z } from "zod";
-import { PackageManager, Package } from "../types/package-manager.type.js";
+import { findUpSync } from "find-up";
 import path from "path";
-import { findUp } from "../utils/find-up.js";
+import { z } from "zod";
+import { Package, PackageManager } from "../types/package-manager.type.js";
 
 const workspaceIdentitySchema = z.object({
   name: z.string().nullable(),
@@ -36,7 +36,7 @@ export class YarnPackageManager implements PackageManager {
   }
 
   private getRepoRootPath(): string {
-    const root = findUp("yarn.lock", this.cwd);
+    const root = findUpSync("yarn.lock", { cwd: this.cwd });
 
     if (root == null) {
       throw new Error(`'yarn.lock' not found from ${this.cwd}`);
