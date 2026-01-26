@@ -45,37 +45,41 @@ export class BuildCommand extends Command {
     for (const pkg of targetPackages) {
       console.log(`📝 ${pkg.name} processing...`);
 
-      const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
-      const project = getTsProject(tsConfigPath);
-      const projectSourceFiles = project.getSourceFiles();
+      try {
+        const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
+        const project = getTsProject(tsConfigPath);
+        const projectSourceFiles = project.getSourceFiles();
 
-      const exportSourceFiles = projectSourceFiles.filter(isExportSourceFile);
-      const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(
-        getExportedDeclarationsBySourceFile
-      );
-      const excludeBarrelReExport = excludeBarrelReExports(
-        exportDeclarationsBySourceFiles
-      );
-      const targets = excludeBarrelReExport.filter((target) => {
-        return target.jsDoc && hasJSDocTag(target.declaration, "public");
-      });
+        const exportSourceFiles = projectSourceFiles.filter(isExportSourceFile);
+        const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(
+          getExportedDeclarationsBySourceFile
+        );
+        const excludeBarrelReExport = excludeBarrelReExports(
+          exportDeclarationsBySourceFiles
+        );
+        const targets = excludeBarrelReExport.filter((target) => {
+          return target.jsDoc && hasJSDocTag(target.declaration, "public");
+        });
 
-      const targetsWithJSDoc = targets.map((target) =>
-        parseJSDoc(target, parser)
-      );
+        const targetsWithJSDoc = targets.map((target) =>
+          parseJSDoc(target, parser)
+        );
 
-      const docs = targetsWithJSDoc.map((target) =>
-        generator.generateDocs(target, pkg.location)
-      );
+        const docs = targetsWithJSDoc.map((target) =>
+          generator.generateDocs(target, pkg.location)
+        );
 
-      console.log(`Generated ${docs.length} documentation files:`);
-      for (const doc of docs) {
-        const outputPath = path.join(outputDir, doc.relativePath);
-        await fs.mkdir(path.dirname(outputPath), { recursive: true });
-        await fs.writeFile(outputPath, doc.content);
-        console.log(`  - ${doc.relativePath}`);
+        console.log(`Generated ${docs.length} documentation files:`);
+        for (const doc of docs) {
+          const outputPath = path.join(outputDir, doc.relativePath);
+          await fs.mkdir(path.dirname(outputPath), { recursive: true });
+          await fs.writeFile(outputPath, doc.content);
+          console.log(`  - ${doc.relativePath}`);
 
-        manifestManager.add(doc.relativePath);
+          manifestManager.add(doc.relativePath);
+        }
+      } catch (error) {
+        console.error(`Failed to build ${pkg.name}: ${error instanceof Error ? error.message : String(error)}`);
       }
     }
 
@@ -133,8 +137,7 @@ async function loadContext() {
     );
   } catch (error) {
     console.error(
-      `❌ Failed to load plugins: ${
-        error instanceof Error ? error.message : String(error)
+      `❌ Failed to load plugins: ${error instanceof Error ? error.message : String(error)
       }`
     );
   }

@@ -28,14 +28,11 @@ describe("getTsConfigPath", () => {
     expect(tsConfigPath).toBe(expectedPath);
   });
 
-  it("should return root tsconfig.json path when package tsconfig doesn't exist", async () => {
+  it("should throw error when package tsconfig doesn't exist", async () => {
     const projectRoot = workspace.root;
     const packageLocation = "packages/non-existent";
 
-    const tsConfigPath = getTsConfigPath(projectRoot, packageLocation);
-    const expectedPath = path.join(projectRoot, "tsconfig.json");
-
-    expect(tsConfigPath).toBe(expectedPath);
+    expect(() => getTsConfigPath(projectRoot, packageLocation)).toThrow();
   });
 
   it("should handle absolute paths correctly", async () => {

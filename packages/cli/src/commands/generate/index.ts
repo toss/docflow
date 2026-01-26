@@ -38,37 +38,43 @@ export class GenerateCommand extends Command {
     const allGenerateTargets = targetPackages.flatMap((pkg) => {
       console.log(`📝 ${pkg.name} processing...`);
 
-      const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
-      const project = getTsProject(tsConfigPath);
-      const projectSourceFiles = project.getSourceFiles();
+      try {
+        const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
+        const project = getTsProject(tsConfigPath);
+        const projectSourceFiles = project.getSourceFiles();
 
-      const exportDeclarationsBySourceFiles = projectSourceFiles.flatMap(
-        getExportedDeclarationsBySourceFile
-      );
+        const exportDeclarationsBySourceFiles = projectSourceFiles.flatMap(
+          getExportedDeclarationsBySourceFile
+        );
 
-      const excludeBarrelReExport = excludeBarrelReExports(
-        exportDeclarationsBySourceFiles
-      );
+        const excludeBarrelReExport = excludeBarrelReExports(
+          exportDeclarationsBySourceFiles
+        );
 
-      const generateTargets = excludeBarrelReExport.filter((target) => {
-        return target.jsDoc && hasJSDocTag(target.declaration, "generate");
-      });
+        const generateTargets = excludeBarrelReExport.filter((target) => {
+          return target.jsDoc && hasJSDocTag(target.declaration, "generate");
+        });
 
-      return generateTargets
-        .map((target) => {
-          const signature = extractSignature(target.declaration);
-          if (!signature) {
-            return null;
-          }
+        return generateTargets
+          .map((target) => {
+            const signature = extractSignature(target.declaration);
+            if (signature == null) {
+              return null;
+            }
 
-          return {
-            ...target,
-            signature,
-            pkg,
-            project,
-          };
-        })
-        .filter((target): target is GenerateTarget => target !== null);
+            return {
+              ...target,
+              signature,
+              pkg,
+              project,
+            };
+          })
+          .filter((target): target is GenerateTarget => target != null);
+      } catch (error) {
+        console.error(`Failed to process ${pkg.name}: ${error instanceof Error ? error.message : String(error)}`);
+
+        return [];
+      }
     });
 
     if (allGenerateTargets.length === 0) {
