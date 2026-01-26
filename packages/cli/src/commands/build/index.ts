@@ -22,23 +22,11 @@ export class BuildCommand extends Command {
   static paths = [[`build`]];
 
   async execute(): Promise<number> {
-    const {
-      projectConfig,
-      projectRoot,
-      buildConfig,
-      targetPackages,
-      parser,
-      generator,
-      manifestManager,
-      outputDir,
-    } = await loadContext();
+    const { projectConfig, projectRoot, buildConfig, targetPackages, parser, generator, manifestManager, outputDir } =
+      await loadContext();
 
     if (targetPackages.length === 0) {
-      printNoPackagesFound(
-        projectConfig.workspace.include,
-        projectConfig.root,
-        projectConfig.packageManager
-      );
+      printNoPackagesFound(projectConfig.workspace.include, projectConfig.root, projectConfig.packageManager);
       return 1;
     }
 
@@ -53,23 +41,15 @@ export class BuildCommand extends Command {
         const projectSourceFiles = project.getSourceFiles();
 
         const exportSourceFiles = projectSourceFiles.filter(isExportSourceFile);
-        const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(
-          getExportedDeclarationsBySourceFile
-        );
-        const excludeBarrelReExport = excludeBarrelReExports(
-          exportDeclarationsBySourceFiles
-        );
-        const targets = excludeBarrelReExport.filter((target) => {
+        const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(getExportedDeclarationsBySourceFile);
+        const excludeBarrelReExport = excludeBarrelReExports(exportDeclarationsBySourceFiles);
+        const targets = excludeBarrelReExport.filter(target => {
           return target.jsDoc && hasJSDocTag(target.declaration, "public");
         });
 
-        const targetsWithJSDoc = targets.map((target) =>
-          parseJSDoc(target, parser)
-        );
+        const targetsWithJSDoc = targets.map(target => parseJSDoc(target, parser));
 
-        const docs = targetsWithJSDoc.map((target) =>
-          generator.generateDocs(target, pkg.location)
-        );
+        const docs = targetsWithJSDoc.map(target => generator.generateDocs(target, pkg.location));
 
         console.log(`Generated ${docs.length} documentation files:`);
         for (const doc of docs) {
@@ -92,12 +72,7 @@ export class BuildCommand extends Command {
 
       await fs.mkdir(path.dirname(manifestPath), { recursive: true });
       await fs.writeFile(manifestPath, manifestManager.toString());
-      console.log(
-        `📋 Generated manifest: ${path.relative(
-          projectConfig.root,
-          manifestPath
-        )}`
-      );
+      console.log(`📋 Generated manifest: ${path.relative(projectConfig.root, manifestPath)}`);
     }
 
     return 0;
@@ -110,10 +85,7 @@ async function loadContext() {
   const projectRoot = path.resolve(root, config.project.root);
   const buildConfig = config.commands.build;
   const projectConfig = config.project;
-  const packageManager = createPackageManager(
-    projectConfig.packageManager,
-    projectRoot
-  );
+  const packageManager = createPackageManager(projectConfig.packageManager, projectRoot);
   const packages = packageManager.getPackages();
 
   const parser = new JSDocParser();
@@ -122,7 +94,7 @@ async function loadContext() {
     config,
   });
 
-  const targetPackages = packages.filter((pkg) =>
+  const targetPackages = packages.filter(pkg =>
     isTargetPackage(pkg, {
       include: projectConfig.workspace.include,
       exclude: projectConfig.workspace.exclude,
@@ -132,16 +104,9 @@ async function loadContext() {
   try {
     const plugins = await loadPlugins(config);
     pluginManager.registerAll(plugins);
-    console.log(
-      `📦 Loaded ${plugins.length} plugin(s): ${plugins
-        .map((p) => p.name)
-        .join(", ")}`
-    );
+    console.log(`📦 Loaded ${plugins.length} plugin(s): ${plugins.map(p => p.name).join(", ")}`);
   } catch (error) {
-    console.error(
-      `❌ Failed to load plugins: ${error instanceof Error ? error.message : String(error)
-      }`
-    );
+    console.error(`❌ Failed to load plugins: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   const generator = pluginManager.getGenerator(config);
@@ -164,11 +129,7 @@ async function loadContext() {
   };
 }
 
-function printNoPackagesFound(
-  include: string[],
-  root: string,
-  packageManager: string
-) {
+function printNoPackagesFound(include: string[], root: string, packageManager: string) {
   console.error("❌ not found packages");
   console.error("check your config:");
   console.error(`  - workspace.include: ${JSON.stringify(include)}`);

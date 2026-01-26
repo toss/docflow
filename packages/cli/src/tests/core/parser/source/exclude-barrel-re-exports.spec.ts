@@ -21,17 +21,13 @@ describe("excludeBarrelReExports", () => {
     const project = getTsProject(tsConfigPath);
 
     const sourceFiles = project.getSourceFiles();
-    const allExportDeclarations = sourceFiles.flatMap((sf) =>
-      getExportedDeclarationsBySourceFile(sf),
-    );
+    const allExportDeclarations = sourceFiles.flatMap(sf => getExportedDeclarationsBySourceFile(sf));
 
     const uniqueExports = excludeBarrelReExports(allExportDeclarations);
 
-    expect(uniqueExports.length).toBeLessThanOrEqual(
-      allExportDeclarations.length,
-    );
+    expect(uniqueExports.length).toBeLessThanOrEqual(allExportDeclarations.length);
 
-    const symbolNames = uniqueExports.map((exp) => exp.symbolName);
+    const symbolNames = uniqueExports.map(exp => exp.symbolName);
     const uniqueSymbolNames = [...new Set(symbolNames)];
     expect(symbolNames.length).toBe(uniqueSymbolNames.length);
   });
@@ -41,13 +37,11 @@ describe("excludeBarrelReExports", () => {
     const project = getTsProject(tsConfigPath);
 
     const sourceFiles = project.getSourceFiles();
-    const allExportDeclarations = sourceFiles.flatMap((sf) =>
-      getExportedDeclarationsBySourceFile(sf),
-    );
+    const allExportDeclarations = sourceFiles.flatMap(sf => getExportedDeclarationsBySourceFile(sf));
 
     const uniqueExports = excludeBarrelReExports(allExportDeclarations);
 
-    const addExport = uniqueExports.find((exp) => exp.symbolName === "add");
+    const addExport = uniqueExports.find(exp => exp.symbolName === "add");
     expect(addExport).toBeDefined();
 
     expect(addExport!.filePath).toContain("math.ts");
@@ -64,9 +58,7 @@ describe("excludeBarrelReExports", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const mathFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("math.ts"));
+    const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(mathFile!);
     const singleExport = exportDeclarations.slice(0, 1);
@@ -81,12 +73,8 @@ describe("excludeBarrelReExports", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const mathFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("math.ts"));
-    const stringFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("string.ts"));
+    const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
+    const stringFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("string.ts"));
 
     const mathExports = getExportedDeclarationsBySourceFile(mathFile!);
     const stringExports = getExportedDeclarationsBySourceFile(stringFile!);
@@ -94,9 +82,9 @@ describe("excludeBarrelReExports", () => {
     const allExports = [...mathExports, ...stringExports];
     const uniqueExports = excludeBarrelReExports(allExports);
 
-    const filePaths = [...new Set(uniqueExports.map((exp) => exp.filePath))];
+    const filePaths = [...new Set(uniqueExports.map(exp => exp.filePath))];
     expect(filePaths.length).toBeGreaterThan(1);
-    expect(filePaths.some((path) => path.includes("math.ts"))).toBe(true);
-    expect(filePaths.some((path) => path.includes("string.ts"))).toBe(true);
+    expect(filePaths.some(path => path.includes("math.ts"))).toBe(true);
+    expect(filePaths.some(path => path.includes("string.ts"))).toBe(true);
   });
 });

@@ -45,17 +45,15 @@ function formatFunctionSignature(node: FunctionDeclaration): string {
   const name = node.getName() ?? "anonymous";
   const typeParams = node
     .getTypeParameters()
-    .map((tp) => tp.getText())
+    .map(tp => tp.getText())
     .join(", ");
   const params = node
     .getParameters()
-    .map((p) => p.getText())
+    .map(p => p.getText())
     .join(", ");
   const returnType = node.getReturnType().getText();
 
-  return `function ${name}${
-    typeParams ? `<${typeParams}>` : ""
-  }(${params}): ${returnType};`;
+  return `function ${name}${typeParams ? `<${typeParams}>` : ""}(${params}): ${returnType};`;
 }
 
 // {let|const|var} {name}: <{generics}>({parameters}) => {returnType};
@@ -71,17 +69,15 @@ function formatArrowFunctionSignature(node: VariableDeclaration): string {
 
   const typeParams = initializer
     .getTypeParameters()
-    .map((tp) => tp.getText())
+    .map(tp => tp.getText())
     .join(", ");
   const params = initializer
     .getParameters()
-    .map((p) => p.getText())
+    .map(p => p.getText())
     .join(", ");
   const returnType = initializer.getReturnType().getText();
 
-  return `${declarationKind} ${name}: ${
-    typeParams ? `<${typeParams}>` : ""
-  }(${params}) => ${returnType};`;
+  return `${declarationKind} ${name}: ${typeParams ? `<${typeParams}>` : ""}(${params}) => ${returnType};`;
 }
 
 // {let|const|var} {name}: {type};
@@ -100,7 +96,7 @@ function formatClassSignature(node: ClassDeclaration): string {
   const isAbstract = node.isAbstract() ? "abstract " : "";
   const typeParams = node
     .getTypeParameters()
-    .map((tp) => tp.getText())
+    .map(tp => tp.getText())
     .join(", ");
 
   const extendsExpr = node.getExtends();
@@ -108,13 +104,9 @@ function formatClassSignature(node: ClassDeclaration): string {
 
   const implementsExprs = node.getImplements();
   const implementsText =
-    implementsExprs.length > 0
-      ? ` implements ${implementsExprs.map((i) => i.getText()).join(", ")}`
-      : "";
+    implementsExprs.length > 0 ? ` implements ${implementsExprs.map(i => i.getText()).join(", ")}` : "";
 
-  return `${isAbstract}class ${name}${
-    typeParams ? `<${typeParams}>` : ""
-  }${extendsText}${implementsText};`;
+  return `${isAbstract}class ${name}${typeParams ? `<${typeParams}>` : ""}${extendsText}${implementsText};`;
 }
 
 // interface {name}<{generics}> {extends ...}? { {members} }
@@ -122,26 +114,21 @@ function formatInterfaceSignature(node: InterfaceDeclaration): string {
   const name = node.getName();
   const typeParams = node
     .getTypeParameters()
-    .map((tp) => tp.getText())
+    .map(tp => tp.getText())
     .join(", ");
 
   const extendsExprs = node.getExtends();
-  const extendsText =
-    extendsExprs.length > 0
-      ? ` extends ${extendsExprs.map((e) => e.getText()).join(", ")}`
-      : "";
+  const extendsText = extendsExprs.length > 0 ? ` extends ${extendsExprs.map(e => e.getText()).join(", ")}` : "";
 
   const members = node
     .getMembers()
-    .map((member) => {
+    .map(member => {
       const text = member.getText().trim();
       return text.endsWith(";") ? text.slice(0, -1) : text;
     })
     .join("; ");
 
-  return `interface ${name}${
-    typeParams ? `<${typeParams}>` : ""
-  }${extendsText} { ${members} }`;
+  return `interface ${name}${typeParams ? `<${typeParams}>` : ""}${extendsText} { ${members} }`;
 }
 
 // type {name}<{generics}> = {definition};
@@ -149,7 +136,7 @@ function formatTypeAliasSignature(node: TypeAliasDeclaration): string {
   const name = node.getName();
   const typeParams = node
     .getTypeParameters()
-    .map((tp) => tp.getText())
+    .map(tp => tp.getText())
     .join(", ");
   const type = node.getTypeNode()?.getText() ?? "unknown";
 
@@ -163,13 +150,11 @@ function formatEnumSignature(node: EnumDeclaration): string {
 
   const members = node
     .getMembers()
-    .map((member) => {
+    .map(member => {
       const memberName = member.getName();
       const value = member.getValue();
       if (value !== undefined) {
-        return `${memberName} = ${
-          typeof value === "string" ? `"${value}"` : value
-        }`;
+        return `${memberName} = ${typeof value === "string" ? `"${value}"` : value}`;
       }
       return memberName;
     })

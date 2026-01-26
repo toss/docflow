@@ -20,23 +20,18 @@ export class GenerateCommand extends Command {
   static paths = [[`generate`]];
 
   async execute(): Promise<number> {
-    const { projectConfig, projectRoot, generateConfig, targetPackages } =
-      await loadContext();
+    const { projectConfig, projectRoot, generateConfig, targetPackages } = await loadContext();
     if (!generateConfig) {
       console.error("❌ not found generate config");
       return 1;
     }
 
     if (targetPackages.length === 0) {
-      printNoPackagesFound(
-        projectConfig.workspace.include,
-        projectConfig.root,
-        projectConfig.packageManager
-      );
+      printNoPackagesFound(projectConfig.workspace.include, projectConfig.root, projectConfig.packageManager);
       return 1;
     }
 
-    const allGenerateTargets = targetPackages.flatMap((pkg) => {
+    const allGenerateTargets = targetPackages.flatMap(pkg => {
       console.log(`📝 ${pkg.name} processing...`);
 
       try {
@@ -44,20 +39,16 @@ export class GenerateCommand extends Command {
         const project = getTsProject(tsConfigPath);
         const projectSourceFiles = project.getSourceFiles();
 
-        const exportDeclarationsBySourceFiles = projectSourceFiles.flatMap(
-          getExportedDeclarationsBySourceFile
-        );
+        const exportDeclarationsBySourceFiles = projectSourceFiles.flatMap(getExportedDeclarationsBySourceFile);
 
-        const excludeBarrelReExport = excludeBarrelReExports(
-          exportDeclarationsBySourceFiles
-        );
+        const excludeBarrelReExport = excludeBarrelReExports(exportDeclarationsBySourceFiles);
 
-        const generateTargets = excludeBarrelReExport.filter((target) => {
+        const generateTargets = excludeBarrelReExport.filter(target => {
           return target.jsDoc && hasJSDocTag(target.declaration, "generate");
         });
 
         return generateTargets
-          .map((target) => {
+          .map(target => {
             const signature = extractSignature(target.declaration);
             if (signature == null) {
               return null;
@@ -91,13 +82,10 @@ export class GenerateCommand extends Command {
 
     const fetcher = generateConfig.jsdoc.fetcher;
     const promptTemplate = generateConfig.jsdoc.prompt;
-    const templateFunction = (signature: string) =>
-      `${promptTemplate}\n\nSignature: ${signature}`;
+    const templateFunction = (signature: string) => `${promptTemplate}\n\nSignature: ${signature}`;
 
     for (const selectTarget of selectedTargets) {
-      const sourceFile = selectTarget.project.getSourceFile(
-        selectTarget.filePath
-      );
+      const sourceFile = selectTarget.project.getSourceFile(selectTarget.filePath);
       if (!sourceFile) continue;
 
       const declaration = selectTarget.declaration;
@@ -113,9 +101,7 @@ export class GenerateCommand extends Command {
 
       updateJSDoc(declaration, newJSDoc);
       await sourceFile.save();
-      console.log(
-        `✅ ${selectTarget.filePath} ${selectTarget.symbolName} updated`
-      );
+      console.log(`✅ ${selectTarget.filePath} ${selectTarget.symbolName} updated`);
     }
 
     console.log("✅ generate done");
@@ -130,19 +116,16 @@ async function loadContext() {
   const projectRoot = path.resolve(root, config.project.root);
   const generateConfig = config.commands?.generate;
   const projectConfig = config.project;
-  const packageManager = createPackageManager(
-    projectConfig.packageManager,
-    projectRoot
-  );
+  const packageManager = createPackageManager(projectConfig.packageManager, projectRoot);
   const packages = packageManager.getPackages();
 
   if (packages.length > 0) {
-    packages.forEach((pkg) => {
+    packages.forEach(pkg => {
       console.log(`  - ${pkg.name} (${pkg.location})`);
     });
   }
 
-  const targetPackages = packages.filter((pkg) =>
+  const targetPackages = packages.filter(pkg =>
     isTargetPackage(pkg, {
       include: projectConfig.workspace.include,
       exclude: projectConfig.workspace.exclude,
@@ -158,11 +141,7 @@ async function loadContext() {
   };
 }
 
-function printNoPackagesFound(
-  include: string[],
-  root: string,
-  packageManager: string
-) {
+function printNoPackagesFound(include: string[], root: string, packageManager: string) {
   console.error("❌ not found packages");
   console.error("check your config:");
   console.error(`  - workspace.include: ${JSON.stringify(include)}`);
@@ -175,9 +154,7 @@ interface GenerateTarget extends ExportDeclaration {
   project: Project;
 }
 
-async function promptTargetSelection(
-  targetContexts: GenerateTarget[]
-): Promise<GenerateTarget[]> {
+async function promptTargetSelection(targetContexts: GenerateTarget[]): Promise<GenerateTarget[]> {
   const choices = [
     {
       name: "All targets",
@@ -200,8 +177,7 @@ async function promptTargetSelection(
     return targetContexts;
   }
 
-  const selectedIndex =
-    choices.findIndex((choice) => choice.name === response.selection) - 1;
+  const selectedIndex = choices.findIndex(choice => choice.name === response.selection) - 1;
   if (selectedIndex === -1) {
     return [];
   }

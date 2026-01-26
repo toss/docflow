@@ -4,15 +4,13 @@ import { getDeclarationKind } from "./get-declaration-kind.js";
 import { getJSDoc } from "../jsdoc/jsdoc-utils.js";
 import { extractSignature } from "./extract-signature.js";
 
-export function getExportedDeclarationsBySourceFile(
-  sourceFile: SourceFile,
-): ExportDeclaration[] {
+export function getExportedDeclarationsBySourceFile(sourceFile: SourceFile): ExportDeclaration[] {
   const filePath = sourceFile.getFilePath();
   const exportedDeclarations = sourceFile.getExportedDeclarations();
 
   return Array.from(exportedDeclarations)
     .flatMap(([symbolName, declarations]) =>
-      declarations.map((declaration) => {
+      declarations.map(declaration => {
         const kind = getDeclarationKind(declaration);
         const jsDoc = getJSDoc(declaration);
         const signature = extractSignature(declaration);
@@ -29,7 +27,7 @@ export function getExportedDeclarationsBySourceFile(
           jsDoc,
           signature,
         };
-      }),
+      })
     )
     .filter((item): item is ExportDeclaration => item !== null);
 }

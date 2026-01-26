@@ -9,7 +9,7 @@ const pnpmSchema = z.object({
 });
 
 export class PnpmPackageManager implements PackageManager {
-  constructor(private cwd: string) { }
+  constructor(private cwd: string) {}
 
   getPackages(): Package[] {
     try {
@@ -17,8 +17,8 @@ export class PnpmPackageManager implements PackageManager {
       const parsed = JSON.parse(raw) as Array<unknown>;
 
       return parsed
-        .map((pkg) => pnpmSchema.parse(pkg))
-        .filter((pkg) => pkg.name !== undefined)
+        .map(pkg => pnpmSchema.parse(pkg))
+        .filter(pkg => pkg.name !== undefined)
         .map(({ name, path: pkgPath }) => ({
           name: name as string,
           location: path.relative(this.cwd, pkgPath),

@@ -19,11 +19,7 @@ export class CheckCommand extends Command {
     const { checkConfig, projectConfig, projectRoot, targetPackages } = await loadContext();
 
     if (targetPackages.length === 0) {
-      printNoPackagesFound(
-        projectConfig.workspace.include,
-        projectConfig.root,
-        projectConfig.packageManager
-      );
+      printNoPackagesFound(projectConfig.workspace.include, projectConfig.root, projectConfig.packageManager);
       return 1;
     }
 
@@ -35,33 +31,25 @@ export class CheckCommand extends Command {
         const tsConfigPath = getTsConfigPath(projectRoot, pkg.location);
         const project = getTsProject(tsConfigPath);
 
-        const entryPoints =
-          checkConfig.entryPoints ?? getPackageEntryPoints(packagePath);
+        const entryPoints = checkConfig.entryPoints ?? getPackageEntryPoints(packagePath);
 
         const sourceFiles = project.getSourceFiles();
-        const entryPointFiles = sourceFiles.filter((file) => {
+        const entryPointFiles = sourceFiles.filter(file => {
           const filePath = file.getFilePath();
-          return entryPoints.some((entryPoint) => filePath.includes(entryPoint));
+          return entryPoints.some(entryPoint => filePath.includes(entryPoint));
         });
 
         const exportSourceFiles = entryPointFiles.filter(isExportSourceFile);
-        const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(
-          getExportedDeclarationsBySourceFile
-        );
-        const excludeBarrelReExport = excludeBarrelReExports(
-          exportDeclarationsBySourceFiles
-        );
-        const missingJSDocExports = excludeBarrelReExport.filter((target) => {
+        const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(getExportedDeclarationsBySourceFile);
+        const excludeBarrelReExport = excludeBarrelReExports(exportDeclarationsBySourceFiles);
+        const missingJSDocExports = excludeBarrelReExport.filter(target => {
           return !hasJSDocTag(target.declaration, "public");
         });
 
         if (missingJSDocExports.length > 0) {
           console.log(`❌ ${pkg.name} has missing JSDoc:`);
-          missingJSDocExports.forEach((exportInfo) => {
-            const relativePath = path.relative(
-              projectConfig.root,
-              exportInfo.filePath
-            );
+          missingJSDocExports.forEach(exportInfo => {
+            const relativePath = path.relative(projectConfig.root, exportInfo.filePath);
             console.log(`  - ${relativePath}:${exportInfo.symbolName}`);
           });
         } else {
@@ -82,13 +70,10 @@ async function loadContext() {
   const projectRoot = path.resolve(root, config.project.root);
   const projectConfig = config.project;
   const checkConfig = config.commands.check;
-  const packageManager = createPackageManager(
-    projectConfig.packageManager,
-    projectRoot
-  );
+  const packageManager = createPackageManager(projectConfig.packageManager, projectRoot);
   const packages = packageManager.getPackages();
 
-  const targetPackages = packages.filter((pkg) =>
+  const targetPackages = packages.filter(pkg =>
     isTargetPackage(pkg, {
       include: projectConfig.workspace.include,
       exclude: projectConfig.workspace.exclude,
@@ -103,11 +88,7 @@ async function loadContext() {
   };
 }
 
-function printNoPackagesFound(
-  include: string[],
-  root: string,
-  packageManager: string
-) {
+function printNoPackagesFound(include: string[], root: string, packageManager: string) {
   console.error("❌ not found packages");
   console.error("check your config:");
   console.error(`  - workspace.include: ${JSON.stringify(include)}`);
