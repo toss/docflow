@@ -5,7 +5,7 @@ export function updateJSDoc(declaration: Node, newJSDoc: string): void {
 
   if (Node.isJSDocable(declaration)) {
     const jsDocs = declaration.getJsDocs();
-    jsDocs.forEach((jsDoc) => {
+    jsDocs.forEach(jsDoc => {
       jsDoc.remove();
     });
   }

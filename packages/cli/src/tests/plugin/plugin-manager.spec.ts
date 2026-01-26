@@ -1,21 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { SidebarItem } from "../../commands/build/manifest/manifest.js";
 import { loadConfig } from "../../config/load-config.js";
-import {
-  GeneratedDoc,
-  MarkdownDocument,
-  MarkdownGenerator,
-} from "../../core/types/generator.types.js";
-import {
-  ParsedJSDoc,
-  StandardizedFilePath,
-} from "../../core/types/parser.types.js";
+import { GeneratedDoc, MarkdownDocument, MarkdownGenerator } from "../../core/types/generator.types.js";
+import { ParsedJSDoc, StandardizedFilePath } from "../../core/types/parser.types.js";
 import { PluginManager } from "../../plugins/plugin-manager.js";
 import { Plugin } from "../../plugins/types/plugin.types.js";
-import {
-  createE2EWorkspace,
-  E2EWorkspace,
-} from "../utils/create-e2e-workspace.js";
+import { createE2EWorkspace, E2EWorkspace } from "../utils/create-e2e-workspace.js";
 import { MockPlugins } from "../utils/plugin-mocks.js";
 
 describe("PluginManager", () => {
@@ -31,10 +21,7 @@ describe("PluginManager", () => {
 
   it("should register multiple plugins", () => {
     const manager = new PluginManager();
-    const plugins = [
-      MockPlugins.empty("plugin-1"),
-      MockPlugins.empty("plugin-2"),
-    ];
+    const plugins = [MockPlugins.empty("plugin-1"), MockPlugins.empty("plugin-2")];
 
     manager.registerAll(plugins);
 
@@ -113,7 +100,7 @@ describe("PluginManager", () => {
           ],
         }),
         serialize: (doc: MarkdownDocument): string => {
-          return doc.sections.map((s) => s.content).join("\n");
+          return doc.sections.map(s => s.content).join("\n");
         },
       };
 
@@ -184,9 +171,7 @@ describe("PluginManager", () => {
 
       expect(() => {
         manager.getGenerator(config);
-      }).toThrow(
-        "Generator 'unknown' not found. Available: vitepress, custom-1, custom-2"
-      );
+      }).toThrow("Generator 'unknown' not found. Available: vitepress, custom-1, custom-2");
     });
 
     it("should work with plugin that doesn't provide generator", async () => {
@@ -196,7 +181,7 @@ describe("PluginManager", () => {
       const plugin: Plugin = {
         name: "manifest-only-plugin",
         hooks: {
-          transformManifest: (manifest) => manifest,
+          transformManifest: manifest => manifest,
         },
       };
 
@@ -241,7 +226,7 @@ describe("PluginManager", () => {
             }
             result += "---\n\n";
           }
-          result += doc.sections.map((s) => s.content).join("\n\n");
+          result += doc.sections.map(s => s.content).join("\n\n");
           return result;
         },
       };

@@ -2,10 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { isExportSourceFile } from "../../../../core/parser/source/is-export-source-file.js";
 import { getTsProject } from "../../../../core/get-ts-project.js";
 import { getTsConfigPath } from "../../../../core/get-ts-config-path.js";
-import {
-  createE2EWorkspace,
-  E2EWorkspace,
-} from "../../../utils/create-e2e-workspace.js";
+import { createE2EWorkspace, E2EWorkspace } from "../../../utils/create-e2e-workspace.js";
 
 describe("isExportSourceFile", () => {
   let workspace: E2EWorkspace;
@@ -22,9 +19,7 @@ describe("isExportSourceFile", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const mathFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("math.ts"));
+    const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
     expect(mathFile).toBeDefined();
     expect(isExportSourceFile(mathFile!)).toBe(true);
@@ -34,9 +29,7 @@ describe("isExportSourceFile", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const indexFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("index.ts"));
+    const indexFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("index.ts"));
 
     expect(indexFile).toBeDefined();
     expect(isExportSourceFile(indexFile!)).toBe(true);
@@ -57,9 +50,7 @@ const internalVariable = "test";
     );
 
     const updatedProject = getTsProject(tsConfigPath);
-    const noExportsFile = updatedProject
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("no-exports.ts"));
+    const noExportsFile = updatedProject.getSourceFiles().find(sf => sf.getFilePath().includes("no-exports.ts"));
 
     expect(noExportsFile).toBeDefined();
     expect(isExportSourceFile(noExportsFile!)).toBe(false);

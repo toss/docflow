@@ -20,9 +20,7 @@ export async function createTestWorkspace(): Promise<TestWorkspace> {
 
     const formatContent = (content: unknown, isJsonFile: boolean) => {
       if (!isJsonFile) return String(content);
-      return typeof content === "string"
-        ? content
-        : JSON.stringify(content, null, 2);
+      return typeof content === "string" ? content : JSON.stringify(content, null, 2);
     };
 
     const isRcFile = /\.?\w*rc$/i.test(filePath);

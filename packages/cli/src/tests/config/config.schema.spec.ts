@@ -54,8 +54,7 @@ describe("configSchema", () => {
       ...validConfig,
       project: {
         ...validConfig.project,
-        packageManager:
-          "invalid" as unknown as Config["project"]["packageManager"],
+        packageManager: "invalid" as unknown as Config["project"]["packageManager"],
       },
     };
 
@@ -70,8 +69,7 @@ describe("configSchema", () => {
         ...validConfig.project,
         workspace: {
           ...validConfig.project.workspace,
-          include:
-            "not-array" as unknown as Config["project"]["workspace"]["include"],
+          include: "not-array" as unknown as Config["project"]["workspace"]["include"],
         },
       },
     };

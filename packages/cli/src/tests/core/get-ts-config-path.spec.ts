@@ -19,11 +19,7 @@ describe("getTsConfigPath", () => {
     const packageLocation = "packages/core";
 
     const tsConfigPath = getTsConfigPath(projectRoot, packageLocation);
-    const expectedPath = path.join(
-      projectRoot,
-      packageLocation,
-      "tsconfig.json"
-    );
+    const expectedPath = path.join(projectRoot, packageLocation, "tsconfig.json");
 
     expect(tsConfigPath).toBe(expectedPath);
   });
@@ -40,11 +36,7 @@ describe("getTsConfigPath", () => {
     const packageLocation = "packages/core";
 
     const tsConfigPath = getTsConfigPath(projectRoot, packageLocation);
-    const expectedPath = path.join(
-      projectRoot,
-      packageLocation,
-      "tsconfig.json"
-    );
+    const expectedPath = path.join(projectRoot, packageLocation, "tsconfig.json");
 
     expect(tsConfigPath).toBe(expectedPath);
   });

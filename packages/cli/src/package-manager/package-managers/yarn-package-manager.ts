@@ -10,7 +10,7 @@ const workspaceIdentitySchema = z.object({
 });
 
 export class YarnPackageManager implements PackageManager {
-  constructor(private cwd: string) { }
+  constructor(private cwd: string) {}
 
   getPackages(): Package[] {
     try {
@@ -20,14 +20,14 @@ export class YarnPackageManager implements PackageManager {
       return output
         .split("\n")
         .filter(Boolean)
-        .map((line) => workspaceIdentitySchema.parse(JSON.parse(line)))
-        .filter((ws) => ws.name !== null)
-        .map((ws) => {
+        .map(line => workspaceIdentitySchema.parse(JSON.parse(line)))
+        .filter(ws => ws.name !== null)
+        .map(ws => {
           const locationAbsolutePath = path.join(repoRootPath, ws.location);
 
           return {
             name: ws.name as string,
-            location: path.relative(this.cwd, locationAbsolutePath)
+            location: path.relative(this.cwd, locationAbsolutePath),
           };
         });
     } catch {

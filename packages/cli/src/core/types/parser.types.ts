@@ -7,7 +7,7 @@ import { ExportedDeclarations, JSDoc } from "ts-morph";
  * @name ParsedJSDoc
  * @description
  * Represents the parsed result of JSDoc templates used in Docflow.
- * 
+ *
  * @param {string} [name] Name of the documented element
  * @param {string} [description] Description of the element
  * @param {string} [category] Category classification of the element
@@ -45,7 +45,7 @@ export interface ParsedJSDoc {
  * @name PropertyData
  * @description
  * Represents property information of an object type. Used to describe object properties in ReturnData and TypedefData.
- * 
+ *
  * @param {string} name Name of the property
  * @param {string} description Description of the property
  * @param {boolean} required Whether the property is required
@@ -65,7 +65,7 @@ interface PropertyData {
  * @name ExampleData
  * @description
  * Represents the parsed result of @example tags in JSDoc.
- * 
+ *
  * @param {string} [title] Optional title of the example
  * @param {string} code Example code content
  * @param {string} [language] Programming language for syntax highlighting
@@ -83,7 +83,7 @@ export interface ExampleData {
  * @name ParameterData
  * @description
  * Represents the parsed result of @param tags in JSDoc.
- * 
+ *
  * @param {string} name Parameter name
  * @param {string} type Parameter type
  * @param {string} description Parameter description
@@ -107,7 +107,7 @@ export interface ParameterData {
  * @name ReturnData
  * @description
  * Represents the parsed result of @returns tags in JSDoc. Used to describe return value information of functions.
- * 
+ *
  * @param {string} type Type of the return value
  * @param {string} [name] Optional name of the return value
  * @param {string} description Description of the return value
@@ -127,7 +127,7 @@ export interface ReturnData {
  * @name ThrowsData
  * @description
  * Represents the parsed result of @throws tags in JSDoc. Used to describe exception information that can occur in functions.
- * 
+ *
  * @param {string} type Type of the exception
  * @param {string} [name] Optional name of the exception
  * @param {string} description Exception occurrence conditions and description
@@ -145,7 +145,7 @@ export interface ThrowsData {
  * @name TypedefData
  * @description
  * Represents the parsed result of @typedef tags in JSDoc. Used to define custom types or complex object structures.
- * 
+ *
  * @param {string} name Name of the type
  * @param {string} type Base type of the type (e.g., Object, Array, etc.)
  * @param {string} description Description of the type
@@ -165,7 +165,7 @@ export interface TypedefData {
  * @name SeeData
  * @description
  * Represents the parsed result of @see tags in JSDoc. Used to provide references to external documents or related content.
- * 
+ *
  * @param {string} reference URL or link to the external document to reference
  * @param {string} [description] Optional description for the reference
  */
@@ -181,7 +181,7 @@ export interface SeeData {
  * @name VersionData
  * @description
  * Represents the parsed result of @version tags in JSDoc. Used to display version information in table format.
- * 
+ *
  * @param {string} version Version number
  * @param {string} description Description of changes in the version
  * @param {string[]} [platforms] List of supported platforms (optional)
@@ -199,7 +199,7 @@ export interface VersionData {
  * @name TargetWithJSDoc
  * @description
  * Parsed JSDoc data for document generation, extending the [ExportDeclaration](/en/reference/cli/parser/ExportDeclaration) interface.
- * 
+ *
  * @param {ParsedJSDoc} parsedJSDoc Parsed result of JSDoc templates used in Docflow
  */
 export interface TargetWithJSDoc extends ExportDeclaration {
@@ -214,13 +214,7 @@ export interface TargetWithJSDoc extends ExportDeclaration {
  * @description
  * Represents the types of TypeScript declarations that can be documented.
  */
-export type DeclarationKind =
-  | "function"
-  | "class"
-  | "interface"
-  | "type"
-  | "enum"
-  | "variable";
+export type DeclarationKind = "function" | "class" | "interface" | "type" | "enum" | "variable";
 
 /**
  * @public
@@ -241,7 +235,7 @@ export type StandardizedFilePath = string & {
  * @name ExportDeclaration
  * @description
  * Represents an exported declaration with metadata including file path, symbol name, and JSDoc information.
- * 
+ *
  * @param {StandardizedFilePath} filePath Standardized file path of the exported declaration
  * @param {string} symbolName Symbol name of the exported declaration
  * @param {ExportedDeclarations} declaration TypeScript declaration object

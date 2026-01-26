@@ -94,7 +94,7 @@ describe("Manifest", () => {
     manifest.add("beta/file.md");
 
     const output = JSON.parse(manifest.toString());
-    const topLevelTexts = output.map((item) => item.text);
+    const topLevelTexts = output.map(item => item.text);
 
     expect(topLevelTexts).toEqual(["alpha", "beta", "zebra"]);
   });

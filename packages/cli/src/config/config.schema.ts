@@ -8,12 +8,8 @@ export const configSchema = z.object({
     root: z.string().describe("Project root directory"),
     packageManager: z.enum(["yarn", "pnpm", "npm"]).describe("Package manager"),
     workspace: z.object({
-      include: z
-        .array(z.string())
-        .describe("Package patterns to include in build"),
-      exclude: z
-        .array(z.string())
-        .describe("Package patterns to exclude from build"),
+      include: z.array(z.string()).describe("Package patterns to include in build"),
+      exclude: z.array(z.string()).describe("Package patterns to exclude from build"),
     }),
   }),
   commands: z.object({
@@ -25,11 +21,9 @@ export const configSchema = z.object({
     .array(
       z.object({
         name: z.string().describe("Plugin name"),
-        plugin: z
-          .function()
-          .describe("Plugin factory function that returns plugin instance"),
+        plugin: z.function().describe("Plugin factory function that returns plugin instance"),
         options: z.record(z.any()).optional().describe("Plugin options"),
-      }),
+      })
     )
     .optional()
     .default([]),
@@ -42,7 +36,7 @@ export const configSchema = z.object({
  * @name Config
  * @description
  * Type for Docflow configuration files. Includes project settings, command settings, and plugin settings.
- * 
+ *
  * @param {object} project Project configuration information
  * @param {string} project.root Project root directory
  * @param {"yarn" | "pnpm" | "npm"} project.packageManager Package manager to use

@@ -40,7 +40,7 @@ function extractExportsEntries(exportsField: unknown): string[] {
     const entries: string[] = [];
     const exportsObj = exportsField as Record<string, unknown>;
 
-    Object.values(exportsObj).forEach((value) => {
+    Object.values(exportsObj).forEach(value => {
       // {
       //   "exports": {
       //     ".": "./dist/index.js",
@@ -60,7 +60,7 @@ function extractExportsEntries(exportsField: unknown): string[] {
       // }
       else if (typeof value === "object" && value !== null) {
         const conditionalExports = value as Record<string, unknown>;
-        ["import", "require", "default"].forEach((condition) => {
+        ["import", "require", "default"].forEach(condition => {
           const conditionValue = conditionalExports[condition];
           if (typeof conditionValue === "string") {
             entries.push(normalizeEntryPath(conditionValue));

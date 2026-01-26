@@ -3,10 +3,7 @@ import { YarnPackageManager } from "./package-managers/yarn-package-manager.js";
 import { PnpmPackageManager } from "./package-managers/pnpm-package-manager.js";
 import { NpmPackageManager } from "./package-managers/npm-package-manager.js";
 
-export function createPackageManager(
-  type: "yarn" | "pnpm" | "npm",
-  cwd: string,
-): PackageManager {
+export function createPackageManager(type: "yarn" | "pnpm" | "npm", cwd: string): PackageManager {
   switch (type) {
     case "yarn":
       return new YarnPackageManager(cwd);

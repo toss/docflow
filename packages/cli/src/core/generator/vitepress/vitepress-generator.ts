@@ -10,16 +10,9 @@ import {
 } from "../../types/parser.types.js";
 import { MarkdownSection } from "../../types/generator.types.js";
 import { TargetWithJSDoc } from "../../types/parser.types.js";
-import {
-  GeneratorConfig,
-  defaultVitePressLabels,
-} from "../../types/generator.types.js";
+import { GeneratorConfig, defaultVitePressLabels } from "../../types/generator.types.js";
 import path from "path";
-import {
-  GeneratedDoc,
-  MarkdownDocument,
-  MarkdownGenerator,
-} from "../../types/generator.types.js";
+import { GeneratedDoc, MarkdownDocument, MarkdownGenerator } from "../../types/generator.types.js";
 
 export class VitePressGenerator implements MarkdownGenerator {
   private labels: typeof defaultVitePressLabels;
@@ -91,10 +84,7 @@ export class VitePressGenerator implements MarkdownGenerator {
   serialize(markdownDoc: MarkdownDocument): string {
     const parts: string[] = [];
 
-    if (
-      markdownDoc.frontmatter &&
-      Object.keys(markdownDoc.frontmatter).length > 0
-    ) {
+    if (markdownDoc.frontmatter && Object.keys(markdownDoc.frontmatter).length > 0) {
       parts.push("---");
       for (const [key, value] of Object.entries(markdownDoc.frontmatter)) {
         parts.push(`${key}: ${JSON.stringify(value)}`);
@@ -124,10 +114,7 @@ export class VitePressGenerator implements MarkdownGenerator {
     };
   }
 
-  private generateRelativePath(
-    target: TargetWithJSDoc,
-    packagePath: string,
-  ): string {
+  private generateRelativePath(target: TargetWithJSDoc, packagePath: string): string {
     const { parsedJSDoc: jsDocData, symbolName, kind } = target;
     const category = jsDocData.category || kind || "misc";
     const name = jsDocData.name || symbolName;
@@ -209,12 +196,8 @@ export class VitePressGenerator implements MarkdownGenerator {
 
       for (const prop of typedef.properties) {
         const requiredText = prop.required ? "" : " (optional)";
-        const defaultText = prop.defaultValue
-          ? `, default = ${prop.defaultValue}`
-          : "";
-        content.push(
-          `- \`${prop.name}\`${requiredText}${defaultText} ${prop.description}`,
-        );
+        const defaultText = prop.defaultValue ? `, default = ${prop.defaultValue}` : "";
+        content.push(`- \`${prop.name}\`${requiredText}${defaultText} ${prop.description}`);
       }
 
       content.push("");
@@ -226,9 +209,7 @@ export class VitePressGenerator implements MarkdownGenerator {
     };
   }
 
-  private createParametersSection(
-    parameters: ParameterData[],
-  ): MarkdownSection {
+  private createParametersSection(parameters: ParameterData[]): MarkdownSection {
     const content = [`### ${this.labels.parameters}`, ""];
 
     content.push('<ul class="post-parameters-ul">');
@@ -249,34 +230,23 @@ export class VitePressGenerator implements MarkdownGenerator {
 
   private renderParameter(param: ParameterData, isRoot = false): string {
     const cssClass = isRoot ? "post-parameters-li-root" : "";
-    const requiredText = param.required
-      ? '<span class="post-parameters--required">Required</span>'
-      : "";
+    const requiredText = param.required ? '<span class="post-parameters--required">Required</span>' : "";
     const defaultText = param.defaultValue
-      ? `<span class="post-parameters--default">${this.escapeHtml(
-          param.defaultValue,
-        )}</span>`
+      ? `<span class="post-parameters--default">${this.escapeHtml(param.defaultValue)}</span>`
       : "";
 
-    const typeText = `<span class="post-parameters--type">${this.escapeHtml(
-      param.type,
-    )}</span>`;
+    const typeText = `<span class="post-parameters--type">${this.escapeHtml(param.type)}</span>`;
 
     const cleanedDescription = param.description.replace(/^-\s*/, "").trim();
 
-    const afterNameParts = [typeText, defaultText].filter(
-      (part) => part.length > 0,
-    );
-    const afterNameText =
-      afterNameParts.length > 0 ? " · " + afterNameParts.join(" · ") : "";
+    const afterNameParts = [typeText, defaultText].filter(part => part.length > 0);
+    const afterNameText = afterNameParts.length > 0 ? " · " + afterNameParts.join(" · ") : "";
 
     const lines = [
       `  <li class="post-parameters-li ${cssClass}">`,
       `    <span class="post-parameters--name">${param.name}</span>${requiredText}${afterNameText}`,
       `    <br/>`,
-      `    <p class="post-parameters--description">${this.toHTMLCode(
-        cleanedDescription,
-      )}</p>`,
+      `    <p class="post-parameters--description">${this.toHTMLCode(cleanedDescription)}</p>`,
     ];
 
     if (param.nested && param.nested.length > 0) {
@@ -299,9 +269,7 @@ export class VitePressGenerator implements MarkdownGenerator {
       "",
       '<ul class="post-parameters-ul">',
       '  <li class="post-parameters-li post-parameters-li-root">',
-      `    <span class="post-parameters--type">${this.escapeHtml(
-        returns.type,
-      )}</span>`,
+      `    <span class="post-parameters--type">${this.escapeHtml(returns.type)}</span>`,
       "    <br/>",
       `    <p class="post-parameters--description">${nameText}${returns.description}</p>`,
       "  </li>",
@@ -312,12 +280,8 @@ export class VitePressGenerator implements MarkdownGenerator {
       content.push("");
       for (const prop of returns.properties) {
         const requiredText = prop.required ? "" : " (optional)";
-        const defaultText = prop.defaultValue
-          ? `, default: ${prop.defaultValue}`
-          : "";
-        content.push(
-          `- \`${prop.name}\`: ${prop.description}${requiredText}${defaultText}`,
-        );
+        const defaultText = prop.defaultValue ? `, default: ${prop.defaultValue}` : "";
+        content.push(`- \`${prop.name}\`: ${prop.description}${requiredText}${defaultText}`);
       }
     }
 
@@ -334,15 +298,9 @@ export class VitePressGenerator implements MarkdownGenerator {
     for (const throwItem of throws) {
       const nameText = throwItem.name ? `${throwItem.name} ` : "";
       content.push('  <li class="post-parameters-li post-parameters-li-root">');
-      content.push(
-        `    <span class="post-parameters--type">${this.escapeHtml(
-          throwItem.type,
-        )}</span>`,
-      );
+      content.push(`    <span class="post-parameters--type">${this.escapeHtml(throwItem.type)}</span>`);
       content.push("    <br/>");
-      content.push(
-        `    <p class="post-parameters--description">${nameText}${throwItem.description}</p>`,
-      );
+      content.push(`    <p class="post-parameters--description">${nameText}${throwItem.description}</p>`);
       content.push("  </li>");
     }
 
@@ -383,16 +341,11 @@ export class VitePressGenerator implements MarkdownGenerator {
   }
 
   private createVersionSection(versions: VersionData[]): MarkdownSection {
-    const content = [
-      `### ${this.labels.version}`,
-      "",
-      "|Version|Changes|",
-      "|-|-|",
-    ];
+    const content = [`### ${this.labels.version}`, "", "|Version|Changes|", "|-|-|"];
 
     for (const version of versions) {
       const versionText = version.platforms
-        ? version.platforms.map((p) => `**\`${p}\`**`).join(" ")
+        ? version.platforms.map(p => `**\`${p}\`**`).join(" ")
         : `**\`${version.version}\`**`;
 
       content.push(`| ${versionText} |${version.description}|`);
@@ -416,9 +369,6 @@ export class VitePressGenerator implements MarkdownGenerator {
   private toHTMLCode(text: string): string {
     return text
       .replace(/`([^`]+)`/g, "<code>$1</code>")
-      .replace(
-        /\[([^\]]+)\]\(([^)]+)\)/g,
-        '<a href="$2" target="_blank" rel="noreferrer">$1</a>',
-      );
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
   }
 }

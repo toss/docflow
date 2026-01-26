@@ -32,9 +32,7 @@ export function add(a: number, b: number): number {
       const jsDoc = func.getJsDocs()[0]!;
 
       const result = parser.parse(jsDoc);
-      expect(result.description).toContain(
-        "A simple function that adds two numbers"
-      );
+      expect(result.description).toContain("A simple function that adds two numbers");
       expect(result.parameters).toHaveLength(2);
       expect(result.parameters?.[0].name).toBe("a");
       expect(result.parameters?.[0].type).toBe("number");
@@ -299,9 +297,7 @@ export function parseUserAgent(userAgent: string): { browser?: string; version?:
       expect(result.returns?.properties).toBeDefined();
       expect(result.returns?.properties).toHaveLength(3);
       expect(result.returns?.properties?.[0].name).toBe("appVersion");
-      expect(result.returns?.properties?.[0].description).toBe(
-        "App version info"
-      );
+      expect(result.returns?.properties?.[0].description).toBe("App version info");
     });
   });
 });

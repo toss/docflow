@@ -1,8 +1,6 @@
 import { TestWorkspace } from "./create-test-workspace.js";
 
-export async function createCorePackage(
-  workspace: TestWorkspace
-): Promise<void> {
+export async function createCorePackage(workspace: TestWorkspace): Promise<void> {
   await workspace.write("packages/core/package.json", {
     name: "@libs/core",
     version: "1.0.0",
@@ -217,9 +215,7 @@ export class SimpleClass {
   );
 }
 
-export async function createMathPackage(
-  workspace: TestWorkspace
-): Promise<void> {
+export async function createMathPackage(workspace: TestWorkspace): Promise<void> {
   await workspace.write("packages/math/package.json", {
     name: "@libs/math",
     version: "1.0.0",
@@ -260,9 +256,7 @@ export function calculateVolume(radius: number, height: number): number {
   );
 }
 
-export async function createUtilsPackage(
-  workspace: TestWorkspace
-): Promise<void> {
+export async function createUtilsPackage(workspace: TestWorkspace): Promise<void> {
   await workspace.write("packages/utils/package.json", {
     name: "@libs/utils",
     version: "1.0.0",
@@ -369,9 +363,7 @@ export function isString(value: unknown): value is string {
   );
 }
 
-export async function createTypesPackage(
-  workspace: TestWorkspace
-): Promise<void> {
+export async function createTypesPackage(workspace: TestWorkspace): Promise<void> {
   await workspace.write("packages/types/package.json", {
     name: "@libs/types",
     version: "1.0.0",

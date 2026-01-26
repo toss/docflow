@@ -22,15 +22,13 @@ describe("updateJSDoc", () => {
 export function testFunction(param: string): boolean {
   return param.length > 0;
 }
-    `,
+    `
     );
 
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const testFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("test-update.ts"));
+    const testFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("test-update.ts"));
 
     const testFunction = testFile?.getFunction("testFunction");
     expect(testFunction).toBeDefined();
@@ -60,15 +58,13 @@ export function testFunction(param: string): boolean {
 export function testFunction(param: string): boolean {
   return param.length > 0;
 }
-    `,
+    `
     );
 
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const testFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("test-replace.ts"));
+    const testFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("test-replace.ts"));
 
     const testFunction = testFile?.getFunction("testFunction");
     expect(testFunction).toBeDefined();
@@ -93,15 +89,13 @@ export function testFunction(param: string): boolean {
       "packages/core/src/test-variable.ts",
       `
 export const testVariable = "test value";
-    `,
+    `
     );
 
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const testFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("test-variable.ts"));
+    const testFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("test-variable.ts"));
 
     const testVariable = testFile?.getVariableDeclaration("testVariable");
     expect(testVariable).toBeDefined();
@@ -125,15 +119,13 @@ export const testVariable = "test value";
 export class TestClass {
   constructor(public name: string) {}
 }
-    `,
+    `
     );
 
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const testFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("test-class.ts"));
+    const testFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("test-class.ts"));
 
     const testClass = testFile?.getClass("TestClass");
     expect(testClass).toBeDefined();
@@ -158,15 +150,13 @@ export interface TestInterface {
   name: string;
   age: number;
 }
-    `,
+    `
     );
 
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const testFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("test-interface.ts"));
+    const testFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("test-interface.ts"));
 
     const testInterface = testFile?.getInterface("TestInterface");
     expect(testInterface).toBeDefined();
@@ -194,15 +184,13 @@ export function firstFunction(): void {
 export function secondFunction(): void {
   console.log("second");
 }
-    `,
+    `
     );
 
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const testFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("test-preserve.ts"));
+    const testFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("test-preserve.ts"));
 
     const firstFunction = testFile?.getFunction("firstFunction");
     expect(firstFunction).toBeDefined();
@@ -226,15 +214,13 @@ export function secondFunction(): void {
 export function complexFunction(a: number, b: string, c?: boolean): string {
   return \`\${a}-\${b}-\${c}\`;
 }
-    `,
+    `
     );
 
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const testFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("test-multiline.ts"));
+    const testFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("test-multiline.ts"));
 
     const complexFunction = testFile?.getFunction("complexFunction");
     expect(complexFunction).toBeDefined();
@@ -252,9 +238,7 @@ export function complexFunction(a: number, b: string, c?: boolean): string {
     updateJSDoc(complexFunction!, newJSDoc);
 
     const updatedContent = testFile?.getFullText();
-    expect(updatedContent).toContain(
-      "A complex function with multiple parameters",
-    );
+    expect(updatedContent).toContain("A complex function with multiple parameters");
     expect(updatedContent).toContain("@param a - The numeric parameter");
     expect(updatedContent).toContain("@param b - The string parameter");
     expect(updatedContent).toContain("@param c - Optional boolean parameter");

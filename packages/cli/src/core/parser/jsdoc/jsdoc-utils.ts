@@ -4,11 +4,7 @@ export function hasJSDocTag(node: Node, tagName: string): boolean {
   const jsDocableNode = getJSDocableNode(node);
   if (!jsDocableNode) return false;
 
-  return jsDocableNode
-    .getJsDocs()
-    .some((jsDoc) =>
-      jsDoc.getTags().some((tag) => tag.getTagName() === tagName),
-    );
+  return jsDocableNode.getJsDocs().some(jsDoc => jsDoc.getTags().some(tag => tag.getTagName() === tagName));
 }
 
 export function getJSDoc(node: Node): JSDoc | undefined {

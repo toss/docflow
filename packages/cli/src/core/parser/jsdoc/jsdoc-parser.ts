@@ -62,7 +62,7 @@ export class JSDocParser {
   }
 
   private extractDescription(block: commentParser.Block): string | undefined {
-    const descriptionTag = block.tags.find((tag) => tag.tag === "description");
+    const descriptionTag = block.tags.find(tag => tag.tag === "description");
     if (!descriptionTag) return undefined;
 
     const name = descriptionTag.name;
@@ -84,7 +84,7 @@ export class JSDocParser {
   }
 
   private extractDeprecated(block: commentParser.Block): string | undefined {
-    const tag = block.tags.find((t) => t.tag === "deprecated");
+    const tag = block.tags.find(t => t.tag === "deprecated");
     if (!tag) return undefined;
 
     const nameMessage = tag.name;
@@ -95,7 +95,7 @@ export class JSDocParser {
   }
 
   private extractSignature(block: commentParser.Block): string | undefined {
-    const signatureTag = block.tags.find((tag) => tag.tag === "signature");
+    const signatureTag = block.tags.find(tag => tag.tag === "signature");
     if (!signatureTag) return undefined;
 
     const signatureText = signatureTag.description.trim();
@@ -103,7 +103,7 @@ export class JSDocParser {
   }
 
   private extractParameters(block: commentParser.Block): ParameterData[] {
-    const paramTags = block.tags.filter((tag) => tag.tag === "param");
+    const paramTags = block.tags.filter(tag => tag.tag === "param");
     const parameters: ParameterData[] = [];
     const paramMap = new Map<string, ParameterData>();
 
@@ -138,7 +138,7 @@ export class JSDocParser {
   private handleNestedParameter(
     param: ParameterData,
     paramMap: Map<string, ParameterData>,
-    parameters: ParameterData[],
+    parameters: ParameterData[]
   ): void {
     const parts = param.name.split(".");
     const parentName = parts[0];
@@ -165,11 +165,11 @@ export class JSDocParser {
   }
 
   private extractReturns(block: commentParser.Block): ReturnData | undefined {
-    const returnTag = block.tags.find((tag) => tag.tag === "returns");
+    const returnTag = block.tags.find(tag => tag.tag === "returns");
     if (!returnTag) return undefined;
 
-    const propertyTags = block.tags.filter((tag) => tag.tag === "property");
-    const properties = propertyTags.map((tag) => ({
+    const propertyTags = block.tags.filter(tag => tag.tag === "property");
+    const properties = propertyTags.map(tag => ({
       name: tag.name,
       description: tag.description,
       required: !tag.optional,
@@ -185,9 +185,9 @@ export class JSDocParser {
   }
 
   private extractThrows(block: commentParser.Block): ThrowsData[] {
-    const throwsTags = block.tags.filter((tag) => tag.tag === "throws");
+    const throwsTags = block.tags.filter(tag => tag.tag === "throws");
 
-    return throwsTags.map((tag) => ({
+    return throwsTags.map(tag => ({
       type: tag.type,
       name: tag.name,
       description: tag.description,
@@ -195,15 +195,15 @@ export class JSDocParser {
   }
 
   private extractTypedefs(block: commentParser.Block): TypedefData[] {
-    const typedefTags = block.tags.filter((tag) => tag.tag === "typedef");
-    const propertyTags = block.tags.filter((tag) => tag.tag === "property");
+    const typedefTags = block.tags.filter(tag => tag.tag === "typedef");
+    const propertyTags = block.tags.filter(tag => tag.tag === "property");
 
-    return typedefTags.map((tag) => {
+    return typedefTags.map(tag => {
       const name = tag.name;
       const type = tag.type;
       const description = tag.description;
 
-      const properties = propertyTags.map((tag) => ({
+      const properties = propertyTags.map(tag => ({
         name: tag.name,
         type: tag.type,
         description: tag.description,
@@ -221,9 +221,9 @@ export class JSDocParser {
   }
 
   private extractExamples(block: commentParser.Block): ExampleData[] {
-    const exampleTags = block.tags.filter((tag) => tag.tag === "example");
+    const exampleTags = block.tags.filter(tag => tag.tag === "example");
 
-    return exampleTags.map((tag) => {
+    return exampleTags.map(tag => {
       const content = tag.description;
 
       return {
@@ -234,9 +234,9 @@ export class JSDocParser {
   }
 
   private extractSee(block: commentParser.Block): SeeData[] {
-    const seeTags = block.tags.filter((tag) => tag.tag === "see");
+    const seeTags = block.tags.filter(tag => tag.tag === "see");
 
-    return seeTags.map((tag) => {
+    return seeTags.map(tag => {
       const reference = tag.name || tag.type;
       const description = tag.description;
 
@@ -248,15 +248,13 @@ export class JSDocParser {
   }
 
   private extractVersions(block: commentParser.Block): VersionData[] {
-    const versionTags = block.tags.filter((tag) => tag.tag === "version");
+    const versionTags = block.tags.filter(tag => tag.tag === "version");
 
-    return versionTags.map((tag) => {
+    return versionTags.map(tag => {
       const versionName = tag.name;
       const description = tag.description;
 
-      const platforms = versionName.includes("/")
-        ? versionName.split("/")
-        : undefined;
+      const platforms = versionName.includes("/") ? versionName.split("/") : undefined;
 
       return {
         version: versionName,
@@ -266,11 +264,8 @@ export class JSDocParser {
     });
   }
 
-  private findTagValue(
-    block: commentParser.Block,
-    tagName: string,
-  ): string | undefined {
-    const tag = block.tags.find((t) => t.tag === tagName);
+  private findTagValue(block: commentParser.Block, tagName: string): string | undefined {
+    const tag = block.tags.find(t => t.tag === tagName);
     if (!tag) return undefined;
 
     const name = tag.name;

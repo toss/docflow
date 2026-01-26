@@ -9,7 +9,7 @@ const npmSchema = z.object({
 });
 
 export class NpmPackageManager implements PackageManager {
-  constructor(private cwd: string) { }
+  constructor(private cwd: string) {}
 
   getPackages(): Package[] {
     try {
@@ -18,7 +18,7 @@ export class NpmPackageManager implements PackageManager {
       if (!Array.isArray(parsed)) return [];
 
       return parsed
-        .map((ws) => npmSchema.parse(ws))
+        .map(ws => npmSchema.parse(ws))
         .map(({ name, path: pkgPath }) => ({
           name,
           location: path.relative(this.cwd, pkgPath),
