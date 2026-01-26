@@ -16,6 +16,7 @@ import { isExportSourceFile } from "../../core/parser/source/is-export-source-fi
 import { getExportedDeclarationsBySourceFile } from "../../core/parser/source/get-exported-declarations-by-sourcefile.js";
 import { excludeBarrelReExports } from "../../core/parser/source/exclude-barrel-re-exports.js";
 import { hasJSDocTag } from "../../core/parser/jsdoc/jsdoc-utils.js";
+import { getWorkingDirectory } from "../../utils/get-working-directory.js";
 
 export class BuildCommand extends Command {
   static paths = [[`build`]];
@@ -23,6 +24,7 @@ export class BuildCommand extends Command {
   async execute(): Promise<number> {
     const {
       projectConfig,
+      projectRoot,
       buildConfig,
       targetPackages,
       parser,
@@ -46,7 +48,7 @@ export class BuildCommand extends Command {
       console.log(`📝 ${pkg.name} processing...`);
 
       try {
-        const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
+        const tsConfigPath = getTsConfigPath(projectRoot, pkg.location);
         const project = getTsProject(tsConfigPath);
         const projectSourceFiles = project.getSourceFiles();
 
@@ -103,7 +105,7 @@ export class BuildCommand extends Command {
 }
 
 async function loadContext() {
-  const root = process.cwd();
+  const root = getWorkingDirectory();
   const config = await loadConfig(root);
   const projectRoot = path.resolve(root, config.project.root);
   const buildConfig = config.commands.build;
@@ -148,11 +150,12 @@ async function loadContext() {
     pluginManager,
   });
 
-  const outputDir = path.resolve(projectConfig.root, buildConfig.outputDir);
+  const outputDir = path.resolve(projectRoot, buildConfig.outputDir);
 
   return {
     buildConfig,
     projectConfig,
+    projectRoot,
     parser,
     generator,
     targetPackages,

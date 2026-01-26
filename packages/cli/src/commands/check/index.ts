@@ -10,12 +10,13 @@ import { excludeBarrelReExports } from "../../core/parser/source/exclude-barrel-
 import { hasJSDocTag } from "../../core/parser/jsdoc/jsdoc-utils.js";
 import { getPackageEntryPoints } from "../../core/entry-point.js";
 import path from "path";
+import { getWorkingDirectory } from "../../utils/get-working-directory.js";
 
 export class CheckCommand extends Command {
   static paths = [[`check`]];
 
   async execute(): Promise<number> {
-    const { checkConfig, projectConfig, targetPackages } = await loadContext();
+    const { checkConfig, projectConfig, projectRoot, targetPackages } = await loadContext();
 
     if (targetPackages.length === 0) {
       printNoPackagesFound(
@@ -29,9 +30,9 @@ export class CheckCommand extends Command {
     for (const pkg of targetPackages) {
       console.log(`📝 ${pkg.name} processing...`);
 
-      const packagePath = path.resolve(projectConfig.root, pkg.location);
+      const packagePath = path.resolve(projectRoot, pkg.location);
       try {
-        const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
+        const tsConfigPath = getTsConfigPath(projectRoot, pkg.location);
         const project = getTsProject(tsConfigPath);
 
         const entryPoints =
@@ -76,7 +77,7 @@ export class CheckCommand extends Command {
 }
 
 async function loadContext() {
-  const root = process.cwd();
+  const root = getWorkingDirectory();
   const config = await loadConfig(root);
   const projectRoot = path.resolve(root, config.project.root);
   const projectConfig = config.project;
@@ -97,6 +98,7 @@ async function loadContext() {
   return {
     checkConfig,
     projectConfig,
+    projectRoot,
     targetPackages,
   };
 }

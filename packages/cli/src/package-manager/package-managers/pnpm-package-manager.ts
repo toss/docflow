@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
-import { z } from "zod";
-import { PackageManager, Package } from "../types/package-manager.type.js";
 import path from "path";
+import { z } from "zod";
+import { Package, PackageManager } from "../types/package-manager.type.js";
 
 const pnpmSchema = z.object({
   name: z.string().optional(),
@@ -9,8 +9,8 @@ const pnpmSchema = z.object({
 });
 
 export class PnpmPackageManager implements PackageManager {
-  constructor(private cwd: string) {}
-  
+  constructor(private cwd: string) { }
+
   getPackages(): Package[] {
     try {
       const raw = execSync("pnpm list --recursive --json", { encoding: "utf8", cwd: this.cwd });

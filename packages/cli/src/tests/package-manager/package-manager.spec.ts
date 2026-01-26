@@ -86,15 +86,19 @@ describe("PackageManager integration", () => {
         expect.arrayContaining([
           expect.objectContaining({
             name: "@libs/core",
+            location: "packages/core",
           }),
           expect.objectContaining({
             name: "@libs/math",
+            location: "packages/math",
           }),
           expect.objectContaining({
             name: "@libs/types",
+            location: "packages/types",
           }),
           expect.objectContaining({
             name: "@libs/utils",
+            location: "packages/utils",
           }),
         ])
       );
