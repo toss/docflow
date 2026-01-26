@@ -300,6 +300,87 @@ export function configure(config: any): void {
       ]);
     });
 
+    it("should parse deeply nested parameters regardless of declaration order", () => {
+      const sourceFile = project.createSourceFile(
+        "test.ts",
+        `
+/**
+ * @param {Object} config.database.connection - Connection settings
+ * @param {string} config.database.connection.host - Database host
+ * @param {number} config.database.connection.port - Database port
+ * @param {string} config.database.name - Database name
+ * @param {Object} config.database - Database settings
+ * @param {Object} config - Configuration object
+ */
+export function configure(config: any): void {
+  // implementation
+}
+        `
+      );
+
+      const func = sourceFile.getFunction("configure")!;
+      const jsDoc = func.getJsDocs()[0]!;
+
+      const result = parser.parse(jsDoc);
+
+      expect(result.parameters).toHaveLength(1);
+      expect(result.parameters).toMatchObject([
+        {
+          name: "config",
+          type: "Object",
+          nested: [
+            {
+              name: "database",
+              type: "Object",
+              nested: [
+                {
+                  name: "connection",
+                  type: "Object",
+                  nested: [{ name: "host" }, { name: "port" }],
+                },
+                { name: "name" },
+              ],
+            },
+          ],
+        },
+      ]);
+    });
+
+    it("should create placeholder for parent when only nested parameter is defined", () => {
+      const sourceFile = project.createSourceFile(
+        "test.ts",
+        `
+/**
+ * @param {Object} config.database - Database settings
+ * @param {string} config.database.host - Database host
+ */
+export function configure(config: any): void {
+  // implementation
+}
+        `
+      );
+
+      const func = sourceFile.getFunction("configure")!;
+      const jsDoc = func.getJsDocs()[0]!;
+
+      const result = parser.parse(jsDoc);
+
+      expect(result.parameters).toHaveLength(1);
+      expect(result.parameters?.[0]).toMatchObject({
+        name: "config",
+        type: "Object",
+        description: "",
+        nested: [
+          {
+            name: "database",
+            type: "Object",
+            description: "- Database settings",
+            nested: [{ name: "host", type: "string" }],
+          },
+        ],
+      });
+    });
+
     it("should handle JSDoc without any documentation", () => {
       const result = parser.parse(null as unknown as JSDoc);
 
