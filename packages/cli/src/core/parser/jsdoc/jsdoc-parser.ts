@@ -105,7 +105,8 @@ export class JSDocParser {
 
   private extractParameters(block: commentParser.Block): ParameterData[] {
     const paramTags = block.tags.filter(tag => tag.tag === "param");
-    const sortedTags = this.sortByNestingDepth(paramTags);
+    const uniqueTags = this.removeDuplicateJSDocTags(paramTags);
+    const sortedTags = this.sortByNestingDepth(uniqueTags);
 
     return sortedTags.reduce<ParameterData[]>((parameters, tag) => {
       const parameter = this.parseParameterTag(tag);
@@ -120,6 +121,15 @@ export class JSDocParser {
 
   private sortByNestingDepth(tags: commentParser.Spec[]): commentParser.Spec[] {
     return sortBy(tags, [tag => tag.name.split(".").length]);
+  }
+
+  private removeDuplicateJSDocTags(tags: commentParser.Spec[]): commentParser.Spec[] {
+    const uniqueByName = new Map<string, commentParser.Spec>();
+    for (const tag of tags) {
+      uniqueByName.set(tag.name, tag);
+    }
+
+    return [...uniqueByName.values()];
   }
 
   private parseParameterTag(tag: commentParser.Spec): ParameterData {
