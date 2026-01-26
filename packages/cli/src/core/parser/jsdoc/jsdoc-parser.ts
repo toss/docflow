@@ -1,5 +1,5 @@
 import * as commentParser from "comment-parser";
-import { isEmpty } from "es-toolkit/compat";
+import { isEmpty, sortBy } from "es-toolkit/compat";
 import { JSDoc } from "ts-morph";
 import {
   ExampleData,
@@ -105,91 +105,93 @@ export class JSDocParser {
 
   private extractParameters(block: commentParser.Block): ParameterData[] {
     const paramTags = block.tags.filter(tag => tag.tag === "param");
-    const parameters: ParameterData[] = [];
-    const paramMap = new Map<string, ParameterData>();
+    const sortedTags = this.sortByNestingDepth(paramTags);
 
-    for (const tag of paramTags) {
-      const param = this.parseParameterTag(tag);
-      if (!param) continue;
+    return sortedTags.reduce<ParameterData[]>((parameters, tag) => {
+      const parameter = this.parseParameterTag(tag);
 
-      if (param.name.includes(".")) {
-        this.handleNestedParameter(param, paramMap, parameters);
-      } else {
-        paramMap.set(param.name, param);
-        parameters.push(param);
+      if (this.isNestedParameter(parameter)) {
+        return this.addNestedParameter(parameters, parameter);
       }
-    }
 
-    return parameters;
+      return [...parameters, parameter];
+    }, []);
+  }
+
+  private sortByNestingDepth(tags: commentParser.Spec[]): commentParser.Spec[] {
+    return sortBy(tags, [tag => tag.name.split(".").length]);
   }
 
   private parseParameterTag(tag: commentParser.Spec): ParameterData {
-    const { type, name, description, optional, default: defaultValue } = tag;
-
     return {
-      name,
-      type,
-      description,
-      required: !optional,
-      defaultValue: defaultValue,
+      name: tag.name,
+      type: tag.type,
+      description: tag.description,
+      required: !tag.optional,
+      defaultValue: tag.default,
       nested: [],
     };
   }
 
-  private handleNestedParameter(
-    param: ParameterData,
-    paramMap: Map<string, ParameterData>,
-    parameters: ParameterData[]
-  ): void {
-    const [rootName, ...nestedPath] = param.name.split(".");
-    if (rootName == null || isEmpty(nestedPath)) {
-      return;
+  private isNestedParameter(param: ParameterData) {
+    return param.name.includes(".");
+  }
+
+  private addNestedParameter(parameters: ParameterData[], parameter: ParameterData): ParameterData[] {
+    const [rootName, ...remainingPath] = parameter.name.split(".");
+    if (rootName == null) {
+      return parameters;
     }
 
-    const existingRoot = paramMap.get(rootName);
-    const rootParam = existingRoot ?? this.createPlaceholderObjectParam(rootName);
+    const existingRoot = parameters.find(x => x.name === rootName);
     if (existingRoot == null) {
-      paramMap.set(rootName, rootParam);
-      parameters.push(rootParam);
+      const newRoot = this.createPlaceholderObjectParameter(rootName);
+
+      return [...parameters, this.insertNestedParameter(newRoot, remainingPath, parameter)];
     }
 
-    this.insertParamAtPath({
-      into: rootParam.nested ?? [],
-      path: nestedPath,
-      param,
-    });
+    const updatedRoot = this.insertNestedParameter(existingRoot, remainingPath, parameter);
+    return parameters.map(x => (x.name === rootName ? updatedRoot : x));
   }
 
-  private insertParamAtPath({ into, path, param }: {
-    into: ParameterData[];
-    path: string[];
-    param: ParameterData;
-  }): void {
-    const [currentSegment, ...remainingPath] = path;
-    if (currentSegment == null) {
-      return;
+  private insertNestedParameter(
+    parent: ParameterData,
+    remainingPath: string[],
+    parameter: ParameterData
+  ): ParameterData {
+    const [name, ...restPath] = remainingPath;
+    if (name == null) {
+      return parent;
     }
 
-    if (isEmpty(remainingPath)) {
-      into.push({ ...param, name: currentSegment, nested: [] });
+    const nested = parent.nested ?? [];
+    const existingNested = nested.find(x => x.name === name);
 
-      return;
+    if (isEmpty(restPath)) {
+      const leafParameter = { ...parameter, name, nested: existingNested?.nested ?? [] };
+
+      return { ...parent, nested: this.upsertNested(nested, leafParameter) };
     }
 
-    const existingChild = into.find((n) => n.name === currentSegment);
-    const child = existingChild ?? this.createPlaceholderObjectParam(currentSegment);
+    const intermediateParameter = this.insertNestedParameter(
+      existingNested ?? this.createPlaceholderObjectParameter(name),
+      restPath,
+      parameter
+    );
+
+    return { ...parent, nested: this.upsertNested(nested, intermediateParameter) };
+  }
+
+  private upsertNested(nested: ParameterData[], newParameter: ParameterData): ParameterData[] {
+    const existingChild = nested.find(child => child.name === newParameter.name);
     if (existingChild == null) {
-      into.push(child);
+      return [...nested, newParameter];
     }
 
-    this.insertParamAtPath({
-      into: child.nested ?? [],
-      path: remainingPath,
-      param,
-    });
+    return nested.map(x => (x.name === newParameter.name ? newParameter : x));
   }
 
-  private createPlaceholderObjectParam(name: string): ParameterData {
+  private createPlaceholderObjectParameter(name: string): ParameterData {
     return {
       name,
       type: "Object",
