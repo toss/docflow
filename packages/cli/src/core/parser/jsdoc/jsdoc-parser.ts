@@ -1,5 +1,5 @@
 import * as commentParser from "comment-parser";
-import { isEmpty, sortBy } from "es-toolkit/compat";
+import { initial, uniq } from "es-toolkit";
 import { JSDoc } from "ts-morph";
 import {
   ExampleData,
@@ -105,110 +105,83 @@ export class JSDocParser {
 
   private extractParameters(block: commentParser.Block): ParameterData[] {
     const paramTags = block.tags.filter(tag => tag.tag === "param");
-    const uniqueTags = this.removeDuplicateJSDocTags(paramTags);
-    const sortedTags = this.sortByNestingDepth(uniqueTags);
+    const uniqueParamTags = this.removeDuplicateParamTags(paramTags);
+    const allParamTags = [...uniqueParamTags, ...this.createMissingParentParams(uniqueParamTags)];
+    const topLevelParams = allParamTags.filter(paramTag => !paramTag.name.includes("."));
 
-    return sortedTags.reduce<ParameterData[]>((parameters, tag) => {
-      const parameter = this.parseParameterTag(tag);
-
-      if (this.isNestedParameter(parameter)) {
-        return this.addNestedParameter(parameters, parameter);
-      }
-
-      return [...parameters, parameter];
-    }, []);
+    return topLevelParams.map(paramTag => this.paramTagToParameterData(paramTag, allParamTags));
   }
 
-  private sortByNestingDepth(tags: commentParser.Spec[]): commentParser.Spec[] {
-    return sortBy(tags, [tag => tag.name.split(".").length]);
-  }
-
-  private removeDuplicateJSDocTags(tags: commentParser.Spec[]): commentParser.Spec[] {
+  // only keep the last tag with the same name
+  private removeDuplicateParamTags(paramTags: commentParser.Spec[]): commentParser.Spec[] {
     const uniqueByName = new Map<string, commentParser.Spec>();
-    for (const tag of tags) {
-      uniqueByName.set(tag.name, tag);
+    for (const paramTag of paramTags) {
+      uniqueByName.set(paramTag.name, paramTag);
     }
 
     return [...uniqueByName.values()];
   }
 
-  private parseParameterTag(tag: commentParser.Spec): ParameterData {
+  private paramTagToParameterData(paramTag: commentParser.Spec, allParamTags: commentParser.Spec[]): ParameterData {
     return {
-      name: tag.name,
-      type: tag.type,
-      description: tag.description,
-      required: !tag.optional,
-      defaultValue: tag.default,
-      nested: [],
+      name: this.getParamShortName(paramTag.name),
+      type: paramTag.type,
+      description: paramTag.description,
+      required: !paramTag.optional,
+      defaultValue: paramTag.default,
+      nested: this.buildNestedParams(paramTag.name, allParamTags),
     };
   }
 
-  private isNestedParameter(param: ParameterData) {
-    return param.name.includes(".");
+  private buildNestedParams(parentParamName: string, allParamTags: commentParser.Spec[]): ParameterData[] {
+    const childParams = allParamTags.filter(paramTag => this.getParentParamName(paramTag.name) === parentParamName);
+
+    return childParams.map(paramTag => this.paramTagToParameterData(paramTag, allParamTags));
   }
 
-  private addNestedParameter(parameters: ParameterData[], parameter: ParameterData): ParameterData[] {
-    const [rootName, ...remainingPath] = parameter.name.split(".");
-    if (rootName == null) {
-      return parameters;
-    }
+  private createMissingParentParams(paramTags: commentParser.Spec[]): commentParser.Spec[] {
+    const existingParamNames = paramTags.map(paramTag => paramTag.name);
+    const ancestorParamNames = paramTags.flatMap(paramTag => this.getParamAncestorNames(paramTag.name));
+    const missingParentNames = uniq(ancestorParamNames.filter(name => !existingParamNames.includes(name)));
 
-    const existingRoot = parameters.find(x => x.name === rootName);
-    if (existingRoot == null) {
-      const newRoot = this.createPlaceholderObjectParameter(rootName);
-
-      return [...parameters, this.insertNestedParameter(newRoot, remainingPath, parameter)];
-    }
-
-    const updatedRoot = this.insertNestedParameter(existingRoot, remainingPath, parameter);
-    return parameters.map(x => (x.name === rootName ? updatedRoot : x));
+    return missingParentNames.map(name => this.createParamPlaceholderTag(name));
   }
 
-  private insertNestedParameter(
-    parent: ParameterData,
-    remainingPath: string[],
-    parameter: ParameterData
-  ): ParameterData {
-    const [name, ...restPath] = remainingPath;
-    if (name == null) {
-      return parent;
+  private getParamAncestorNames(paramName: string): string[] {
+    const parentName = this.getParentParamName(paramName);
+    if (parentName == null) {
+      return [];
     }
 
-    const nested = parent.nested ?? [];
-    const existingNested = nested.find(x => x.name === name);
-
-    if (isEmpty(restPath)) {
-      const leafParameter = { ...parameter, name, nested: existingNested?.nested ?? [] };
-
-      return { ...parent, nested: this.upsertNested(nested, leafParameter) };
-    }
-
-    const intermediateParameter = this.insertNestedParameter(
-      existingNested ?? this.createPlaceholderObjectParameter(name),
-      restPath,
-      parameter
-    );
-
-    return { ...parent, nested: this.upsertNested(nested, intermediateParameter) };
+    return [parentName, ...this.getParamAncestorNames(parentName)];
   }
 
-  private upsertNested(nested: ParameterData[], newParameter: ParameterData): ParameterData[] {
-    const existingChild = nested.find(child => child.name === newParameter.name);
-    if (existingChild == null) {
-      return [...nested, newParameter];
+  private getParentParamName(paramName: string): string | null {
+    const segments = paramName.split(".");
+    const hasParent = segments.length > 1;
+    if (hasParent) {
+      return initial(segments).join(".");
     }
 
-    return nested.map(x => (x.name === newParameter.name ? newParameter : x));
+    return null;
   }
 
-  private createPlaceholderObjectParameter(name: string): ParameterData {
+  private getParamShortName(paramName: string) {
+    const segments = paramName.split(".");
+
+    return segments.at(-1) ?? paramName;
+  }
+
+  private createParamPlaceholderTag(name: string): commentParser.Spec {
     return {
+      tag: "param",
       name,
       type: "Object",
       description: "",
-      required: true,
-      defaultValue: undefined,
-      nested: [],
+      optional: false,
+      default: undefined,
+      source: [],
+      problems: [],
     };
   }
 
