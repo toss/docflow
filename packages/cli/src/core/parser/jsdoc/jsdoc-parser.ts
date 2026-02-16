@@ -1,13 +1,14 @@
-import { JSDoc } from "ts-morph";
 import * as commentParser from "comment-parser";
+import { initial, uniq } from "es-toolkit";
+import { JSDoc } from "ts-morph";
 import {
-  ParsedJSDoc,
+  ExampleData,
   ParameterData,
+  ParsedJSDoc,
   ReturnData,
+  SeeData,
   ThrowsData,
   TypedefData,
-  ExampleData,
-  SeeData,
   VersionData,
 } from "../../types/parser.types.js";
 
@@ -104,64 +105,125 @@ export class JSDocParser {
 
   private extractParameters(block: commentParser.Block): ParameterData[] {
     const paramTags = block.tags.filter(tag => tag.tag === "param");
-    const parameters: ParameterData[] = [];
-    const paramMap = new Map<string, ParameterData>();
+    const dedupedParamTags = this.dedupeParamTagsKeepingLastByName(paramTags);
+    const normalizedParamTags = this.appendMissingAncestorPlaceholders(dedupedParamTags);
 
-    for (const tag of paramTags) {
-      const param = this.parseParameterTag(tag);
-      if (!param) continue;
-
-      if (param.name.includes(".")) {
-        this.handleNestedParameter(param, paramMap, parameters);
-      } else {
-        paramMap.set(param.name, param);
-        parameters.push(param);
-      }
-    }
-
-    return parameters;
+    return this.buildParameterTree(normalizedParamTags);
   }
 
-  private parseParameterTag(tag: commentParser.Spec): ParameterData {
-    const { type, name, description, optional, default: defaultValue } = tag;
+  private dedupeParamTagsKeepingLastByName(paramTags: commentParser.Spec[]): commentParser.Spec[] {
+    const latestByName = new Map<string, commentParser.Spec>();
+    for (const paramTag of paramTags) {
+      latestByName.set(paramTag.name, paramTag);
+    }
 
+    return [...latestByName.values()];
+  }
+
+  private appendMissingAncestorPlaceholders(paramTags: commentParser.Spec[]): commentParser.Spec[] {
+    return [...paramTags, ...this.createMissingAncestorPlaceholderTags(paramTags)];
+  }
+
+  private buildParameterTree(paramTags: commentParser.Spec[]): ParameterData[] {
+    const childParamsByParent = this.groupParamTagsByParent(paramTags);
+    const rootParamTags = this.getRootParamTags(paramTags);
+
+    return rootParamTags.map(paramTag => this.toParameterData(paramTag, childParamsByParent));
+  }
+
+  private getRootParamTags(paramTags: commentParser.Spec[]): commentParser.Spec[] {
+    return paramTags.filter(paramTag => this.getParentParamName(paramTag.name) == null);
+  }
+
+  private toParameterData(
+    paramTag: commentParser.Spec,
+    childParamsByParent: Map<string, commentParser.Spec[]>
+  ): ParameterData {
     return {
-      name,
-      type,
-      description,
-      required: !optional,
-      defaultValue: defaultValue,
-      nested: [],
+      name: this.getParamLeafName(paramTag.name),
+      type: paramTag.type,
+      description: paramTag.description,
+      required: !paramTag.optional,
+      defaultValue: paramTag.default,
+      nested: this.buildNestedParameters(paramTag.name, childParamsByParent),
     };
   }
 
-  private handleNestedParameter(
-    param: ParameterData,
-    paramMap: Map<string, ParameterData>,
-    parameters: ParameterData[]
-  ): void {
-    const parts = param.name.split(".");
-    const parentName = parts[0];
-    if (!parentName) return;
+  private buildNestedParameters(
+    parentParamName: string,
+    childParamsByParent: Map<string, commentParser.Spec[]>
+  ): ParameterData[] {
+    const childParamTags = childParamsByParent.get(parentParamName) ?? [];
 
-    let parent = paramMap.get(parentName);
+    return childParamTags.map(paramTag => this.toParameterData(paramTag, childParamsByParent));
+  }
 
-    if (!parent) {
-      parent = {
-        name: parentName,
-        type: "Object",
-        description: "",
-        required: true,
-        defaultValue: undefined,
-        nested: [],
-      };
-      paramMap.set(parentName, parent);
-      parameters.push(parent);
+  private groupParamTagsByParent(paramTags: commentParser.Spec[]): Map<string, commentParser.Spec[]> {
+    const childParamsByParent = new Map<string, commentParser.Spec[]>();
+
+    for (const paramTag of paramTags) {
+      const parentParamName = this.getParentParamName(paramTag.name);
+      if (parentParamName == null) {
+        continue;
+      }
+
+      const existingChildParams = childParamsByParent.get(parentParamName);
+      if (existingChildParams != null) {
+        existingChildParams.push(paramTag);
+
+        continue;
+      }
+
+      childParamsByParent.set(parentParamName, [paramTag]);
     }
 
-    const nestedParam = { ...param, name: parts.slice(1).join(".") };
-    parent.nested = parent.nested || [];
-    parent.nested.push(nestedParam);
+    return childParamsByParent;
+  }
+
+  private createMissingAncestorPlaceholderTags(paramTags: commentParser.Spec[]): commentParser.Spec[] {
+    const existingParamNames = new Set(paramTags.map(paramTag => paramTag.name));
+    const ancestorParamNames = paramTags.flatMap(paramTag => this.getParamAncestorNames(paramTag.name));
+    const missingParentNames = uniq(ancestorParamNames.filter(name => !existingParamNames.has(name)));
+
+    return missingParentNames.map(name => this.createParamPlaceholderTag(name));
+  }
+
+  private getParamAncestorNames(paramName: string): string[] {
+    const parentName = this.getParentParamName(paramName);
+    if (parentName == null) {
+      return [];
+    }
+
+    return [parentName, ...this.getParamAncestorNames(parentName)];
+  }
+
+  private getParentParamName(paramName: string): string | null {
+    const segments = paramName.split(".");
+    const hasParent = segments.length > 1;
+    if (hasParent) {
+      return initial(segments).join(".");
+    }
+
+    return null;
+  }
+
+  private getParamLeafName(paramName: string): string {
+    const segments = paramName.split(".");
+
+    return segments.at(-1) ?? paramName;
+  }
+
+  private createParamPlaceholderTag(name: string): commentParser.Spec {
+    return {
+      tag: "param",
+      name,
+      type: "Object",
+      description: "",
+      optional: false,
+      default: undefined,
+      source: [],
+      problems: [],
+    };
   }
 
   private extractReturns(block: commentParser.Block): ReturnData | undefined {
