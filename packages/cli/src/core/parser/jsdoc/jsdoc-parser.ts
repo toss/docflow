@@ -105,44 +105,85 @@ export class JSDocParser {
 
   private extractParameters(block: commentParser.Block): ParameterData[] {
     const paramTags = block.tags.filter(tag => tag.tag === "param");
-    const uniqueParamTags = this.removeDuplicateParamTags(paramTags);
-    const allParamTags = [...uniqueParamTags, ...this.createMissingParentParams(uniqueParamTags)];
-    const topLevelParams = allParamTags.filter(paramTag => !paramTag.name.includes("."));
+    const dedupedParamTags = this.dedupeParamTagsKeepingLastByName(paramTags);
+    const normalizedParamTags = this.appendMissingAncestorPlaceholders(dedupedParamTags);
 
-    return topLevelParams.map(paramTag => this.paramTagToParameterData(paramTag, allParamTags));
+    return this.buildParameterTree(normalizedParamTags);
   }
 
-  // only keep the last tag with the same name
-  private removeDuplicateParamTags(paramTags: commentParser.Spec[]): commentParser.Spec[] {
-    const uniqueByName = new Map<string, commentParser.Spec>();
+  private dedupeParamTagsKeepingLastByName(paramTags: commentParser.Spec[]): commentParser.Spec[] {
+    const latestByName = new Map<string, commentParser.Spec>();
     for (const paramTag of paramTags) {
-      uniqueByName.set(paramTag.name, paramTag);
+      latestByName.set(paramTag.name, paramTag);
     }
 
-    return [...uniqueByName.values()];
+    return [...latestByName.values()];
   }
 
-  private paramTagToParameterData(paramTag: commentParser.Spec, allParamTags: commentParser.Spec[]): ParameterData {
+  private appendMissingAncestorPlaceholders(paramTags: commentParser.Spec[]): commentParser.Spec[] {
+    return [...paramTags, ...this.createMissingAncestorPlaceholderTags(paramTags)];
+  }
+
+  private buildParameterTree(paramTags: commentParser.Spec[]): ParameterData[] {
+    const childParamsByParent = this.groupParamTagsByParent(paramTags);
+    const rootParamTags = this.getRootParamTags(paramTags);
+
+    return rootParamTags.map(paramTag => this.toParameterData(paramTag, childParamsByParent));
+  }
+
+  private getRootParamTags(paramTags: commentParser.Spec[]): commentParser.Spec[] {
+    return paramTags.filter(paramTag => this.getParentParamName(paramTag.name) == null);
+  }
+
+  private toParameterData(
+    paramTag: commentParser.Spec,
+    childParamsByParent: Map<string, commentParser.Spec[]>
+  ): ParameterData {
     return {
-      name: this.getParamShortName(paramTag.name),
+      name: this.getParamLeafName(paramTag.name),
       type: paramTag.type,
       description: paramTag.description,
       required: !paramTag.optional,
       defaultValue: paramTag.default,
-      nested: this.buildNestedParams(paramTag.name, allParamTags),
+      nested: this.buildNestedParameters(paramTag.name, childParamsByParent),
     };
   }
 
-  private buildNestedParams(parentParamName: string, allParamTags: commentParser.Spec[]): ParameterData[] {
-    const childParams = allParamTags.filter(paramTag => this.getParentParamName(paramTag.name) === parentParamName);
+  private buildNestedParameters(
+    parentParamName: string,
+    childParamsByParent: Map<string, commentParser.Spec[]>
+  ): ParameterData[] {
+    const childParamTags = childParamsByParent.get(parentParamName) ?? [];
 
-    return childParams.map(paramTag => this.paramTagToParameterData(paramTag, allParamTags));
+    return childParamTags.map(paramTag => this.toParameterData(paramTag, childParamsByParent));
   }
 
-  private createMissingParentParams(paramTags: commentParser.Spec[]): commentParser.Spec[] {
-    const existingParamNames = paramTags.map(paramTag => paramTag.name);
+  private groupParamTagsByParent(paramTags: commentParser.Spec[]): Map<string, commentParser.Spec[]> {
+    const childParamsByParent = new Map<string, commentParser.Spec[]>();
+
+    for (const paramTag of paramTags) {
+      const parentParamName = this.getParentParamName(paramTag.name);
+      if (parentParamName == null) {
+        continue;
+      }
+
+      const existingChildParams = childParamsByParent.get(parentParamName);
+      if (existingChildParams != null) {
+        existingChildParams.push(paramTag);
+
+        continue;
+      }
+
+      childParamsByParent.set(parentParamName, [paramTag]);
+    }
+
+    return childParamsByParent;
+  }
+
+  private createMissingAncestorPlaceholderTags(paramTags: commentParser.Spec[]): commentParser.Spec[] {
+    const existingParamNames = new Set(paramTags.map(paramTag => paramTag.name));
     const ancestorParamNames = paramTags.flatMap(paramTag => this.getParamAncestorNames(paramTag.name));
-    const missingParentNames = uniq(ancestorParamNames.filter(name => !existingParamNames.includes(name)));
+    const missingParentNames = uniq(ancestorParamNames.filter(name => !existingParamNames.has(name)));
 
     return missingParentNames.map(name => this.createParamPlaceholderTag(name));
   }
@@ -166,7 +207,7 @@ export class JSDocParser {
     return null;
   }
 
-  private getParamShortName(paramName: string) {
+  private getParamLeafName(paramName: string): string {
     const segments = paramName.split(".");
 
     return segments.at(-1) ?? paramName;
