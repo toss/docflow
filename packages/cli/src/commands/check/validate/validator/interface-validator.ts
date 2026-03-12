@@ -16,6 +16,6 @@ export class InterfaceValidator extends Validator<InterfaceDeclaration> {
 
     const jsDocParams = getJSDocParameterNames(this.parsedJSDoc.parameters ?? []);
 
-    return [...findMissingDocs(allPropertyPaths, jsDocParams), ...findUnusedDocs(jsDocParams, [...allPropertyPaths, ...methods])];
+    return [...findMissingDocs(allPropertyPaths, jsDocParams), ...findUnusedDocs([...allPropertyPaths, ...methods], jsDocParams)];
   }
 }
