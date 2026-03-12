@@ -225,7 +225,7 @@ describe("InterfaceValidator", () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should not require method documentation", () => {
+    it("should detect missing method documentation", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
@@ -243,8 +243,11 @@ describe("InterfaceValidator", () => {
       const validator = new InterfaceValidator(iface, parseJSDocFromNode(iface));
       const result = validator.validate();
 
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({
+        type: "missing_param",
+        target: "greet",
+      });
     });
   });
 

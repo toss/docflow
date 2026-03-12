@@ -13,9 +13,10 @@ export class InterfaceValidator extends Validator<InterfaceDeclaration> {
 
     const allPropertyPaths = flatMap(properties, p => collectPropertySignaturePaths(p));
     const methods = this.node.getMethods().map(m => m.getName());
+    const allMemberPaths = [...allPropertyPaths, ...methods];
 
     const jsDocParams = getJSDocParameterNames(this.parsedJSDoc.parameters ?? []);
 
-    return [...findMissingDocs(allPropertyPaths, jsDocParams), ...findUnusedDocs([...allPropertyPaths, ...methods], jsDocParams)];
+    return [...findMissingDocs(allMemberPaths, jsDocParams), ...findUnusedDocs(allMemberPaths, jsDocParams)];
   }
 }
