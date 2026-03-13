@@ -34,6 +34,7 @@ export interface ParsedJSDoc {
   returns?: ReturnData;
   throws?: ThrowsData[];
   typedef?: TypedefData[];
+  properties?: ParameterData[];
   see?: SeeData[];
   version?: VersionData[];
 }
