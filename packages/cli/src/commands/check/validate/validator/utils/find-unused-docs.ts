@@ -1,9 +1,15 @@
 import { difference } from "es-toolkit";
 import { ValidationError } from "../../validate.types.js";
 
-export function findUnusedDocs(validTargets: string[], jsDocNames: string[]): ValidationError[] {
-  return difference(jsDocNames, validTargets).map(target => ({
-    type: "unused_param",
+interface FindUnusedDocsOptions {
+  codeSymbols: string[];
+  jsDocNames: string[];
+  errorType: "unused_param" | "unused_property";
+}
+
+export function findUnusedDocs({ codeSymbols, jsDocNames, errorType }: FindUnusedDocsOptions): ValidationError[] {
+  return difference(jsDocNames, codeSymbols).map(target => ({
+    type: errorType,
     target,
   }));
 }

@@ -1,6 +1,6 @@
 import { isEmpty } from "es-toolkit/compat";
 import { Node, PropertyAssignment, VariableDeclaration } from "ts-morph";
-import { getJSDocParameterNames } from "../../../../core/parser/jsdoc/jsdoc-utils.js";
+import { getJSDocPropertyNames } from "../../../../core/parser/jsdoc/jsdoc-utils.js";
 import { ValidationError } from "../validate.types.js";
 import { collectPropertyAssignmentPaths } from "./utils/collect-property-assignment-paths.js";
 import { findMissingDocs } from "./utils/find-missing-docs.js";
@@ -15,9 +15,12 @@ export class ObjectLiteralValidator extends Validator<VariableDeclaration> {
     }
 
     const allPropertyPaths = collectPropertyAssignmentPaths(properties);
-    const jsDocParams = getJSDocParameterNames(this.parsedJSDoc.parameters ?? []);
+    const jsDocProperties = getJSDocPropertyNames(this.parsedJSDoc.properties ?? []);
 
-    return [...findMissingDocs(allPropertyPaths, jsDocParams), ...findUnusedDocs(allPropertyPaths, jsDocParams)];
+    return [
+      ...findMissingDocs({ codeSymbols: allPropertyPaths, jsDocNames: jsDocProperties, errorType: "missing_property" }),
+      ...findUnusedDocs({ codeSymbols: allPropertyPaths, jsDocNames: jsDocProperties, errorType: "unused_property" }),
+    ];
   }
 
   private getProperties(): PropertyAssignment[] {

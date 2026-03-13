@@ -10,8 +10,8 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param name - The user's name
-         * @param age - The user's age
+         * @property name - The user's name
+         * @property age - The user's age
          */
         export interface User {
           name: string;
@@ -33,7 +33,7 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param name - The user's name
+         * @property name - The user's name
          */
         export interface User {
           name: string;
@@ -49,7 +49,7 @@ describe("InterfaceValidator", () => {
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toContainEqual({
-        type: "missing_param",
+        type: "missing_property",
         target: "age",
       });
     });
@@ -58,8 +58,8 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param name - The user's name
-         * @param deletedField - No longer exists
+         * @property name - The user's name
+         * @property deletedField - No longer exists
          */
         export interface User {
           name: string;
@@ -74,7 +74,7 @@ describe("InterfaceValidator", () => {
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toContainEqual({
-        type: "unused_param",
+        type: "unused_property",
         target: "deletedField",
       });
     });
@@ -83,8 +83,8 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param oldField1 - Removed
-         * @param oldField2 - Also removed
+         * @property oldField1 - Removed
+         * @property oldField2 - Also removed
          */
         export interface User {
           name: string;
@@ -100,19 +100,19 @@ describe("InterfaceValidator", () => {
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toContainEqual({
-        type: "missing_param",
+        type: "missing_property",
         target: "name",
       });
       expect(result.errors).toContainEqual({
-        type: "missing_param",
+        type: "missing_property",
         target: "email",
       });
       expect(result.errors).toContainEqual({
-        type: "unused_param",
+        type: "unused_property",
         target: "oldField1",
       });
       expect(result.errors).toContainEqual({
-        type: "unused_param",
+        type: "unused_property",
         target: "oldField2",
       });
     });
@@ -123,9 +123,9 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param address - The address
-         * @param address.street - The street
-         * @param address.city - The city
+         * @property address - The address
+         * @property address.street - The street
+         * @property address.city - The city
          */
         export interface User {
           address: {
@@ -149,8 +149,8 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param address - The address
-         * @param address.street - The street
+         * @property address - The address
+         * @property address.street - The street
          */
         export interface User {
           address: {
@@ -168,7 +168,7 @@ describe("InterfaceValidator", () => {
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toContainEqual({
-        type: "missing_param",
+        type: "missing_property",
         target: "address.city",
       });
     });
@@ -177,8 +177,8 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param address - The address
-         * @param address.zipCode - Removed property
+         * @property address - The address
+         * @property address.zipCode - Removed property
          */
         export interface User {
           address: {
@@ -195,7 +195,7 @@ describe("InterfaceValidator", () => {
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toContainEqual({
-        type: "unused_param",
+        type: "unused_property",
         target: "address.zipCode",
       });
     });
@@ -206,8 +206,8 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param name - The name
-         * @param greet - Method to greet
+         * @property name - The name
+         * @property greet - Method to greet
          */
         export interface Person {
           name: string;
@@ -229,7 +229,7 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param name - The name
+         * @property name - The name
          */
         export interface Person {
           name: string;
@@ -245,7 +245,7 @@ describe("InterfaceValidator", () => {
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toContainEqual({
-        type: "missing_param",
+        type: "missing_property",
         target: "greet",
       });
     });
@@ -256,7 +256,7 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param name - The name
+         * @property name - The name
          */
         export interface User {
           name: string;
@@ -272,7 +272,7 @@ describe("InterfaceValidator", () => {
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toContainEqual({
-        type: "missing_param",
+        type: "missing_property",
         target: "age",
       });
     });
@@ -281,8 +281,8 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param name - The name
-         * @param age - The age
+         * @property name - The name
+         * @property age - The age
          */
         export interface User {
           name: string;
@@ -306,8 +306,8 @@ describe("InterfaceValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param id - The ID
-         * @param name - The name
+         * @property id - The ID
+         * @property name - The name
          */
         export interface User {
           readonly id: string;

@@ -9,8 +9,8 @@ describe("ObjectLiteralValidator", () => {
     const sourceFile = createTSSourceFile(`
       /**
        * @public
-       * @param host - The host
-       * @param port - The port
+       * @property host - The host
+       * @property port - The port
        * @returns void
        */
       export const config = {
@@ -33,7 +33,7 @@ describe("ObjectLiteralValidator", () => {
     const sourceFile = createTSSourceFile(`
       /**
        * @public
-       * @param host - The host
+       * @property host - The host
        * @returns void
        */
       export const config = {
@@ -49,15 +49,15 @@ describe("ObjectLiteralValidator", () => {
     const result = validator.validate();
 
     expect(result.isValid).toBe(false);
-    expect(result.errors).toContainEqual({ type: "missing_param", target: "port" });
+    expect(result.errors).toContainEqual({ type: "missing_property", target: "port" });
   });
 
   it("should detect unused property documentation", () => {
     const sourceFile = createTSSourceFile(`
       /**
        * @public
-       * @param host - The host
-       * @param removed - No longer exists
+       * @property host - The host
+       * @property removed - No longer exists
        * @returns void
        */
       export const config = {
@@ -72,16 +72,16 @@ describe("ObjectLiteralValidator", () => {
     const result = validator.validate();
 
     expect(result.isValid).toBe(false);
-    expect(result.errors).toContainEqual({ type: "unused_param", target: "removed" });
+    expect(result.errors).toContainEqual({ type: "unused_property", target: "removed" });
   });
 
   it("should validate nested object properties", () => {
     const sourceFile = createTSSourceFile(`
       /**
        * @public
-       * @param db - Database config
-       * @param db.host - The host
-       * @param db.port - The port
+       * @property db - Database config
+       * @property db.host - The host
+       * @property db.port - The port
        * @returns void
        */
       export const config = {
@@ -106,7 +106,7 @@ describe("ObjectLiteralValidator", () => {
     const sourceFile = createTSSourceFile(`
       /**
        * @public
-       * @param db - Database config
+       * @property db - Database config
        * @returns void
        */
       export const config = {
@@ -124,15 +124,15 @@ describe("ObjectLiteralValidator", () => {
     const result = validator.validate();
 
     expect(result.isValid).toBe(false);
-    expect(result.errors).toContainEqual({ type: "missing_param", target: "db.host" });
-    expect(result.errors).toContainEqual({ type: "missing_param", target: "db.port" });
+    expect(result.errors).toContainEqual({ type: "missing_property", target: "db.host" });
+    expect(result.errors).toContainEqual({ type: "missing_property", target: "db.port" });
   });
 
   it("should detect both missing and unused simultaneously", () => {
     const sourceFile = createTSSourceFile(`
       /**
        * @public
-       * @param removed - No longer exists
+       * @property removed - No longer exists
        * @returns void
        */
       export const config = {
@@ -148,9 +148,9 @@ describe("ObjectLiteralValidator", () => {
     const result = validator.validate();
 
     expect(result.isValid).toBe(false);
-    expect(result.errors).toContainEqual({ type: "missing_param", target: "host" });
-    expect(result.errors).toContainEqual({ type: "missing_param", target: "port" });
-    expect(result.errors).toContainEqual({ type: "unused_param", target: "removed" });
+    expect(result.errors).toContainEqual({ type: "missing_property", target: "host" });
+    expect(result.errors).toContainEqual({ type: "missing_property", target: "port" });
+    expect(result.errors).toContainEqual({ type: "unused_property", target: "removed" });
   });
 
   it("should return no errors for non-object initializer", () => {

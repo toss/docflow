@@ -25,7 +25,7 @@ describe("validate", () => {
     const sourceFile = createTSSourceFile(`
       /**
        * @public
-       * @param name - The name
+       * @property name - The name
        */
       export interface User {
         name: string;
@@ -42,7 +42,7 @@ describe("validate", () => {
     const sourceFile = createTSSourceFile(`
       /**
        * @public
-       * @param name - The name
+       * @property name - The name
        */
       export type User = {
         name: string;
@@ -75,8 +75,7 @@ describe("validate", () => {
     const sourceFile = createTSSourceFile(`
       /**
        * @public
-       * @param host - The host
-       * @returns void
+       * @property host - The host
        */
       export const config = {
         host: "localhost",

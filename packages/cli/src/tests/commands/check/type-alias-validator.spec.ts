@@ -10,8 +10,8 @@ describe("TypeAliasValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param name - The name
-         * @param age - The age
+         * @property name - The name
+         * @property age - The age
          */
         export type User = {
           name: string;
@@ -33,7 +33,7 @@ describe("TypeAliasValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param name - The name
+         * @property name - The name
          */
         export type User = {
           name: string;
@@ -48,15 +48,15 @@ describe("TypeAliasValidator", () => {
       const result = validator.validate();
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual({ type: "missing_param", target: "age" });
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "age" });
     });
 
     it("should detect unused property documentation", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param name - The name
-         * @param removed - No longer exists
+         * @property name - The name
+         * @property removed - No longer exists
          */
         export type User = {
           name: string;
@@ -70,14 +70,14 @@ describe("TypeAliasValidator", () => {
       const result = validator.validate();
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual({ type: "unused_param", target: "removed" });
+      expect(result.errors).toContainEqual({ type: "unused_property", target: "removed" });
     });
 
     it("should detect both missing and unused simultaneously", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param oldField - Removed
+         * @property oldField - Removed
          */
         export type Config = {
           host: string;
@@ -92,9 +92,9 @@ describe("TypeAliasValidator", () => {
       const result = validator.validate();
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual({ type: "missing_param", target: "host" });
-      expect(result.errors).toContainEqual({ type: "missing_param", target: "port" });
-      expect(result.errors).toContainEqual({ type: "unused_param", target: "oldField" });
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "host" });
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "port" });
+      expect(result.errors).toContainEqual({ type: "unused_property", target: "oldField" });
     });
   });
 
@@ -103,9 +103,9 @@ describe("TypeAliasValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param db - Database config
-         * @param db.host - The host
-         * @param db.port - The port
+         * @property db - Database config
+         * @property db.host - The host
+         * @property db.port - The port
          */
         export type Config = {
           db: {
@@ -129,9 +129,9 @@ describe("TypeAliasValidator", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param db - Database config
-         * @param db.host - The host
-         * @param db.removed - No longer exists
+         * @property db - Database config
+         * @property db.host - The host
+         * @property db.removed - No longer exists
          */
         export type Config = {
           db: {
@@ -147,14 +147,14 @@ describe("TypeAliasValidator", () => {
       const result = validator.validate();
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual({ type: "unused_param", target: "db.removed" });
+      expect(result.errors).toContainEqual({ type: "unused_property", target: "db.removed" });
     });
 
     it("should detect missing nested property documentation", () => {
       const sourceFile = createTSSourceFile(`
         /**
          * @public
-         * @param db - Database config
+         * @property db - Database config
          */
         export type Config = {
           db: {
@@ -171,8 +171,8 @@ describe("TypeAliasValidator", () => {
       const result = validator.validate();
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual({ type: "missing_param", target: "db.host" });
-      expect(result.errors).toContainEqual({ type: "missing_param", target: "db.port" });
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "db.host" });
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "db.port" });
     });
   });
 

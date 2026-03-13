@@ -1,6 +1,6 @@
 import { flatMap } from "es-toolkit";
 import { Node, TypeAliasDeclaration } from "ts-morph";
-import { getJSDocParameterNames } from "../../../../core/parser/jsdoc/jsdoc-utils.js";
+import { getJSDocPropertyNames } from "../../../../core/parser/jsdoc/jsdoc-utils.js";
 import { ValidationError } from "../validate.types.js";
 import { collectPropertySignaturePaths } from "./utils/collect-property-signature-paths.js";
 import { findMissingDocs } from "./utils/find-missing-docs.js";
@@ -18,8 +18,11 @@ export class TypeAliasValidator extends Validator<TypeAliasDeclaration> {
     const properties = typeNode.getProperties().filter(p => Node.isPropertySignature(p));
 
     const allPropertyPaths = flatMap(properties, p => collectPropertySignaturePaths(p));
-    const jsDocParams = getJSDocParameterNames(this.parsedJSDoc.parameters ?? []);
+    const jsDocProperties = getJSDocPropertyNames(this.parsedJSDoc.properties ?? []);
 
-    return [...findMissingDocs(allPropertyPaths, jsDocParams), ...findUnusedDocs(allPropertyPaths, jsDocParams)];
+    return [
+      ...findMissingDocs({ codeSymbols: allPropertyPaths, jsDocNames: jsDocProperties, errorType: "missing_property" }),
+      ...findUnusedDocs({ codeSymbols: allPropertyPaths, jsDocNames: jsDocProperties, errorType: "unused_property" }),
+    ];
   }
 }

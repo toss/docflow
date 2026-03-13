@@ -115,6 +115,10 @@ function formatErrorMessage(error: ValidationError): string {
       return `missing @param for '${error.target}'`;
     case "unused_param":
       return `unused @param '${error.target}'`;
+    case "missing_property":
+      return `missing @property for '${error.target}'`;
+    case "unused_property":
+      return `unused @property '${error.target}'`;
     case "missing_returns":
       return "missing @returns";
     case "invalid_returns":

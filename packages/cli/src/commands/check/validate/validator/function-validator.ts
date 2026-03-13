@@ -28,7 +28,10 @@ export class FunctionValidator extends Validator<FunctionLikeNode> {
     const allParamPaths = collectParameterPaths(parameters);
     const jsDocParamNames = getJSDocParameterNames(this.parsedJSDoc.parameters ?? []);
 
-    return [...findMissingDocs(allParamPaths, jsDocParamNames), ...findUnusedDocs(allParamPaths, jsDocParamNames)];
+    return [
+      ...findMissingDocs({ codeSymbols: allParamPaths, jsDocNames: jsDocParamNames, errorType: "missing_param" }),
+      ...findUnusedDocs({ codeSymbols: allParamPaths, jsDocNames: jsDocParamNames, errorType: "unused_param" }),
+    ];
   }
 
   private validateReturns(): ValidationError[] {

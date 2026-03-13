@@ -1,6 +1,6 @@
 import { flatMap } from "es-toolkit";
 import { InterfaceDeclaration, Node } from "ts-morph";
-import { getJSDocParameterNames } from "../../../../core/parser/jsdoc/jsdoc-utils.js";
+import { getJSDocPropertyNames } from "../../../../core/parser/jsdoc/jsdoc-utils.js";
 import { ValidationError } from "../validate.types.js";
 import { collectPropertySignaturePaths } from "./utils/collect-property-signature-paths.js";
 import { findMissingDocs } from "./utils/find-missing-docs.js";
@@ -15,8 +15,11 @@ export class InterfaceValidator extends Validator<InterfaceDeclaration> {
     const methods = this.node.getMethods().map(m => m.getName());
     const allMemberPaths = [...allPropertyPaths, ...methods];
 
-    const jsDocParams = getJSDocParameterNames(this.parsedJSDoc.parameters ?? []);
+    const jsDocProperties = getJSDocPropertyNames(this.parsedJSDoc.properties ?? []);
 
-    return [...findMissingDocs(allMemberPaths, jsDocParams), ...findUnusedDocs(allMemberPaths, jsDocParams)];
+    return [
+      ...findMissingDocs({ codeSymbols: allMemberPaths, jsDocNames: jsDocProperties, errorType: "missing_property" }),
+      ...findUnusedDocs({ codeSymbols: allMemberPaths, jsDocNames: jsDocProperties, errorType: "unused_property" }),
+    ];
   }
 }
