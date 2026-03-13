@@ -6,6 +6,7 @@ import { ParameterData, ParsedJSDoc } from "../../types/parser.types.js";
 export const EMPTY_PARSED_JSDOC: ParsedJSDoc = {
   examples: [],
   parameters: [],
+  properties: [],
   throws: [],
   typedef: [],
   see: [],
@@ -46,6 +47,10 @@ function getJSDocableNode(node: Node): JSDocableNode | undefined {
   }
 
   return undefined;
+}
+
+export function getJSDocPropertyNames(properties: ParameterData[]): string[] {
+  return getJSDocParameterNames(properties);
 }
 
 export function getJSDocParameterNames(parameters: ParameterData[]): string[] {

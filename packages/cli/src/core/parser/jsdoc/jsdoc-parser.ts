@@ -43,6 +43,7 @@ export class JSDocParser {
       deprecated: this.extractDeprecated(block),
       examples: this.extractExamples(block),
       parameters: this.extractParameters(block),
+      properties: this.extractProperties(block),
       returns: this.extractReturns(block),
       throws: this.extractThrows(block),
       typedef: this.extractTypedefs(block),
@@ -55,6 +56,7 @@ export class JSDocParser {
     return {
       examples: [],
       parameters: [],
+      properties: [],
       throws: [],
       typedef: [],
       see: [],
@@ -224,6 +226,14 @@ export class JSDocParser {
       source: [],
       problems: [],
     };
+  }
+
+  private extractProperties(block: commentParser.Block): ParameterData[] {
+    const propertyTags = block.tags.filter(tag => tag.tag === "property");
+    const dedupedPropertyTags = this.dedupeParamTagsKeepingLastByName(propertyTags);
+    const normalizedPropertyTags = this.appendMissingAncestorPlaceholders(dedupedPropertyTags);
+
+    return this.buildParameterTree(normalizedPropertyTags);
   }
 
   private extractReturns(block: commentParser.Block): ReturnData | undefined {
