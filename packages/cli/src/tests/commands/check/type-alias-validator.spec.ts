@@ -1,0 +1,270 @@
+import { describe, it, expect } from "vitest";
+import { assert } from "es-toolkit";
+import { TypeAliasValidator } from "../../../commands/check/validate/validator/type-alias-validator.js";
+import { createTSSourceFile } from "../../utils/create-ts-source-file.js";
+import { parseJSDocFromNode } from "../../utils/parse-jsdoc-from-node.js";
+
+describe("TypeAliasValidator", () => {
+  describe("type literal validation", () => {
+    it("should return valid when all properties are documented", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         * @param name - The name
+         * @param age - The age
+         */
+        export type User = {
+          name: string;
+          age: number;
+        };
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should detect missing property documentation", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         * @param name - The name
+         */
+        export type User = {
+          name: string;
+          age: number;
+        };
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "missing_param", target: "age" });
+    });
+
+    it("should detect unused property documentation", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         * @param name - The name
+         * @param removed - No longer exists
+         */
+        export type User = {
+          name: string;
+        };
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "unused_param", target: "removed" });
+    });
+
+    it("should detect both missing and unused simultaneously", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         * @param oldField - Removed
+         */
+        export type Config = {
+          host: string;
+          port: number;
+        };
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "missing_param", target: "host" });
+      expect(result.errors).toContainEqual({ type: "missing_param", target: "port" });
+      expect(result.errors).toContainEqual({ type: "unused_param", target: "oldField" });
+    });
+  });
+
+  describe("nested property validation", () => {
+    it("should validate nested type literal properties", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         * @param db - Database config
+         * @param db.host - The host
+         * @param db.port - The port
+         */
+        export type Config = {
+          db: {
+            host: string;
+            port: number;
+          };
+        };
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should detect unused nested property documentation", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         * @param db - Database config
+         * @param db.host - The host
+         * @param db.removed - No longer exists
+         */
+        export type Config = {
+          db: {
+            host: string;
+          };
+        };
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "unused_param", target: "db.removed" });
+    });
+
+    it("should detect missing nested property documentation", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         * @param db - Database config
+         */
+        export type Config = {
+          db: {
+            host: string;
+            port: number;
+          };
+        };
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "missing_param", target: "db.host" });
+      expect(result.errors).toContainEqual({ type: "missing_param", target: "db.port" });
+    });
+  });
+
+  describe("non-type-literal types", () => {
+    it("should skip union types", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         */
+        export type Status = "active" | "inactive";
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should skip primitive types", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         */
+        export type ID = string;
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should skip array types", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         */
+        export type Names = string[];
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should skip function types", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         */
+        export type Handler = (event: Event) => void;
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should return valid for empty type literal", () => {
+      const sourceFile = createTSSourceFile(`
+        /**
+         * @public
+         */
+        export type Empty = {};
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases()[0];
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+});
