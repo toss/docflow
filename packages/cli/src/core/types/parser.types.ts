@@ -31,10 +31,10 @@ export interface ParsedJSDoc {
   deprecated?: string;
   examples?: ExampleData[];
   parameters?: ParameterData[];
+  properties?: PropertyData[];
   returns?: ReturnData;
   throws?: ThrowsData[];
   typedef?: TypedefData[];
-  properties?: ParameterData[];
   see?: SeeData[];
   version?: VersionData[];
 }

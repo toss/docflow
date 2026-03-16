@@ -42,6 +42,7 @@ export interface GeneratorConfig {
 
 export const defaultVitePressLabels = {
   parameters: "Parameters",
+  properties: "Properties",
   returns: "Returns",
   throws: "Throws",
   examples: "Examples",
@@ -74,6 +75,7 @@ type MarkdownSectionType =
   | "deprecated"
   | "signature"
   | "parameters"
+  | "properties"
   | "returns"
   | "throws"
   | "typedef"
