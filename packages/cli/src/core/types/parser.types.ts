@@ -52,11 +52,13 @@ export interface ParsedJSDoc {
  * @param {boolean} required Whether the property is required
  * @param {string} [defaultValue] Default value if the property is optional
  */
-interface PropertyData {
+export interface PropertyData {
   name: string;
+  type?: string;
   description: string;
   required: boolean;
   defaultValue?: string;
+  nested?: PropertyData[];
 }
 
 /**
