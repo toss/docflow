@@ -35,6 +35,7 @@ export interface GeneratorConfig {
     deprecated?: string;
     signature?: string;
     typedef?: string;
+    properties?: string;
   };
   signatureLanguage?: string;
 }
