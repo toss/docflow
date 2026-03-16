@@ -14,7 +14,7 @@ Represents a sidebar navigation item for the documentation site. Can be a link o
 interface SidebarItem { text: string; link?: string; items?: SidebarItem[]; collapsed?: boolean }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

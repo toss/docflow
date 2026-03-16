@@ -14,7 +14,7 @@ Represents the parsed result of @version tags in JSDoc. Used to display version 
 interface VersionData { version: string; description: string; platforms?: string[] }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

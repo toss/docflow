@@ -14,7 +14,7 @@ Context information passed during plugin execution. Includes workspace path and 
 interface PluginContext { workspacePath?: string; config?: Config }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

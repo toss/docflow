@@ -2,16 +2,16 @@
 sourcePath: "packages/cli/src/core/types/parser.types.ts"
 ---
 
-# ParameterData
+# PropertyData
 
  
-Represents the parsed result of @param tags in JSDoc.
+Represents property information of an object type. Used to describe object properties in ReturnData and TypedefData.
 
 
 ## Signature
 
 ```typescript
-interface ParameterData { name: string; type: string; description: string; required: boolean; defaultValue?: string; nested?: ParameterData[] }
+interface PropertyData { name: string; type?: string; description: string; required: boolean; defaultValue?: string; nested?: PropertyData[] }
 ```
 
 ### Properties
@@ -20,31 +20,26 @@ interface ParameterData { name: string; type: string; description: string; requi
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">name</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">string</span>
     <br/>
-    <p class="post-parameters--description">Parameter name</p>
+    <p class="post-parameters--description">Name of the property</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
-    <span class="post-parameters--name">type</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">string</span>
+    <span class="post-parameters--name">type</span> · <span class="post-parameters--type">string</span>
     <br/>
-    <p class="post-parameters--description">Parameter type</p>
+    <p class="post-parameters--description">Type of the property</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">description</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">string</span>
     <br/>
-    <p class="post-parameters--description">Parameter description</p>
+    <p class="post-parameters--description">Description of the property</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">required</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">boolean</span>
     <br/>
-    <p class="post-parameters--description">Whether the parameter is required</p>
+    <p class="post-parameters--description">Whether the property is required</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">defaultValue</span> · <span class="post-parameters--type">string</span>
     <br/>
-    <p class="post-parameters--description">Default value if the parameter is optional</p>
-  </li>
-  <li class="post-parameters-li post-parameters-li-root">
-    <span class="post-parameters--name">nested</span> · <span class="post-parameters--type">ParameterData[]</span>
-    <br/>
-    <p class="post-parameters--description">Nested parameter data for object parameters</p>
+    <p class="post-parameters--description">Default value if the property is optional</p>
   </li>
 </ul>

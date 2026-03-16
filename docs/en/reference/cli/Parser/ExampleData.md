@@ -14,7 +14,7 @@ Represents the parsed result of @example tags in JSDoc.
 interface ExampleData { title?: string; code: string; language?: string }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
