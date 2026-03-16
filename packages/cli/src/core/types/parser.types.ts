@@ -8,19 +8,20 @@ import { ExportedDeclarations, JSDoc } from "ts-morph";
  * @description
  * Represents the parsed result of JSDoc templates used in Docflow.
  *
- * @param {string} [name] Name of the documented element
- * @param {string} [description] Description of the element
- * @param {string} [category] Category classification of the element
- * @param {string} [kind] Type of declaration (function, class, interface, etc.)
- * @param {string} [signature] TypeScript signature of the element
- * @param {string} [deprecated] Deprecation notice (if applicable)
- * @param {ExampleData[]} [examples] Array of example code
- * @param {ParameterData[]} [parameters] Array of parameter information
- * @param {ReturnData} [returns] Return value information
- * @param {ThrowsData[]} [throws] Array of exception information
- * @param {TypedefData[]} [typedef] Array of type definitions
- * @param {SeeData[]} [see] Array of references to related documentation
- * @param {VersionData[]} [version] Array of version information
+ * @property {string} [name] Name of the documented element
+ * @property {string} [description] Description of the element
+ * @property {string} [category] Category classification of the element
+ * @property {string} [kind] Type of declaration (function, class, interface, etc.)
+ * @property {string} [signature] TypeScript signature of the element
+ * @property {string} [deprecated] Deprecation notice (if applicable)
+ * @property {ExampleData[]} [examples] Array of example code
+ * @property {ParameterData[]} [parameters] Array of parameter information
+ * @property {PropertyData[]} [properties] Array of property information for interface/type declarations
+ * @property {ReturnData} [returns] Return value information
+ * @property {ThrowsData[]} [throws] Array of exception information
+ * @property {TypedefData[]} [typedef] Array of type definitions
+ * @property {SeeData[]} [see] Array of references to related documentation
+ * @property {VersionData[]} [version] Array of version information
  */
 export interface ParsedJSDoc {
   name?: string;
@@ -47,10 +48,11 @@ export interface ParsedJSDoc {
  * @description
  * Represents property information of an object type. Used to describe object properties in ReturnData and TypedefData.
  *
- * @param {string} name Name of the property
- * @param {string} description Description of the property
- * @param {boolean} required Whether the property is required
- * @param {string} [defaultValue] Default value if the property is optional
+ * @property {string} name Name of the property
+ * @property {string} [type] Type of the property
+ * @property {string} description Description of the property
+ * @property {boolean} required Whether the property is required
+ * @property {string} [defaultValue] Default value if the property is optional
  */
 export interface PropertyData {
   name: string;
@@ -69,9 +71,9 @@ export interface PropertyData {
  * @description
  * Represents the parsed result of @example tags in JSDoc.
  *
- * @param {string} [title] Optional title of the example
- * @param {string} code Example code content
- * @param {string} [language] Programming language for syntax highlighting
+ * @property {string} [title] Optional title of the example
+ * @property {string} code Example code content
+ * @property {string} [language] Programming language for syntax highlighting
  */
 export interface ExampleData {
   title?: string;
@@ -87,12 +89,12 @@ export interface ExampleData {
  * @description
  * Represents the parsed result of @param tags in JSDoc.
  *
- * @param {string} name Parameter name
- * @param {string} type Parameter type
- * @param {string} description Parameter description
- * @param {boolean} required Whether the parameter is required
- * @param {string} [defaultValue] Default value if the parameter is optional
- * @param {ParameterData[]} [nested] Nested parameter data for object parameters
+ * @property {string} name Parameter name
+ * @property {string} type Parameter type
+ * @property {string} description Parameter description
+ * @property {boolean} required Whether the parameter is required
+ * @property {string} [defaultValue] Default value if the parameter is optional
+ * @property {ParameterData[]} [nested] Nested parameter data for object parameters
  */
 export interface ParameterData {
   name: string;
@@ -111,10 +113,10 @@ export interface ParameterData {
  * @description
  * Represents the parsed result of @returns tags in JSDoc. Used to describe return value information of functions.
  *
- * @param {string} type Type of the return value
- * @param {string} [name] Optional name of the return value
- * @param {string} description Description of the return value
- * @param {PropertyData[]} [properties] Array of property information if the return value is an object
+ * @property {string} type Type of the return value
+ * @property {string} [name] Optional name of the return value
+ * @property {string} description Description of the return value
+ * @property {PropertyData[]} [properties] Array of property information if the return value is an object
  */
 export interface ReturnData {
   type: string;
@@ -131,9 +133,9 @@ export interface ReturnData {
  * @description
  * Represents the parsed result of @throws tags in JSDoc. Used to describe exception information that can occur in functions.
  *
- * @param {string} type Type of the exception
- * @param {string} [name] Optional name of the exception
- * @param {string} description Exception occurrence conditions and description
+ * @property {string} type Type of the exception
+ * @property {string} [name] Optional name of the exception
+ * @property {string} description Exception occurrence conditions and description
  */
 export interface ThrowsData {
   type: string;
@@ -149,10 +151,10 @@ export interface ThrowsData {
  * @description
  * Represents the parsed result of @typedef tags in JSDoc. Used to define custom types or complex object structures.
  *
- * @param {string} name Name of the type
- * @param {string} type Base type of the type (e.g., Object, Array, etc.)
- * @param {string} description Description of the type
- * @param {PropertyData[]} properties Array of property information if the type is an object
+ * @property {string} name Name of the type
+ * @property {string} type Base type of the type (e.g., Object, Array, etc.)
+ * @property {string} description Description of the type
+ * @property {PropertyData[]} properties Array of property information if the type is an object
  */
 export interface TypedefData {
   name: string;
@@ -169,8 +171,8 @@ export interface TypedefData {
  * @description
  * Represents the parsed result of @see tags in JSDoc. Used to provide references to external documents or related content.
  *
- * @param {string} reference URL or link to the external document to reference
- * @param {string} [description] Optional description for the reference
+ * @property {string} reference URL or link to the external document to reference
+ * @property {string} [description] Optional description for the reference
  */
 export interface SeeData {
   reference: string;
@@ -185,9 +187,9 @@ export interface SeeData {
  * @description
  * Represents the parsed result of @version tags in JSDoc. Used to display version information in table format.
  *
- * @param {string} version Version number
- * @param {string} description Description of changes in the version
- * @param {string[]} [platforms] List of supported platforms (optional)
+ * @property {string} version Version number
+ * @property {string} description Description of changes in the version
+ * @property {string[]} [platforms] List of supported platforms (optional)
  */
 export interface VersionData {
   version: string;
@@ -203,7 +205,7 @@ export interface VersionData {
  * @description
  * Parsed JSDoc data for document generation, extending the [ExportDeclaration](/en/reference/cli/parser/ExportDeclaration) interface.
  *
- * @param {ParsedJSDoc} parsedJSDoc Parsed result of JSDoc templates used in Docflow
+ * @property {ParsedJSDoc} parsedJSDoc Parsed result of JSDoc templates used in Docflow
  */
 export interface TargetWithJSDoc extends ExportDeclaration {
   parsedJSDoc: ParsedJSDoc;
@@ -239,12 +241,12 @@ export type StandardizedFilePath = string & {
  * @description
  * Represents an exported declaration with metadata including file path, symbol name, and JSDoc information.
  *
- * @param {StandardizedFilePath} filePath Standardized file path of the exported declaration
- * @param {string} symbolName Symbol name of the exported declaration
- * @param {ExportedDeclarations} declaration TypeScript declaration object
- * @param {DeclarationKind} kind Type of the declaration
- * @param {JSDoc} jsDoc Raw JSDoc data
- * @param {string} signature TypeScript signature string
+ * @property {StandardizedFilePath} filePath Standardized file path of the exported declaration
+ * @property {string} symbolName Symbol name of the exported declaration
+ * @property {ExportedDeclarations} declaration TypeScript declaration object
+ * @property {DeclarationKind} kind Type of the declaration
+ * @property {JSDoc} jsDoc Raw JSDoc data
+ * @property {string} signature TypeScript signature string
  */
 export type ExportDeclaration = {
   filePath: StandardizedFilePath;

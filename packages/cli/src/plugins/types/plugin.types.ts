@@ -10,8 +10,8 @@ import { MarkdownGenerator } from "../../core/types/generator.types.js";
  * @description
  * Context information passed during plugin execution. Includes workspace path and configuration data.
  *
- * @param {string} [workspacePath] Absolute path to the workspace root directory
- * @param {Config} [config] Complete configuration object including project, command, and plugin settings
+ * @property {string} [workspacePath] Absolute path to the workspace root directory
+ * @property {Config} [config] Complete configuration object including project, command, and plugin settings
  */
 export interface PluginContext {
   workspacePath?: string;
@@ -26,10 +26,10 @@ export interface PluginContext {
  * @description
  * Interface defining the basic structure of a Docflow plugin. Includes plugin name and hook functions.
  *
- * @param {string} name Unique identifier for the plugin
- * @param {object} hooks Object containing hook functions that the plugin can implement
- * @param {function} [hooks.transformManifest] Hook to transform generated manifest data
- * @param {function} [hooks.provideGenerator] Hook to provide a custom markdown generator
+ * @property {string} name Unique identifier for the plugin
+ * @property {object} hooks Object containing hook functions that the plugin can implement
+ * @property {function} [hooks.transformManifest] Hook to transform generated manifest data
+ * @property {function} [hooks.provideGenerator] Hook to provide a custom markdown generator
  */
 export interface Plugin {
   name: string;
