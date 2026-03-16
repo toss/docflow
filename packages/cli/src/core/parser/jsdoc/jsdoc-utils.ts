@@ -1,7 +1,7 @@
 import { flatMap } from "es-toolkit";
 import { isEmpty } from "es-toolkit/compat";
-import { Node, JSDocableNode, JSDoc } from "ts-morph";
-import { ParameterData, ParsedJSDoc } from "../../types/parser.types.js";
+import { JSDoc, JSDocableNode, Node } from "ts-morph";
+import { ParsedJSDoc, PropertyData } from "../../types/parser.types.js";
 
 export const EMPTY_PARSED_JSDOC: ParsedJSDoc = {
   examples: [],
@@ -49,18 +49,18 @@ function getJSDocableNode(node: Node): JSDocableNode | undefined {
   return undefined;
 }
 
-export function getJSDocPropertyNames(properties: ParameterData[]): string[] {
+export function getJSDocPropertyNames(properties: PropertyData[]): string[] {
   return getJSDocParameterNames(properties);
 }
 
-export function getJSDocParameterNames(parameters: ParameterData[]): string[] {
-  const collectNames = (params: ParameterData[], prefix = ""): string[] => {
-    return flatMap(params, param => {
+export function getJSDocParameterNames(properties: PropertyData[]): string[] {
+  const collectNames = (properties: PropertyData[], prefix = ""): string[] => {
+    return flatMap(properties, param => {
       const fullName = isEmpty(prefix) ? param.name : `${prefix}.${param.name}`;
 
       return [fullName, ...(param.nested != null ? collectNames(param.nested, fullName) : [])];
     });
   };
 
-  return collectNames(parameters);
+  return collectNames(properties);
 }

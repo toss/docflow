@@ -387,6 +387,140 @@ export function configure(config: any): void {
       expect(result.throws).toHaveLength(0);
     });
 
+    it("should parse @property tags for interface kind", () => {
+      const sourceFile = project.createSourceFile(
+        "test.ts",
+        `
+/**
+ * @kind interface
+ * @name UserConfig
+ * @description User configuration options
+ * @property {string} name User name
+ * @property {number} [age] User age
+ * @property {boolean} active Whether user is active
+ */
+export interface UserConfig {
+  name: string;
+  age?: number;
+  active: boolean;
+}
+        `
+      );
+
+      const iface = sourceFile.getInterface("UserConfig")!;
+      const jsDoc = iface.getJsDocs()[0]!;
+
+      const result = parser.parse(jsDoc);
+
+      expect(result.parameters).toHaveLength(0);
+      expect(result.properties).toBeDefined();
+      expect(result.properties).toHaveLength(3);
+      expect(result.properties?.[0].name).toBe("name");
+      expect(result.properties?.[0].type).toBe("string");
+      expect(result.properties?.[0].required).toBe(true);
+      expect(result.properties?.[1].name).toBe("age");
+      expect(result.properties?.[1].required).toBe(false);
+      expect(result.properties?.[2].name).toBe("active");
+    });
+
+    it("should parse @property tags for type kind", () => {
+      const sourceFile = project.createSourceFile(
+        "test.ts",
+        `
+/**
+ * @kind type
+ * @name Options
+ * @description Options type
+ * @property {string} mode Operation mode
+ * @property {boolean} [verbose=false] Enable verbose output
+ */
+export type Options = {
+  mode: string;
+  verbose?: boolean;
+}
+        `
+      );
+
+      const typeAlias = sourceFile.getTypeAlias("Options")!;
+      const jsDoc = typeAlias.getJsDocs()[0]!;
+
+      const result = parser.parse(jsDoc);
+
+      expect(result.parameters).toHaveLength(0);
+      expect(result.properties).toBeDefined();
+      expect(result.properties).toHaveLength(2);
+      expect(result.properties?.[0].name).toBe("mode");
+      expect(result.properties?.[1].name).toBe("verbose");
+      expect(result.properties?.[1].defaultValue).toBe("false");
+    });
+
+    it("should parse nested @property tags as tree for interface kind", () => {
+      const sourceFile = project.createSourceFile(
+        "test.ts",
+        `
+/**
+ * @kind interface
+ * @name ServerConfig
+ * @description Server configuration
+ * @property {string} host Server hostname
+ * @property {number} port Server port
+ * @property {object} database Database settings
+ * @property {string} database.host Database hostname
+ * @property {number} database.port Database port
+ */
+export interface ServerConfig {
+  host: string;
+  port: number;
+  database: {
+    host: string;
+    port: number;
+  };
+}
+        `
+      );
+
+      const iface = sourceFile.getInterface("ServerConfig")!;
+      const jsDoc = iface.getJsDocs()[0]!;
+
+      const result = parser.parse(jsDoc);
+
+      expect(result.parameters).toHaveLength(0);
+      expect(result.properties).toBeDefined();
+      expect(result.properties).toHaveLength(3);
+      expect(result.properties?.[0].name).toBe("host");
+      expect(result.properties?.[1].name).toBe("port");
+      expect(result.properties?.[2]).toMatchObject({
+        name: "database",
+        type: "object",
+        nested: [
+          { name: "host", type: "string" },
+          { name: "port", type: "number" },
+        ],
+      });
+    });
+
+    it("should parse @param tags for function kind (not @property)", () => {
+      const sourceFile = project.createSourceFile(
+        "test.ts",
+        `
+/**
+ * @kind function
+ * @param {string} name The name
+ * @param {number} count The count
+ */
+export function greet(name: string, count: number): void {}
+        `
+      );
+
+      const func = sourceFile.getFunction("greet")!;
+      const jsDoc = func.getJsDocs()[0]!;
+
+      const result = parser.parse(jsDoc);
+
+      expect(result.parameters).toHaveLength(2);
+      expect(result.properties).toHaveLength(0);
+    });
+
     it("should parse JSDoc with return properties", () => {
       const sourceFile = project.createSourceFile(
         "test.ts",

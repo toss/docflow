@@ -2,6 +2,7 @@ import {
   ParsedJSDoc,
   TypedefData,
   ParameterData,
+  PropertyData,
   ReturnData,
   ThrowsData,
   ExampleData,
@@ -53,6 +54,10 @@ export class VitePressGenerator implements MarkdownGenerator {
 
     if (jsDocData.parameters && jsDocData.parameters.length > 0) {
       sections.push(this.createParametersSection(jsDocData.parameters));
+    }
+
+    if (jsDocData.properties && jsDocData.properties.length > 0) {
+      sections.push(this.createPropertiesSection(jsDocData.properties));
     }
 
     if (jsDocData.returns) {
@@ -207,6 +212,56 @@ export class VitePressGenerator implements MarkdownGenerator {
       type: "typedef",
       content: content.join("\n"),
     };
+  }
+
+  private createPropertiesSection(properties: PropertyData[]): MarkdownSection {
+    const content = [`### ${this.labels.properties}`, ""];
+
+    content.push('<ul class="post-parameters-ul">');
+
+    for (const prop of properties) {
+      content.push(this.renderProperty(prop, true));
+    }
+
+    content.push("</ul>");
+
+    return {
+      type: "properties",
+      content: content.join("\n"),
+    };
+  }
+
+  private renderProperty(prop: PropertyData, isRoot = false): string {
+    const cssClass = isRoot ? "post-parameters-li-root" : "";
+    const requiredText = prop.required ? '<span class="post-parameters--required">Required</span>' : "";
+    const defaultText = prop.defaultValue
+      ? `<span class="post-parameters--default">${this.escapeHtml(prop.defaultValue)}</span>`
+      : "";
+
+    const typeText = prop.type ? `<span class="post-parameters--type">${this.escapeHtml(prop.type)}</span>` : "";
+
+    const cleanedDescription = prop.description.replace(/^-\s*/, "").trim();
+
+    const afterNameParts = [typeText, defaultText].filter(part => part.length > 0);
+    const afterNameText = afterNameParts.length > 0 ? " · " + afterNameParts.join(" · ") : "";
+
+    const lines = [
+      `  <li class="post-parameters-li ${cssClass}">`,
+      `    <span class="post-parameters--name">${prop.name}</span>${requiredText}${afterNameText}`,
+      `    <br/>`,
+      `    <p class="post-parameters--description">${this.toHTMLCode(cleanedDescription)}</p>`,
+    ];
+
+    if (prop.nested && prop.nested.length > 0) {
+      lines.push('    <ul class="post-parameters-ul">');
+      for (const nested of prop.nested) {
+        lines.push(this.renderProperty(nested, false));
+      }
+      lines.push("    </ul>");
+    }
+
+    lines.push("  </li>");
+    return lines.join("\n");
   }
 
   private createParametersSection(parameters: ParameterData[]): MarkdownSection {
