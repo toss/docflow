@@ -4,17 +4,17 @@ sourcePath: "packages/cli/src/core/types/parser.types.ts"
 
 # ParsedJSDoc
 
- 
+
 Docflow에서 사용하는 JSDoc 템플릿을 파싱한 결과를 나타내요.
 
 
 ## 시그니처
 
 ```typescript
-interface ParsedJSDoc { name?: string; description?: string; category?: string; kind?: string; signature?: string; deprecated?: string; examples?: ExampleData[]; parameters?: ParameterData[]; returns?: ReturnData; throws?: ThrowsData[]; typedef?: TypedefData[]; see?: SeeData[]; version?: VersionData[] }
+interface ParsedJSDoc { name?: string; description?: string; category?: string; kind?: string; signature?: string; deprecated?: string; examples?: ExampleData[]; parameters?: ParameterData[]; properties?: PropertyData[]; returns?: ReturnData; throws?: ThrowsData[]; typedef?: TypedefData[]; see?: SeeData[]; version?: VersionData[] }
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
@@ -56,6 +56,11 @@ interface ParsedJSDoc { name?: string; description?: string; category?: string; 
     <span class="post-parameters--name">parameters</span> · <span class="post-parameters--type">ParameterData[]</span>
     <br/>
     <p class="post-parameters--description">매개변수 정보의 배열</p>
+  </li>
+  <li class="post-parameters-li post-parameters-li-root">
+    <span class="post-parameters--name">properties</span> · <span class="post-parameters--type">PropertyData[]</span>
+    <br/>
+    <p class="post-parameters--description">인터페이스/타입 선언의 속성 정보 배열</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">returns</span> · <span class="post-parameters--type">ReturnData</span>
