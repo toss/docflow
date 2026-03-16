@@ -7,6 +7,7 @@ const EN_BUILD_OPTIONS = {
     signatureLanguage: "typescript",
     labels: {
       parameters: "Parameters",
+      properties: "Properties",
       returns: "Returns",
       throws: "Throws",
       examples: "Examples",
@@ -31,6 +32,7 @@ const KO_BUILD_OPTIONS = {
     signatureLanguage: "typescript",
     labels: {
       parameters: "매개변수",
+      properties: "속성",
       returns: "반환값",
       throws: "예외",
       examples: "예시 코드",
@@ -53,8 +55,7 @@ const BUILD_OPTIONS = {
   ko: KO_BUILD_OPTIONS,
 };
 
-const BUILD_TARGET =
-  (process.env.LANGUAGE as keyof typeof BUILD_OPTIONS) || "en";
+const BUILD_TARGET = (process.env.LANGUAGE as keyof typeof BUILD_OPTIONS) || "en";
 
 const config: Config = {
   project: {
@@ -72,21 +73,18 @@ const config: Config = {
     },
     generate: {
       jsdoc: {
-        fetcher: async ({ signature, prompt }) => {
-          const response = await fetch(
-            "https://api.openai.com/v1/chat/completions",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-              },
-              body: JSON.stringify({
-                model: "gpt-4o",
-                messages: [{ role: "user", content: prompt }],
-              }),
-            }
-          );
+        fetcher: async ({ prompt }) => {
+          const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+            },
+            body: JSON.stringify({
+              model: "gpt-4o",
+              messages: [{ role: "user", content: prompt }],
+            }),
+          });
           const data = await response.json();
           return data.choices[0].message.content;
         },
