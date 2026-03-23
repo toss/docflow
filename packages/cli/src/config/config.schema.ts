@@ -8,8 +8,13 @@ export const configSchema = z.object({
     root: z.string().describe("Project root directory"),
     packageManager: z.enum(["yarn", "pnpm", "npm"]).describe("Package manager"),
     workspace: z.object({
-      include: z.array(z.string()).describe("Package patterns to include in build"),
-      exclude: z.array(z.string()).describe("Package patterns to exclude from build"),
+      include: z
+        .array(z.string())
+        .describe("Package patterns to include in build"),
+      exclude: z
+        .array(z.string())
+        .describe("Package patterns to exclude from build")
+        .default([]),
     }),
   }),
   commands: z.object({
@@ -52,4 +57,6 @@ export const configSchema = z.object({
  * @property {function} plugins.plugin Factory function that returns plugin instance
  * @property {object} [plugins.options] Plugin options
  */
-export type Config = z.infer<typeof configSchema>;
+export type Config = z.input<typeof configSchema>;
+
+export type ResolvedConfig = z.output<typeof configSchema>;

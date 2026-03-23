@@ -1,5 +1,5 @@
 import { SidebarItem } from "../../commands/build/manifest/manifest.js";
-import { Config } from "../../config/config.schema.js";
+import { ResolvedConfig } from "../../config/config.schema.js";
 import { MarkdownGenerator } from "../../core/types/generator.types.js";
 
 /**
@@ -15,7 +15,7 @@ import { MarkdownGenerator } from "../../core/types/generator.types.js";
  */
 export interface PluginContext {
   workspacePath?: string;
-  config?: Config;
+  config?: ResolvedConfig;
 }
 
 /**

@@ -1,7 +1,7 @@
 import { Plugin } from "./types/plugin.types.js";
-import { Config } from "../config/config.schema.js";
+import { ResolvedConfig } from "../config/config.schema.js";
 
-export async function loadPlugins(config: Config): Promise<Plugin[]> {
+export async function loadPlugins(config: ResolvedConfig): Promise<Plugin[]> {
   const plugins: Plugin[] = [];
 
   for (const pluginConfig of config.plugins) {

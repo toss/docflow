@@ -1,17 +1,28 @@
 import z from "zod";
 
 export const buildConfigSchema = z.object({
-  manifest: z.object({
-    prefix: z.string().describe("Default prefix for documentation links").default("docs/references"),
-    enabled: z.boolean().describe("Whether to generate manifest.json file").default(true),
-    path: z
-      .string()
-      .describe(
-        "Path to save manifest file (relative to project root or absolute path). If not specified, uses outputDir/manifest.json"
-      )
-      .optional(),
-  }),
-  outputDir: z.string().describe("Directory where build output will be saved").default("docs/references"),
+  manifest: z
+    .object({
+      prefix: z
+        .string()
+        .describe("Default prefix for documentation links")
+        .default("docs/references"),
+      enabled: z
+        .boolean()
+        .describe("Whether to generate manifest.json file")
+        .default(true),
+      path: z
+        .string()
+        .describe(
+          "Path to save manifest file (relative to project root or absolute path). If not specified, uses outputDir/manifest.json",
+        )
+        .optional(),
+    })
+    .default({}),
+  outputDir: z
+    .string()
+    .describe("Directory where build output will be saved")
+    .default("docs/references"),
   generator: z.object({
     name: z.string().describe("Generator name (vitepress or plugin name)"),
     signatureLanguage: z
