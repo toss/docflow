@@ -8,13 +8,8 @@ export const configSchema = z.object({
     root: z.string().describe("Project root directory"),
     packageManager: z.enum(["yarn", "pnpm", "npm"]).describe("Package manager"),
     workspace: z.object({
-      include: z
-        .array(z.string())
-        .describe("Package patterns to include in build"),
-      exclude: z
-        .array(z.string())
-        .describe("Package patterns to exclude from build")
-        .default([]),
+      include: z.array(z.string()).describe("Package patterns to include in build"),
+      exclude: z.array(z.string()).describe("Package patterns to exclude from build").default([]),
     }),
   }),
   commands: z.object({
