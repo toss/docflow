@@ -3694,7 +3694,7 @@ __metadata:
     vitest: "npm:^2.1.9"
     zod: "npm:^3.22.4"
   bin:
-    docflow: ./dist/cli.js
+    docflow: ./bin/cli.js
   languageName: unknown
   linkType: soft
 
