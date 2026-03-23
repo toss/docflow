@@ -19,9 +19,7 @@ describe("getDeclarationKind", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const mathFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("math.ts"));
+    const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
     const addFunction = mathFile?.getFunction("add");
     expect(addFunction).toBeDefined();
@@ -34,9 +32,7 @@ describe("getDeclarationKind", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const mathFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("math.ts"));
+    const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
     const piVariable = mathFile?.getVariableDeclaration("PI");
     expect(piVariable).toBeDefined();
@@ -49,9 +45,7 @@ describe("getDeclarationKind", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const classFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("classes.ts"));
+    const classFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("classes.ts"));
 
     const userClass = classFile?.getClass("User");
     expect(userClass).toBeDefined();
@@ -65,9 +59,7 @@ describe("getDeclarationKind", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/types");
     const project = getTsProject(tsConfigPath);
 
-    const configFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("index.ts"));
+    const configFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("index.ts"));
 
     const userConfigInterface = configFile?.getInterface("UserConfig");
     expect(userConfigInterface).toBeDefined();
@@ -81,9 +73,7 @@ describe("getDeclarationKind", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/types");
     const project = getTsProject(tsConfigPath);
 
-    const configFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("index.ts"));
+    const configFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("index.ts"));
 
     const idTypeAlias = configFile?.getTypeAlias("ID");
     expect(idTypeAlias).toBeDefined();
@@ -97,9 +87,7 @@ describe("getDeclarationKind", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const mathFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("math.ts"));
+    const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
     const statusEnum = mathFile?.getEnum("Status");
     expect(statusEnum).toBeDefined();
@@ -113,9 +101,7 @@ describe("getDeclarationKind", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const classesFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("classes.ts"));
+    const classesFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("classes.ts"));
 
     const importStatement = classesFile?.getImportDeclarations()[0];
     expect(importStatement).toBeDefined();

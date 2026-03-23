@@ -14,7 +14,7 @@ Represents the parsed result of @throws tags in JSDoc. Used to describe exceptio
 interface ThrowsData { type: string; name?: string; description: string }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

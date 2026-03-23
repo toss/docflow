@@ -14,7 +14,7 @@ Represents the parsed result of @returns tags in JSDoc. Used to describe return 
 interface ReturnData { type: string; name?: string; description: string; properties?: PropertyData[] }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

@@ -16,27 +16,17 @@ import { isExportSourceFile } from "../../core/parser/source/is-export-source-fi
 import { getExportedDeclarationsBySourceFile } from "../../core/parser/source/get-exported-declarations-by-sourcefile.js";
 import { excludeBarrelReExports } from "../../core/parser/source/exclude-barrel-re-exports.js";
 import { hasJSDocTag } from "../../core/parser/jsdoc/jsdoc-utils.js";
+import { getWorkingDirectory } from "../../utils/get-working-directory.js";
 
 export class BuildCommand extends Command {
   static paths = [[`build`]];
 
   async execute(): Promise<number> {
-    const {
-      projectConfig,
-      buildConfig,
-      targetPackages,
-      parser,
-      generator,
-      manifestManager,
-      outputDir,
-    } = await loadContext();
+    const { projectConfig, projectRoot, buildConfig, targetPackages, parser, generator, manifestManager, outputDir } =
+      await loadContext();
 
     if (targetPackages.length === 0) {
-      printNoPackagesFound(
-        projectConfig.workspace.include,
-        projectConfig.root,
-        projectConfig.packageManager
-      );
+      printNoPackagesFound(projectConfig.workspace.include, projectConfig.root, projectConfig.packageManager);
       return 1;
     }
 
@@ -45,37 +35,33 @@ export class BuildCommand extends Command {
     for (const pkg of targetPackages) {
       console.log(`📝 ${pkg.name} processing...`);
 
-      const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
-      const project = getTsProject(tsConfigPath);
-      const projectSourceFiles = project.getSourceFiles();
+      try {
+        const tsConfigPath = getTsConfigPath(projectRoot, pkg.location);
+        const project = getTsProject(tsConfigPath);
+        const projectSourceFiles = project.getSourceFiles();
 
-      const exportSourceFiles = projectSourceFiles.filter(isExportSourceFile);
-      const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(
-        getExportedDeclarationsBySourceFile
-      );
-      const excludeBarrelReExport = excludeBarrelReExports(
-        exportDeclarationsBySourceFiles
-      );
-      const targets = excludeBarrelReExport.filter((target) => {
-        return target.jsDoc && hasJSDocTag(target.declaration, "public");
-      });
+        const exportSourceFiles = projectSourceFiles.filter(isExportSourceFile);
+        const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(getExportedDeclarationsBySourceFile);
+        const excludeBarrelReExport = excludeBarrelReExports(exportDeclarationsBySourceFiles);
+        const targets = excludeBarrelReExport.filter(target => {
+          return target.jsDoc && hasJSDocTag(target.declaration, "public");
+        });
 
-      const targetsWithJSDoc = targets.map((target) =>
-        parseJSDoc(target, parser)
-      );
+        const targetsWithJSDoc = targets.map(target => parseJSDoc(target, parser));
 
-      const docs = targetsWithJSDoc.map((target) =>
-        generator.generateDocs(target, pkg.location)
-      );
+        const docs = targetsWithJSDoc.map(target => generator.generateDocs(target, pkg.location));
 
-      console.log(`Generated ${docs.length} documentation files:`);
-      for (const doc of docs) {
-        const outputPath = path.join(outputDir, doc.relativePath);
-        await fs.mkdir(path.dirname(outputPath), { recursive: true });
-        await fs.writeFile(outputPath, doc.content);
-        console.log(`  - ${doc.relativePath}`);
+        console.log(`Generated ${docs.length} documentation files:`);
+        for (const doc of docs) {
+          const outputPath = path.join(outputDir, doc.relativePath);
+          await fs.mkdir(path.dirname(outputPath), { recursive: true });
+          await fs.writeFile(outputPath, doc.content);
+          console.log(`  - ${doc.relativePath}`);
 
-        manifestManager.add(doc.relativePath);
+          manifestManager.add(doc.relativePath);
+        }
+      } catch (error) {
+        console.error(`Failed to build ${pkg.name}: ${error instanceof Error ? error.message : String(error)}`);
       }
     }
 
@@ -86,12 +72,7 @@ export class BuildCommand extends Command {
 
       await fs.mkdir(path.dirname(manifestPath), { recursive: true });
       await fs.writeFile(manifestPath, manifestManager.toString());
-      console.log(
-        `📋 Generated manifest: ${path.relative(
-          projectConfig.root,
-          manifestPath
-        )}`
-      );
+      console.log(`📋 Generated manifest: ${path.relative(projectConfig.root, manifestPath)}`);
     }
 
     return 0;
@@ -99,15 +80,12 @@ export class BuildCommand extends Command {
 }
 
 async function loadContext() {
-  const root = process.cwd();
+  const root = getWorkingDirectory();
   const config = await loadConfig(root);
   const projectRoot = path.resolve(root, config.project.root);
   const buildConfig = config.commands.build;
   const projectConfig = config.project;
-  const packageManager = createPackageManager(
-    projectConfig.packageManager,
-    projectRoot
-  );
+  const packageManager = createPackageManager(projectConfig.packageManager, projectRoot);
   const packages = packageManager.getPackages();
 
   const parser = new JSDocParser();
@@ -116,7 +94,7 @@ async function loadContext() {
     config,
   });
 
-  const targetPackages = packages.filter((pkg) =>
+  const targetPackages = packages.filter(pkg =>
     isTargetPackage(pkg, {
       include: projectConfig.workspace.include,
       exclude: projectConfig.workspace.exclude,
@@ -126,17 +104,9 @@ async function loadContext() {
   try {
     const plugins = await loadPlugins(config);
     pluginManager.registerAll(plugins);
-    console.log(
-      `📦 Loaded ${plugins.length} plugin(s): ${plugins
-        .map((p) => p.name)
-        .join(", ")}`
-    );
+    console.log(`📦 Loaded ${plugins.length} plugin(s): ${plugins.map(p => p.name).join(", ")}`);
   } catch (error) {
-    console.error(
-      `❌ Failed to load plugins: ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    );
+    console.error(`❌ Failed to load plugins: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   const generator = pluginManager.getGenerator(config);
@@ -145,11 +115,12 @@ async function loadContext() {
     pluginManager,
   });
 
-  const outputDir = path.resolve(projectConfig.root, buildConfig.outputDir);
+  const outputDir = path.resolve(projectRoot, buildConfig.outputDir);
 
   return {
     buildConfig,
     projectConfig,
+    projectRoot,
     parser,
     generator,
     targetPackages,
@@ -158,11 +129,7 @@ async function loadContext() {
   };
 }
 
-function printNoPackagesFound(
-  include: string[],
-  root: string,
-  packageManager: string
-) {
+function printNoPackagesFound(include: string[], root: string, packageManager: string) {
   console.error("❌ not found packages");
   console.error("check your config:");
   console.error(`  - workspace.include: ${JSON.stringify(include)}`);

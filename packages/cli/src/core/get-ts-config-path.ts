@@ -12,10 +12,5 @@ export function getTsConfigPath(root: string, pkg: string) {
     return buildConfigPath;
   }
 
-  const rootConfigPath = path.join(root, "tsconfig.json");
-  if (existsSync(rootConfigPath)) {
-    return rootConfigPath;
-  }
-
-  throw new Error(`tsconfig.json not found in ${root} or ${pkg}`);
+  throw new Error(`tsconfig.json not found in ${pkg}`);
 }

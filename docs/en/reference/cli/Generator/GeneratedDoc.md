@@ -4,19 +4,17 @@ sourcePath: "packages/cli/src/core/types/generator.types.ts"
 
 # GeneratedDoc
 
+ 
 Document generation result containing file path, content, and relative path information.
+
 
 ## Signature
 
 ```typescript
-interface GeneratedDoc {
-  filePath: StandardizedFilePath;
-  content: string;
-  relativePath: string;
-}
+interface GeneratedDoc { filePath: StandardizedFilePath; content: string; relativePath: string }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
@@ -27,7 +25,7 @@ interface GeneratedDoc {
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">content</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">string</span>
     <br/>
-    <p class="post-parameters--description">Generated Markdown content</p>
+    <p class="post-parameters--description">Generated markdown content</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">relativePath</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">string</span>

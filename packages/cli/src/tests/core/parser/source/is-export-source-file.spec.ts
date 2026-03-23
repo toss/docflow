@@ -19,9 +19,7 @@ describe("isExportSourceFile", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const mathFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("math.ts"));
+    const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
     expect(mathFile).toBeDefined();
     expect(isExportSourceFile(mathFile!)).toBe(true);
@@ -31,9 +29,7 @@ describe("isExportSourceFile", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const indexFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("index.ts"));
+    const indexFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("index.ts"));
 
     expect(indexFile).toBeDefined();
     expect(isExportSourceFile(indexFile!)).toBe(true);
@@ -41,7 +37,6 @@ describe("isExportSourceFile", () => {
 
   it("should return false for files without exports", async () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
-    const project = getTsProject(tsConfigPath);
 
     await workspace.write(
       "packages/core/src/no-exports.ts",
@@ -51,13 +46,11 @@ function internalFunction() {
 }
 
 const internalVariable = "test";
-    `,
+    `
     );
 
     const updatedProject = getTsProject(tsConfigPath);
-    const noExportsFile = updatedProject
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("no-exports.ts"));
+    const noExportsFile = updatedProject.getSourceFiles().find(sf => sf.getFilePath().includes("no-exports.ts"));
 
     expect(noExportsFile).toBeDefined();
     expect(isExportSourceFile(noExportsFile!)).toBe(false);

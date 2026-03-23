@@ -11,18 +11,13 @@ export class TSProjectTestHelper {
   constructor(private workspace: E2EWorkspace) {}
 
   async getProject(packageName: string = "core") {
-    const tsConfigPath = getTsConfigPath(
-      this.workspace.root,
-      `packages/${packageName}`
-    );
+    const tsConfigPath = getTsConfigPath(this.workspace.root, `packages/${packageName}`);
     return getTsProject(tsConfigPath);
   }
 
   async getFileExports(fileName: string, packageName: string = "core") {
     const project = await this.getProject(packageName);
-    const sourceFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes(fileName));
+    const sourceFile = project.getSourceFiles().find(sf => sf.getFilePath().includes(fileName));
 
     if (!sourceFile) {
       throw new Error(`File ${fileName} not found in package ${packageName}`);
@@ -31,13 +26,9 @@ export class TSProjectTestHelper {
     return getExportedDeclarationsBySourceFile(sourceFile);
   }
 
-  async getExportByName(
-    exportName: string,
-    fileName: string,
-    packageName: string = "core"
-  ) {
+  async getExportByName(exportName: string, fileName: string, packageName: string = "core") {
     const exports = await this.getFileExports(fileName, packageName);
-    const targetExport = exports.find((exp) => exp.symbolName === exportName);
+    const targetExport = exports.find(exp => exp.symbolName === exportName);
 
     if (!targetExport) {
       throw new Error(`Export ${exportName} not found in ${fileName}`);
@@ -46,16 +37,8 @@ export class TSProjectTestHelper {
     return targetExport;
   }
 
-  async getExportWithJSDoc(
-    exportName: string,
-    fileName: string,
-    packageName: string = "core"
-  ) {
-    const exportDeclaration = await this.getExportByName(
-      exportName,
-      fileName,
-      packageName
-    );
+  async getExportWithJSDoc(exportName: string, fileName: string, packageName: string = "core") {
+    const exportDeclaration = await this.getExportByName(exportName, fileName, packageName);
     return parseJSDoc(exportDeclaration, this.parser);
   }
 

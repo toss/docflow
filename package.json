@@ -1,14 +1,26 @@
 {
+  "name": "docflow-monorepo",
   "private": true,
   "workspaces": [
     "packages/*",
     "docs"
   ],
   "scripts": {
-    "lint": "eslint ."
+    "lint": "yarn workspaces foreach -ptR --from 'packages/*' run lint",
+    "typecheck": "yarn workspaces foreach -ptR --from 'packages/*' run typecheck",
+    "build": "yarn workspaces foreach -ptR --from 'packages/*' run build",
+    "test": "yarn workspaces foreach -ptR --from 'packages/*' run test",
+    "format": "prettier  --write 'packages/**/*' 'docs/**/*.{ts,tsx,js,jsx,json}'",
+    "format:check": "prettier  --check 'packages/**/*' 'docs/**/*.{ts,tsx,js,jsx,json}'",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish"
   },
   "packageManager": "yarn@4.9.1",
+  "resolutions": {
+    "node-gyp@npm:latest": "npm:11.2.0"
+  },
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "@eslint/js": "^9.9.1",
     "@types/eslint": "^9",
     "@types/eslint__js": "^8.42.3",
@@ -17,6 +29,7 @@
     "eslint": "^9.9.1",
     "hygen": "^6.2.11",
     "knip": "^5.61.3",
+    "prettier": "^3.8.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.4.0",

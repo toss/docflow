@@ -125,10 +125,7 @@ export function testNoExamples(input: string): boolean {
     `
     );
 
-    const targetWithJSDoc = await tsHelper.getExportWithJSDoc(
-      "testNoExamples",
-      "test-no-examples.ts"
-    );
+    const targetWithJSDoc = await tsHelper.getExportWithJSDoc("testNoExamples", "test-no-examples.ts");
     const result = generator.generateDocs(targetWithJSDoc, "@test/core");
 
     expect(result.content).not.toContain("## Examples");

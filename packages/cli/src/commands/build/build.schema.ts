@@ -29,9 +29,7 @@ export const buildConfigSchema = z.object({
       .string()
       .optional()
       .default("typescript")
-      .describe(
-        "Language for code signature highlighting (e.g., typescript, tsx, javascript)",
-      ),
+      .describe("Language for code signature highlighting (e.g., typescript, tsx, javascript)"),
     labels: z
       .object({
         parameters: z.string().default("Parameters"),

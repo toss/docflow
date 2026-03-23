@@ -1,9 +1,7 @@
 import { Node, ExportedDeclarations } from "ts-morph";
 import { DeclarationKind } from "../../types/parser.types.js";
 
-export function getDeclarationKind(
-  declaration: ExportedDeclarations,
-): DeclarationKind | undefined {
+export function getDeclarationKind(declaration: ExportedDeclarations): DeclarationKind | undefined {
   if (Node.isFunctionDeclaration(declaration)) {
     return "function";
   }
@@ -26,11 +24,7 @@ export function getDeclarationKind(
 
   if (Node.isVariableDeclaration(declaration)) {
     const initializer = declaration.getInitializer();
-    if (
-      initializer &&
-      (Node.isArrowFunction(initializer) ||
-        Node.isFunctionExpression(initializer))
-    ) {
+    if (initializer && (Node.isArrowFunction(initializer) || Node.isFunctionExpression(initializer))) {
       return "function";
     }
     return "variable";

@@ -26,9 +26,7 @@ export class PluginManager {
     return this.plugins.reduce<SidebarItem[]>((current, plugin) => {
       const { transformManifest } = plugin.hooks;
 
-      return transformManifest
-        ? transformManifest(current, this.context)
-        : current;
+      return transformManifest ? transformManifest(current, this.context) : current;
     }, manifest);
   }
 
@@ -46,22 +44,13 @@ export class PluginManager {
       }
     }
 
-    const plugin = this.plugins.find((p) => p.name === generatorConfig.name);
+    const plugin = this.plugins.find(p => p.name === generatorConfig.name);
     if (plugin?.hooks.provideGenerator) {
       return plugin.hooks.provideGenerator();
     }
 
-    const availableGenerators = [
-      "vitepress",
-      ...this.plugins
-        .filter((p) => p.hooks.provideGenerator)
-        .map((p) => p.name),
-    ];
-    throw new Error(
-      `Generator '${
-        generatorConfig.name
-      }' not found. Available: ${availableGenerators.join(", ")}`,
-    );
+    const availableGenerators = ["vitepress", ...this.plugins.filter(p => p.hooks.provideGenerator).map(p => p.name)];
+    throw new Error(`Generator '${generatorConfig.name}' not found. Available: ${availableGenerators.join(", ")}`);
   }
 
   getPlugins(): Plugin[] {

@@ -1,8 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import {
-  hasJSDocTag,
-  getJSDoc,
-} from "../../../../core/parser/jsdoc/jsdoc-utils.js";
+import { hasJSDocTag, getJSDoc } from "../../../../core/parser/jsdoc/jsdoc-utils.js";
 import { getTsProject } from "../../../../core/get-ts-project.js";
 import { getTsConfigPath } from "../../../../core/get-ts-config-path.js";
 import { createE2EWorkspace, E2EWorkspace } from "../../../utils/create-e2e-workspace.js";
@@ -23,9 +20,7 @@ describe("jsdoc-utils", () => {
       const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
       const project = getTsProject(tsConfigPath);
 
-      const mathFile = project
-        .getSourceFiles()
-        .find((sf) => sf.getFilePath().includes("math.ts"));
+      const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
       const addFunction = mathFile?.getFunction("add");
       expect(addFunction).toBeDefined();
@@ -38,9 +33,7 @@ describe("jsdoc-utils", () => {
       const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
       const project = getTsProject(tsConfigPath);
 
-      const mathFile = project
-        .getSourceFiles()
-        .find((sf) => sf.getFilePath().includes("math.ts"));
+      const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
       const subtractFunction = mathFile?.getFunction("subtract");
       expect(subtractFunction).toBeDefined();
@@ -53,9 +46,7 @@ describe("jsdoc-utils", () => {
       const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
       const project = getTsProject(tsConfigPath);
 
-      const mathFile = project
-        .getSourceFiles()
-        .find((sf) => sf.getFilePath().includes("math.ts"));
+      const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
       const subtractFunction = mathFile?.getFunction("subtract");
       expect(subtractFunction).toBeDefined();
@@ -67,8 +58,6 @@ describe("jsdoc-utils", () => {
     it("should handle different tag names", async () => {
       const workspace = await createE2EWorkspace();
       const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
-      const project = getTsProject(tsConfigPath);
-
       await workspace.write(
         "packages/core/src/test-tags.ts",
         `
@@ -80,13 +69,11 @@ describe("jsdoc-utils", () => {
 export function testFunction() {
   return true;
 }
-      `,
+      `
       );
 
       const updatedProject = getTsProject(tsConfigPath);
-      const testFile = updatedProject
-        .getSourceFiles()
-        .find((sf) => sf.getFilePath().includes("test-tags.ts"));
+      const testFile = updatedProject.getSourceFiles().find(sf => sf.getFilePath().includes("test-tags.ts"));
 
       const testFunction = testFile?.getFunction("testFunction");
       expect(testFunction).toBeDefined();
@@ -104,9 +91,7 @@ export function testFunction() {
       const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
       const project = getTsProject(tsConfigPath);
 
-      const mathFile = project
-        .getSourceFiles()
-        .find((sf) => sf.getFilePath().includes("math.ts"));
+      const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
       const addFunction = mathFile?.getFunction("add");
       expect(addFunction).toBeDefined();
@@ -121,9 +106,7 @@ export function testFunction() {
       const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
       const project = getTsProject(tsConfigPath);
 
-      const mathFile = project
-        .getSourceFiles()
-        .find((sf) => sf.getFilePath().includes("math.ts"));
+      const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
       const subtractFunction = mathFile?.getFunction("subtract");
       expect(subtractFunction).toBeDefined();
@@ -137,9 +120,7 @@ export function testFunction() {
       const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
       const project = getTsProject(tsConfigPath);
 
-      const mathFile = project
-        .getSourceFiles()
-        .find((sf) => sf.getFilePath().includes("math.ts"));
+      const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
       const piVariable = mathFile?.getVariableDeclaration("PI");
       expect(piVariable).toBeDefined();
@@ -153,9 +134,7 @@ export function testFunction() {
       const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
       const project = getTsProject(tsConfigPath);
 
-      const classFile = project
-        .getSourceFiles()
-        .find((sf) => sf.getFilePath().includes("classes.ts"));
+      const classFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("classes.ts"));
 
       const userClass = classFile?.getClass("User");
       expect(userClass).toBeDefined();

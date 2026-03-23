@@ -40,8 +40,7 @@ export default {
       plugins: [
         {
           name: "my-plugin",
-          plugin: async () =>
-            (await import(`${workspace.root}/my-plugin.js`)).default,
+          plugin: async () => (await import(`${workspace.root}/my-plugin.js`)).default,
         },
       ],
     });
@@ -79,8 +78,7 @@ export const myNamedPlugin = {
       plugins: [
         {
           name: "myNamedPlugin",
-          plugin: async () =>
-            (await import(`${workspace.root}/named-plugin.js`)).myNamedPlugin,
+          plugin: async () => (await import(`${workspace.root}/named-plugin.js`)).myNamedPlugin,
         },
       ],
     });
@@ -107,7 +105,7 @@ export const myNamedPlugin = {
             name: "inline-plugin",
             hooks: {
               transformManifest: (manifest: SidebarItem[]) => {
-                return manifest.map((item) => ({ ...item, inline: true }));
+                return manifest.map(item => ({ ...item, inline: true }));
               },
             },
           }),
@@ -149,15 +147,12 @@ export const myNamedPlugin = {
       plugins: [
         {
           name: "missing-plugin",
-          plugin: async () =>
-            (await import(`${workspace.root}/nonexistent.js`)).default,
+          plugin: async () => (await import(`${workspace.root}/nonexistent.js`)).default,
         },
       ],
     });
 
-    await expect(loadPlugins(config)).rejects.toThrow(
-      "Failed to load plugin 'missing-plugin'"
-    );
+    await expect(loadPlugins(config)).rejects.toThrow("Failed to load plugin 'missing-plugin'");
   });
 
   it("should throw error for plugin without path or hooks", async () => {
@@ -176,9 +171,7 @@ export const myNamedPlugin = {
       ],
     });
 
-    await expect(loadPlugins(config)).rejects.toThrow(
-      "pluginConfig.plugin is not a function"
-    );
+    await expect(loadPlugins(config)).rejects.toThrow("pluginConfig.plugin is not a function");
   });
 
   it("should throw error for invalid plugin export", async () => {
@@ -199,14 +192,11 @@ export default "not a plugin object";
       plugins: [
         {
           name: "invalid-plugin",
-          plugin: async () =>
-            (await import(`${workspace.root}/invalid-plugin.js`)).default,
+          plugin: async () => (await import(`${workspace.root}/invalid-plugin.js`)).default,
         },
       ],
     });
 
-    await expect(loadPlugins(config)).rejects.toThrow(
-      "did not return a valid plugin object"
-    );
+    await expect(loadPlugins(config)).rejects.toThrow("did not return a valid plugin object");
   });
 });

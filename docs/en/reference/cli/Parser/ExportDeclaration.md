@@ -4,7 +4,9 @@ sourcePath: "packages/cli/src/core/types/parser.types.ts"
 
 # ExportDeclaration
 
+ 
 Represents an exported declaration with metadata including file path, symbol name, and JSDoc information.
+
 
 ## Signature
 
@@ -19,7 +21,7 @@ type ExportDeclaration = {
 };
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

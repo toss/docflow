@@ -1,89 +1,79 @@
 import { Command } from "clipanion";
+import { isEmpty } from "es-toolkit/compat";
+import path from "path";
 import { loadConfig } from "../../config/load-config.js";
-import { createPackageManager } from "../../package-manager/create-package-manager.js";
-import { isTargetPackage } from "../../package-manager/utils/is-target-package.js";
+import { getPackageEntryPoints } from "../../core/entry-point.js";
 import { getTsConfigPath } from "../../core/get-ts-config-path.js";
 import { getTsProject } from "../../core/get-ts-project.js";
-import { isExportSourceFile } from "../../core/parser/source/is-export-source-file.js";
-import { getExportedDeclarationsBySourceFile } from "../../core/parser/source/get-exported-declarations-by-sourcefile.js";
 import { excludeBarrelReExports } from "../../core/parser/source/exclude-barrel-re-exports.js";
-import { hasJSDocTag } from "../../core/parser/jsdoc/jsdoc-utils.js";
-import { getPackageEntryPoints } from "../../core/entry-point.js";
-import path from "path";
+import { getExportedDeclarationsBySourceFile } from "../../core/parser/source/get-exported-declarations-by-sourcefile.js";
+import { isExportSourceFile } from "../../core/parser/source/is-export-source-file.js";
+import { createPackageManager } from "../../package-manager/create-package-manager.js";
+import { isTargetPackage } from "../../package-manager/utils/is-target-package.js";
+import { getWorkingDirectory } from "../../utils/get-working-directory.js";
+import { PackageValidationResult, validateExports } from "./validate/validate-exports.js";
+import { ValidationError } from "./validate/validate.types.js";
 
 export class CheckCommand extends Command {
   static paths = [[`check`]];
 
   async execute(): Promise<number> {
-    const { checkConfig, projectConfig, targetPackages } = await loadContext();
+    const { checkConfig, projectConfig, projectRoot, targetPackages } = await loadContext();
 
-    if (targetPackages.length === 0) {
-      printNoPackagesFound(
-        projectConfig.workspace.include,
-        projectConfig.root,
-        projectConfig.packageManager
-      );
+    if (isEmpty(targetPackages)) {
+      printNoPackagesFound(projectConfig.workspace.include, projectConfig.root, projectConfig.packageManager);
       return 1;
     }
 
+    let hasErrors = false;
     for (const pkg of targetPackages) {
       console.log(`📝 ${pkg.name} processing...`);
 
-      const packagePath = path.resolve(projectConfig.root, pkg.location);
-      const tsConfigPath = getTsConfigPath(projectConfig.root, pkg.location);
-      const project = getTsProject(tsConfigPath);
+      const packagePath = path.resolve(projectRoot, pkg.location);
+      try {
+        const tsConfigPath = getTsConfigPath(projectRoot, pkg.location);
+        const project = getTsProject(tsConfigPath);
 
-      const entryPoints =
-        checkConfig.entryPoints ?? getPackageEntryPoints(packagePath);
+        const entryPoints = checkConfig.entryPoints ?? getPackageEntryPoints(packagePath);
 
-      const sourceFiles = project.getSourceFiles();
-      const entryPointFiles = sourceFiles.filter((file) => {
-        const filePath = file.getFilePath();
-        return entryPoints.some((entryPoint) => filePath.includes(entryPoint));
-      });
-
-      const exportSourceFiles = entryPointFiles.filter(isExportSourceFile);
-      const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(
-        getExportedDeclarationsBySourceFile
-      );
-      const excludeBarrelReExport = excludeBarrelReExports(
-        exportDeclarationsBySourceFiles
-      );
-      const missingJSDocExports = excludeBarrelReExport.filter((target) => {
-        return !hasJSDocTag(target.declaration, "public");
-      });
-
-      if (missingJSDocExports.length > 0) {
-        console.log(`❌ ${pkg.name} has missing JSDoc:`);
-        missingJSDocExports.forEach((exportInfo) => {
-          const relativePath = path.relative(
-            projectConfig.root,
-            exportInfo.filePath
-          );
-          console.log(`  - ${relativePath}:${exportInfo.symbolName}`);
+        const sourceFiles = project.getSourceFiles();
+        const entryPointFiles = sourceFiles.filter(file => {
+          const filePath = file.getFilePath();
+          return entryPoints.some(entryPoint => filePath.includes(entryPoint));
         });
-      } else {
+
+        const exportSourceFiles = entryPointFiles.filter(isExportSourceFile);
+        const exportDeclarationsBySourceFiles = exportSourceFiles.flatMap(getExportedDeclarationsBySourceFile);
+        const exportDeclarations = excludeBarrelReExports(exportDeclarationsBySourceFiles);
+        const result = validateExports(exportDeclarations, projectConfig.root);
+
+        if (!isEmpty(result.issues)) {
+          printValidationErrors(pkg.name, result);
+          hasErrors = true;
+
+          continue;
+        }
+
         console.log(`✅ ${pkg.name} has JSDoc for all exports`);
+      } catch (error) {
+        console.error(`Failed to check ${pkg.name}: ${error instanceof Error ? error.message : String(error)}`);
       }
     }
 
-    return 0;
+    return hasErrors ? 1 : 0;
   }
 }
 
 async function loadContext() {
-  const root = process.cwd();
+  const root = getWorkingDirectory();
   const config = await loadConfig(root);
   const projectRoot = path.resolve(root, config.project.root);
   const projectConfig = config.project;
   const checkConfig = config.commands.check;
-  const packageManager = createPackageManager(
-    projectConfig.packageManager,
-    projectRoot
-  );
+  const packageManager = createPackageManager(projectConfig.packageManager, projectRoot);
   const packages = packageManager.getPackages();
 
-  const targetPackages = packages.filter((pkg) =>
+  const targetPackages = packages.filter(pkg =>
     isTargetPackage(pkg, {
       include: projectConfig.workspace.include,
       exclude: projectConfig.workspace.exclude,
@@ -93,18 +83,45 @@ async function loadContext() {
   return {
     checkConfig,
     projectConfig,
+    projectRoot,
     targetPackages,
   };
 }
 
-function printNoPackagesFound(
-  include: string[],
-  root: string,
-  packageManager: string
-) {
+function printNoPackagesFound(include: string[], root: string, packageManager: string) {
   console.error("❌ not found packages");
   console.error("check your config:");
   console.error(`  - workspace.include: ${JSON.stringify(include)}`);
   console.error(`  - project root: ${root}`);
   console.error(`  - package manager: ${packageManager}`);
+}
+
+function printValidationErrors(packageName: string, result: PackageValidationResult): void {
+  console.log(`❌ ${packageName} has missing JSDoc:`);
+
+  result.issues.forEach(issue => {
+    issue.errors.forEach(error => {
+      const message = formatErrorMessage(error);
+      console.log(`  - ${issue.relativePath}:${issue.exportDeclaration.symbolName} - ${message}`);
+    });
+  });
+}
+
+function formatErrorMessage(error: ValidationError): string {
+  switch (error.type) {
+    case "missing_public":
+      return "missing @public";
+    case "missing_param":
+      return `missing @param for '${error.target}'`;
+    case "unused_param":
+      return `unused @param '${error.target}'`;
+    case "missing_property":
+      return `missing @property for '${error.target}'`;
+    case "unused_property":
+      return `unused @property '${error.target}'`;
+    case "missing_returns":
+      return "missing @returns";
+    case "invalid_returns":
+      return error.message ?? "invalid @returns";
+  }
 }

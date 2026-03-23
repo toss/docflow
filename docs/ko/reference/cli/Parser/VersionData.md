@@ -14,7 +14,7 @@ JSDoc에서 @version 태그를 파싱한 결과를 나타내요. 버전 정보�
 interface VersionData { version: string; description: string; platforms?: string[] }
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

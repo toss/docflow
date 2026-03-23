@@ -14,7 +14,7 @@ sourcePath: "packages/cli/src/core/types/generator.types.ts"
 interface MarkdownDocument { frontmatter?: Record<string, unknown>; sections: MarkdownSection[] }
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

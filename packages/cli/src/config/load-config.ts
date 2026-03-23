@@ -17,6 +17,7 @@ export async function loadConfig(rootPath: string) {
       {
         files: "package.json",
         extensions: [],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         rewrite: (pkg: any) => pkg?.[MODULE_NAME],
       },
     ],
@@ -35,9 +36,7 @@ export async function loadConfig(rootPath: string) {
   const result = configSchema.safeParse(config);
 
   if (!result.success) {
-    throw new Error(
-      `Invalid config file: ${JSON.stringify(result.error.format(), null, 2)}`
-    );
+    throw new Error(`Invalid config file: ${JSON.stringify(result.error.format(), null, 2)}`);
   }
 
   return result.data;

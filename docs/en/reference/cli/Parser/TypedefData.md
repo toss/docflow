@@ -14,7 +14,7 @@ Represents the parsed result of @typedef tags in JSDoc. Used to define custom ty
 interface TypedefData { name: string; type: string; description: string; properties: PropertyData[] }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

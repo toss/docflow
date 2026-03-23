@@ -27,15 +27,14 @@ export const MockPlugins = {
   manifestAppender: (name: string, itemToAdd: SidebarItem): Plugin => ({
     name,
     hooks: {
-      transformManifest: (manifest) => [...manifest, itemToAdd],
+      transformManifest: manifest => [...manifest, itemToAdd],
     },
   }),
 
   manifestMarker: (name: string, marker: Record<string, unknown>): Plugin => ({
     name,
     hooks: {
-      transformManifest: (manifest) =>
-        manifest.map((item) => ({ ...item, ...marker })),
+      transformManifest: manifest => manifest.map(item => ({ ...item, ...marker })),
     },
   }),
 };
@@ -52,10 +51,7 @@ export function createManifestTransformPlugin(
   };
 }
 
-export function createGeneratorPlugin(
-  name: string,
-  generator: MarkdownGenerator
-): Plugin {
+export function createGeneratorPlugin(name: string, generator: MarkdownGenerator): Plugin {
   return {
     name,
     hooks: {
