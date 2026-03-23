@@ -11,7 +11,7 @@ sourcePath: "packages/cli/src/plugins/types/plugin.types.ts"
 ## 시그니처
 
 ```typescript
-interface PluginContext { workspacePath?: string; config?: Config }
+interface PluginContext { workspacePath?: string; config?: ResolvedConfig }
 ```
 
 ### 속성

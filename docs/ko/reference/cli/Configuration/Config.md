@@ -9,7 +9,7 @@ Docflow의 설정 타입이에요. 프로젝트 설정, 명령어 설정, 플러
 ## 시그니처
 
 ```typescript
-type Config = z.infer<typeof configSchema>;
+type Config = z.input<typeof configSchema>;
 ```
 
 ### 속성

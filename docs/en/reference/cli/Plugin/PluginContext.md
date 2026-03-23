@@ -11,7 +11,7 @@ Context information passed during plugin execution. Includes workspace path and 
 ## Signature
 
 ```typescript
-interface PluginContext { workspacePath?: string; config?: Config }
+interface PluginContext { workspacePath?: string; config?: ResolvedConfig }
 ```
 
 ### Properties

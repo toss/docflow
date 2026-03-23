@@ -5,7 +5,7 @@ sourcePath: "packages/cli/src/core/types/parser.types.ts"
 # TargetWithJSDoc
 
  
-Parsed JSDoc data for document generation, extending the [ExportDeclaration](/en/reference/cli/parser/ExportDeclaration) interface.
+Parsed JSDoc data for document generation, extending the [ExportDeclaration](/en/reference/cli/Parser/ExportDeclaration) interface.
 
 
 ## Signature

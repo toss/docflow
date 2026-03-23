@@ -203,7 +203,7 @@ export interface VersionData {
  * @category Parser
  * @name TargetWithJSDoc
  * @description
- * Parsed JSDoc data for document generation, extending the [ExportDeclaration](/en/reference/cli/parser/ExportDeclaration) interface.
+ * Parsed JSDoc data for document generation, extending the [ExportDeclaration](/en/reference/cli/Parser/ExportDeclaration) interface.
  *
  * @property {ParsedJSDoc} parsedJSDoc Parsed result of JSDoc templates used in Docflow
  */

@@ -11,7 +11,7 @@ Type for Docflow configuration files. Includes project settings, command setting
 ## Signature
 
 ```typescript
-type Config = z.infer<typeof configSchema>;
+type Config = z.input<typeof configSchema>;
 ```
 
 ### Properties
