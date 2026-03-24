@@ -44,6 +44,12 @@ export function fetchData(url: string): Promise<unknown> {
   return fetch(url).then((response) => response.json());
 }
 
+export { UserConfig } from '@libs/types';
+
+export function getDefaultConfig(): UserConfig {
+  return { name: '', email: '', preferences: { theme: 'light', language: 'en', notifications: true } };
+}
+
 export * from './math.js';
 export * from './string.js';
 export * from './classes.js';`

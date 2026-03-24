@@ -147,6 +147,20 @@ describe("extractSignature", () => {
     expect(signature).toContain("/** The database URL. */");
   });
 
+  it("should not include absolute file paths in return types", async () => {
+    const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
+    const project = getTsProject(tsConfigPath);
+
+    const indexFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("index.ts"));
+
+    const getDefaultConfig = indexFile?.getFunction("getDefaultConfig");
+    expect(getDefaultConfig).toBeDefined();
+
+    const signature = extractSignature(getDefaultConfig!);
+    expect(signature).not.toMatch(/import\("[^"]*\/[^"]*"\)/);
+    expect(signature).toContain("UserConfig");
+  });
+
   it("should return undefined for unsupported node types", async () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
