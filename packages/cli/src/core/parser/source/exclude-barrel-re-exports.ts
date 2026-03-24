@@ -3,14 +3,14 @@ import { ExportDeclaration } from "../../types/parser.types.js";
 
 export function excludeBarrelReExports(exportDeclarations: ExportDeclaration[]): ExportDeclaration[] {
   return Object.values(groupBy(exportDeclarations, exp => exp.symbolName))
-    .map(declarations => {
+    .flatMap(declarations => {
       if (declarations.length === 1) {
-        return declarations[0];
+        return declarations;
       }
 
       const nonBarrelExports = declarations.filter(decl => !decl.filePath.endsWith("index.ts"));
 
-      return nonBarrelExports.length > 0 ? nonBarrelExports[0] : declarations[0];
+      return nonBarrelExports.length > 0 ? nonBarrelExports : declarations.slice(0, 1);
     })
-    .filter((decl): decl is ExportDeclaration => decl !== undefined);
+    .filter(decl => decl != null);
 }

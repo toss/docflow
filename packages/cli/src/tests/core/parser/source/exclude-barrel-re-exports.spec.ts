@@ -16,7 +16,7 @@ describe("excludeBarrelReExports", () => {
     await workspace.cleanup();
   });
 
-  it("should remove duplicate re-exported symbols", async () => {
+  it("should remove barrel re-exported symbols but keep non-barrel duplicates", async () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
@@ -27,9 +27,14 @@ describe("excludeBarrelReExports", () => {
 
     expect(uniqueExports.length).toBeLessThanOrEqual(allExportDeclarations.length);
 
-    const symbolNames = uniqueExports.map(exp => exp.symbolName);
-    const uniqueSymbolNames = [...new Set(symbolNames)];
-    expect(symbolNames.length).toBe(uniqueSymbolNames.length);
+    // Barrel re-exports (from index.ts) should be removed when the original source exists
+    const barrelExports = uniqueExports.filter(exp => exp.filePath.endsWith("index.ts"));
+    for (const barrelExport of barrelExports) {
+      const hasNonBarrelSource = allExportDeclarations.some(
+        exp => exp.symbolName === barrelExport.symbolName && !exp.filePath.endsWith("index.ts")
+      );
+      expect(hasNonBarrelSource).toBe(false);
+    }
   });
 
   it("should prefer original declarations over re-exports", async () => {
