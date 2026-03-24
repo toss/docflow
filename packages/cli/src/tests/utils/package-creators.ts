@@ -421,6 +421,68 @@ export interface RequestOptions {
 }
 
 export type ID = string | number;
-export type Handler<T> = (value: T) => void;`
+export type Handler<T> = (value: T) => void;
+
+/**
+ * @public
+ * @name ServerOptions
+ */
+export interface ServerOptions {
+  /** The port to listen on. */
+  port: number;
+  /** The host configuration. */
+  host: {
+    /** The hostname. */
+    name: string;
+    /** The protocol to use. */
+    protocol: 'http' | 'https';
+  };
+  /**
+   * Optional timeout in milliseconds.
+   *
+   * Set to 0 to disable.
+   */
+  timeout?: number;
+}
+
+/**
+ * @public
+ * @name ServerConfig
+ */
+export type ServerConfig = {
+  /** The environment name. */
+  env: string;
+  /** The connection settings. */
+  connection: {
+    /** The database URL. */
+    url: string;
+  };
+};
+
+/**
+ * @public
+ * @name Server
+ */
+export class Server {
+  /** The server name. */
+  name: string;
+
+  /** The current status. */
+  status: string;
+
+  constructor(name: string, status: string) {
+    this.name = name;
+    this.status = status;
+  }
+
+  /**
+   * Starts the server.
+   *
+   * @param message - The startup message
+   */
+  start(message: string): void {
+    console.log(message);
+  }
+}`
   );
 }
