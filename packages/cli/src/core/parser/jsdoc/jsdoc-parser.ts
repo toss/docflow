@@ -1,5 +1,6 @@
 import * as commentParser from "comment-parser";
 import { initial, uniq } from "es-toolkit";
+import { isEmpty } from "es-toolkit/compat";
 import { JSDoc } from "ts-morph";
 import {
   ExampleData,
@@ -350,6 +351,7 @@ export class JSDocParser {
     const name = tag.name;
     const description = tag.description;
 
-    return name || description;
+    // comment-parser destructs @category Foo Bar -> name: Foo, description: Bar
+    return [name, description].filter(x => !isEmpty(x)).join(" ") || undefined;
   }
 }
