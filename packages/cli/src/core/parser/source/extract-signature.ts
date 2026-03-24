@@ -51,7 +51,7 @@ function formatFunctionSignature(node: FunctionDeclaration): string {
     .getParameters()
     .map(p => p.getText())
     .join(", ");
-  const returnType = node.getReturnType().getText();
+  const returnType = node.getReturnType().getText(node);
 
   return `function ${name}${typeParams ? `<${typeParams}>` : ""}(${params}): ${returnType};`;
 }
@@ -75,7 +75,7 @@ function formatArrowFunctionSignature(node: VariableDeclaration): string {
     .getParameters()
     .map(p => p.getText())
     .join(", ");
-  const returnType = initializer.getReturnType().getText();
+  const returnType = initializer.getReturnType().getText(node);
 
   return `${declarationKind} ${name}: ${typeParams ? `<${typeParams}>` : ""}(${params}) => ${returnType};`;
 }
@@ -85,12 +85,12 @@ function formatVariableSignature(node: VariableDeclaration): string {
   const name = node.getName();
   const variableStatement = node.getVariableStatement();
   const declarationKind = variableStatement?.getDeclarationKind() ?? "const";
-  const type = node.getType().getText();
+  const type = node.getType().getText(node);
 
   return `${declarationKind} ${name}: ${type};`;
 }
 
-// {abstract?} class {name}<{generics}> {extends ...}? {implements ...}?;
+// {abstract?} class {name}<{generics}> {extends ...}? {implements ...}? { {members} }
 function formatClassSignature(node: ClassDeclaration): string {
   const name = node.getName() ?? "AnonymousClass";
   const isAbstract = node.isAbstract() ? "abstract " : "";
@@ -106,7 +106,9 @@ function formatClassSignature(node: ClassDeclaration): string {
   const implementsText =
     implementsExprs.length > 0 ? ` implements ${implementsExprs.map(i => i.getText()).join(", ")}` : "";
 
-  return `${isAbstract}class ${name}${typeParams ? `<${typeParams}>` : ""}${extendsText}${implementsText};`;
+  const members = formatMembersWithJsDoc(node.getMembers());
+
+  return `${isAbstract}class ${name}${typeParams ? `<${typeParams}>` : ""}${extendsText}${implementsText} {\n${members}\n}`;
 }
 
 // interface {name}<{generics}> {extends ...}? { {members} }
@@ -120,15 +122,9 @@ function formatInterfaceSignature(node: InterfaceDeclaration): string {
   const extendsExprs = node.getExtends();
   const extendsText = extendsExprs.length > 0 ? ` extends ${extendsExprs.map(e => e.getText()).join(", ")}` : "";
 
-  const members = node
-    .getMembers()
-    .map(member => {
-      const text = member.getText().trim();
-      return text.endsWith(";") ? text.slice(0, -1) : text;
-    })
-    .join("; ");
+  const members = formatMembersWithJsDoc(node.getMembers());
 
-  return `interface ${name}${typeParams ? `<${typeParams}>` : ""}${extendsText} { ${members} }`;
+  return `interface ${name}${typeParams ? `<${typeParams}>` : ""}${extendsText} {\n${members}\n}`;
 }
 
 // type {name}<{generics}> = {definition};
@@ -161,4 +157,29 @@ function formatEnumSignature(node: EnumDeclaration): string {
     .join(", ");
 
   return `${isConst}enum ${name} { ${members} }`;
+}
+
+function formatMembersWithJsDoc(members: Node[]): string {
+  const INDENT = "  ";
+  return members
+    .map(member => {
+      const text = `${INDENT}${getMemberSignatureText(member)}`;
+      return text.endsWith(";") ? text : `${text};`;
+    })
+    .join("\n");
+}
+
+function getMemberSignatureText(member: Node): string {
+  if (Node.isMethodDeclaration(member) || Node.isConstructorDeclaration(member)) {
+    const body = member.getBody();
+    if (body != null) {
+      const fullText = member.getText({ includeJsDocComments: true });
+      const memberStart = member.getStart(true);
+      const bodyStart = body.getStart();
+
+      return fullText.slice(0, bodyStart - memberStart).trimEnd();
+    }
+  }
+
+  return member.getText({ includeJsDocComments: true });
 }
