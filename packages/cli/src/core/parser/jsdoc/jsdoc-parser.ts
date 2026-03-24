@@ -352,6 +352,11 @@ export class JSDocParser {
     const description = tag.description;
 
     // comment-parser destructs @category Foo Bar -> name: Foo, description: Bar
-    return [name, description].filter(x => !isEmpty(x)).join(" ") || undefined;
+    const value = [name, description]
+      .filter(x => !isEmpty(x))
+      .join(" ")
+      .trim();
+
+    return value || undefined;
   }
 }
