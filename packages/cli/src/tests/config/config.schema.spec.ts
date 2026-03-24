@@ -102,6 +102,21 @@ describe("configSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("should fail validation when plugin.plugin is not a function", () => {
+    const invalidConfig = {
+      ...validConfig,
+      plugins: [
+        {
+          name: "invalid-plugin",
+          plugin: null,
+        },
+      ],
+    };
+
+    const result = configSchema.safeParse(invalidConfig);
+    expect(result.success).toBe(false);
+  });
+
   it("should default plugins to empty array", () => {
     const configWithoutPlugins = { ...validConfig };
     delete (configWithoutPlugins as Partial<Config>).plugins;
