@@ -51,7 +51,7 @@ function formatFunctionSignature(node: FunctionDeclaration): string {
     .getParameters()
     .map(p => p.getText())
     .join(", ");
-  const returnType = node.getReturnType().getText();
+  const returnType = node.getReturnType().getText(node);
 
   return `function ${name}${typeParams ? `<${typeParams}>` : ""}(${params}): ${returnType};`;
 }
@@ -75,7 +75,7 @@ function formatArrowFunctionSignature(node: VariableDeclaration): string {
     .getParameters()
     .map(p => p.getText())
     .join(", ");
-  const returnType = initializer.getReturnType().getText();
+  const returnType = initializer.getReturnType().getText(node);
 
   return `${declarationKind} ${name}: ${typeParams ? `<${typeParams}>` : ""}(${params}) => ${returnType};`;
 }
@@ -85,7 +85,7 @@ function formatVariableSignature(node: VariableDeclaration): string {
   const name = node.getName();
   const variableStatement = node.getVariableStatement();
   const declarationKind = variableStatement?.getDeclarationKind() ?? "const";
-  const type = node.getType().getText();
+  const type = node.getType().getText(node);
 
   return `${declarationKind} ${name}: ${type};`;
 }
