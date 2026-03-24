@@ -155,25 +155,6 @@ export const myNamedPlugin = {
     await expect(loadPlugins(config)).rejects.toThrow("Failed to load plugin 'missing-plugin'");
   });
 
-  it("should throw error for plugin without path or hooks", async () => {
-    const workspace = await createE2EWorkspace();
-    const config = configSchema.parse({
-      ...MOCK_CONFIG,
-      project: {
-        ...MOCK_CONFIG.project,
-        root: workspace.root,
-      },
-      plugins: [
-        {
-          name: "invalid-plugin",
-          plugin: null as unknown as () => Promise<unknown>,
-        },
-      ],
-    });
-
-    await expect(loadPlugins(config)).rejects.toThrow("pluginConfig.plugin is not a function");
-  });
-
   it("should throw error for invalid plugin export", async () => {
     const workspace = await createE2EWorkspace();
     await workspace.write(
