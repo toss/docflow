@@ -4,14 +4,21 @@ sourcePath: "packages/cli/src/core/types/parser.types.ts"
 
 # PropertyData
 
-
-객체 타입의 속성 정보를 나타내요. ReturnData, TypedefData, 그리고 인터페이스/타입 선언의 속성을 표현하는 데 사용돼요.
+ 
+객체 타입의 속성 정보를 나타내요. ReturnData와 TypedefData에서 객체 속성을 설명하는 데 사용돼요.
 
 
 ## 시그니처
 
 ```typescript
-interface PropertyData { name: string; type?: string; description: string; required: boolean; defaultValue?: string; nested?: PropertyData[] }
+interface PropertyData {
+  name: string;
+  type?: string;
+  description: string;
+  required: boolean;
+  defaultValue?: string;
+  nested?: PropertyData[];
+}
 ```
 
 ### 속성

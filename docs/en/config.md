@@ -41,23 +41,20 @@ export default {
       jsdoc: {
         fetcher: async ({ signature, prompt }) => {
           // Call AI services like OpenAI, Claude
-          const response = await fetch(
-            "https://api.openai.com/v1/chat/completions",
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                model: "gpt-4",
-                messages: [
-                  { role: "system", content: prompt },
-                  { role: "user", content: signature },
-                ],
-              }),
-            }
-          );
+          const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "gpt-4",
+              messages: [
+                { role: "system", content: prompt },
+                { role: "user", content: signature },
+              ],
+            }),
+          });
           const data = await response.json();
           return data.choices[0].message.content;
         },
@@ -112,7 +109,7 @@ Sets the root directory of the project. This becomes the reference point for all
 ```js
 {
   project: {
-    root: process.cwd() // Current directory
+    root: process.cwd(); // Current directory
   }
 }
 ```
@@ -124,7 +121,7 @@ Specifies the package manager to use. This changes how workspaces are detected.
 ```js
 {
   project: {
-    packageManager: "yarn" // "yarn" | "pnpm" | "npm"
+    packageManager: "yarn"; // "yarn" | "pnpm" | "npm"
   }
 }
 ```
@@ -182,7 +179,7 @@ The directory where generated documentation will be saved. All Markdown files ar
 {
   commands: {
     build: {
-      outputDir: "docs/references" // default value
+      outputDir: "docs/references"; // default value
     }
   }
 }
@@ -273,6 +270,7 @@ Controls how documentation is generated. By default, it generates Markdown docum
           typedef: "Type Definition"
           signature: "Signature",
           parameters: "Parameters",
+          properties: "Properties",
           returns: "Returns",
           throws: "Throws",
           examples: "Examples",
@@ -318,7 +316,7 @@ Specifies entry points for documentation validation.
 {
   commands: {
     check: {
-      entryPoints: ["src/index.ts", "src/api.ts"] // optional
+      entryPoints: ["src/index.ts", "src/api.ts"]; // optional
     }
   }
 }
@@ -373,15 +371,15 @@ Configure plugins that customize document generation methods or add new output f
   plugins: [
     {
       name: "custom-generator",
-      plugin: (options) => ({
+      plugin: options => ({
         hooks: {
           // Manifest transformation
-          transformManifest: (manifest) => {
+          transformManifest: manifest => {
             // Modify manifest structure
             return modifiedManifest;
           },
           // Provide custom generator
-          provideGenerator: (name) => {
+          provideGenerator: name => {
             if (name === "custom-generator") {
               return new CustomGenerator();
             }
@@ -393,7 +391,7 @@ Configure plugins that customize document generation methods or add new output f
         customOption: "value",
       },
     },
-  ]
+  ];
 }
 ```
 

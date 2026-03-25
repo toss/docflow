@@ -5,7 +5,7 @@ sourcePath: "packages/cli/src/core/types/parser.types.ts"
 # ExportDeclaration
 
  
-파일 경로, 심볼 이름, JSDoc 정보를 포함한 메타데이터와 함께 외부 공개된 선언을 나타내요.
+파일 경로, 심볼 이름, JSDoc 정보를 포함한 export된 선언을 나타내요.
 
 
 ## 시그니처
@@ -27,12 +27,12 @@ type ExportDeclaration = {
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">filePath</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">StandardizedFilePath</span>
     <br/>
-    <p class="post-parameters--description">외부 공개된 선언의 표준화된 파일 경로</p>
+    <p class="post-parameters--description">export된 선언의 표준화된 파일 경로</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">symbolName</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">string</span>
     <br/>
-    <p class="post-parameters--description">외부 공개된 선언의 심볼 이름</p>
+    <p class="post-parameters--description">export된 선언의 심볼 이름</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">declaration</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">ExportedDeclarations</span>
@@ -47,7 +47,7 @@ type ExportDeclaration = {
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">jsDoc</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">JSDoc</span>
     <br/>
-    <p class="post-parameters--description">원시 JSDoc 데이터</p>
+    <p class="post-parameters--description">원본 JSDoc 데이터</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">signature</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">string</span>

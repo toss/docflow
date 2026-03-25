@@ -28,6 +28,41 @@ Docflow는 JSDoc의 표준 태그와 문서 생성을 위한 커스텀 태그를
 
 이러한 태그들을 조합해서 구조화된 문서를 자동으로 생성할 수 있어요.
 
+### `@public` 태그
+
+`@public` 태그는 문서화할 대상을 공개 API로 표시해요.
+
+```typescript
+/**
+ * @public
+ * ... 다른 JSDoc 설명 ...
+ */
+export function getUser(id: string): User {
+  // ...
+}
+```
+
+- **`docflow build` 실행 시**: `@public` 태그가 있는 export만 선택해서 문서로 생성해요.
+- **`docflow check` 실행 시**: public API로 export되었지만 `@public` 태그가 없는 함수나 클래스를 찾아서 알려줘요.
+
+### `@generate` 태그
+
+`@generate` 태그는 AI를 통해 JSDoc을 자동으로 생성할 대상을 표시해요.
+
+```typescript
+/**
+ * @generate
+ */
+export function calculateTotalPrice(
+  items: CartItem[],
+  discountRate: number
+): number {
+  // ...
+}
+```
+
+- **`docflow generate` 실행 시**: 함수 시그니처와 컨텍스트를 LLM에 전달해서 완전한 JSDoc 주석을 자동으로 생성하고 코드에 적용해요.
+
 ## JSDoc 템플릿 사용법
 
 Docflow는 일관된 문서 생성을 위해 표준화된 JSDoc 템플릿을 사용해요. 다음은 예시 코드에서 사용하는 예시와 생성되는 문서 예시에요.
@@ -134,17 +169,23 @@ JSDoc 태그에 따라 파일이 어떻게 구성되는지 알아볼게요.
 **동작 예시**
 
 ```typescript
+// @category 태그 사용 (최우선)
 /** @public @category Math */
 export function add(a: number, b: number): number {}
+// 결과: Math/add.md
 
+// 자동 감지 (TypeScript 기반)
 /** @public */
 export function multiply(x: number, y: number): number {}
+// 결과: function/multiply.md
 
 /** @public */
 export class Calculator {}
+// 결과: class/Calculator.md
 
 /** @public */
 export interface UserConfig {}
+// 결과: interface/UserConfig.md
 ```
 
 **생성되는 폴더 구조:**
@@ -160,6 +201,10 @@ docs/references/
 ├── variable/       ← 자동 감지된 kind
 └── misc/           ← 기본값
 ```
+
+:::note
+`@kind` 태그는 표준 JSDoc 태그로 파싱되지만, VitePress 제너레이터에서 폴더 구조 결정에는 현재 사용되지 않아요. 폴더명은 `@category` 태그와 TypeScript 자동 감지만 사용해요.
+:::
 
 ## 플러그인 시스템
 
@@ -209,3 +254,17 @@ docs/references/
 ```
 
 Docflow가 기본적으로 생성하는 VitePress 매니페스트 형식을 다른 문서 시스템에서 사용할 수 있는 형식으로 변환할 수 있어요. 예를 들어 Docusaurus의 `sidebars.js` 형식이나 Nextra의 `_meta.json` 형식으로 자동 변환할 수 있어요.
+
+## 시그니처 분석
+
+Docflow는 AST(Abstract Syntax Tree)를 통해 복잡한 TypeScript 타입도 정확하게 분석해서 문서화할 수 있어요.
+
+**복잡한 타입 예시:**
+
+```typescript
+// 입력: 제네릭, 조건부 타입, 유니온 타입 등 복잡한 타입
+export function process<T extends BaseType>(
+  data: T[],
+  options?: ProcessOptions<T>
+): Promise<Result<T>>;
+```

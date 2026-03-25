@@ -74,6 +74,10 @@
             "link": "/ko/reference/cli/Parser/ParsedJSDoc.md"
           },
           {
+            "text": "PropertyData",
+            "link": "/ko/reference/cli/Parser/PropertyData.md"
+          },
+          {
             "text": "ReturnData",
             "link": "/ko/reference/cli/Parser/ReturnData.md"
           },
