@@ -9,10 +9,12 @@ export const DEFAULT_GENERATOR_CONFIG: GeneratorConfig = {
     returns: "Returns",
     throws: "Throws",
     examples: "Examples",
+    properties: "Properties",
     deprecated: "Deprecated",
     see: "See Also",
     version: "Version",
     signature: "Signature",
+    typedef: "Type Definitions",
   },
 };
 

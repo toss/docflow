@@ -24,6 +24,7 @@ export const buildConfigSchema = z.object({
     labels: z
       .object({
         parameters: z.string().default("Parameters"),
+        properties: z.string().default("Properties"),
         returns: z.string().default("Returns"),
         throws: z.string().default("Throws"),
         examples: z.string().default("Examples"),
