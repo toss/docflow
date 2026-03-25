@@ -27,10 +27,10 @@ describe("getTsProject", () => {
     const project = getTsProject(tsConfigPath);
 
     const sourceFiles = project.getSourceFiles();
-    const filePaths = sourceFiles.map((sf) => sf.getFilePath());
+    const filePaths = sourceFiles.map(sf => sf.getFilePath());
 
-    expect(filePaths.some((path) => path.includes("math.ts"))).toBe(true);
-    expect(filePaths.some((path) => path.includes("string.ts"))).toBe(true);
+    expect(filePaths.some(path => path.includes("math.ts"))).toBe(true);
+    expect(filePaths.some(path => path.includes("string.ts"))).toBe(true);
   });
 
   it("should handle different packages correctly", async () => {
@@ -38,9 +38,9 @@ describe("getTsProject", () => {
     const utilsProject = getTsProject(utilsConfigPath);
 
     const sourceFiles = utilsProject.getSourceFiles();
-    const filePaths = sourceFiles.map((sf) => sf.getFilePath());
+    const filePaths = sourceFiles.map(sf => sf.getFilePath());
 
-    expect(filePaths.some((path) => path.includes("helpers.ts"))).toBe(true);
-    expect(filePaths.some((path) => path.includes("validators.ts"))).toBe(true);
+    expect(filePaths.some(path => path.includes("helpers.ts"))).toBe(true);
+    expect(filePaths.some(path => path.includes("validators.ts"))).toBe(true);
   });
 });

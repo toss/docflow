@@ -5,13 +5,16 @@ sourcePath: "packages/cli/src/core/types/generator.types.ts"
 # GeneratorConfig
 
  
-Configuration for the Markdown generator. Defines generator name, project root, labels, and signature language.
+Configuration for the markdown generator. Defines generator name, project root, labels, and signature language.
 
 
 ## Signature
 
 ```typescript
-interface GeneratorConfig { name: string; projectRoot: string; labels?: {
+interface GeneratorConfig {
+  name: string;
+  projectRoot: string;
+  labels?: {
     parameters?: string;
     returns?: string;
     throws?: string;
@@ -21,10 +24,13 @@ interface GeneratorConfig { name: string; projectRoot: string; labels?: {
     deprecated?: string;
     signature?: string;
     typedef?: string;
-  }; signatureLanguage?: string }
+    properties?: string;
+  };
+  signatureLanguage?: string;
+}
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
@@ -86,6 +92,11 @@ interface GeneratorConfig { name: string; projectRoot: string; labels?: {
     <span class="post-parameters--name">typedef</span> · <span class="post-parameters--type">string</span>
     <br/>
     <p class="post-parameters--description">Label for the typedef section</p>
+  </li>
+  <li class="post-parameters-li ">
+    <span class="post-parameters--name">properties</span> · <span class="post-parameters--type">string</span>
+    <br/>
+    <p class="post-parameters--description">Label for the properties section</p>
   </li>
     </ul>
   </li>

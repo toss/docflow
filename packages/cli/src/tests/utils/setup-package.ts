@@ -8,7 +8,7 @@ export async function setupPackage(
     tsconfig?: Record<string, unknown>;
     tsconfigBuild?: Record<string, unknown>;
     files?: Record<string, string>;
-  } = {},
+  } = {}
 ): Promise<string> {
   const packagePath = path.join(workspace.root, "packages", packageName);
 

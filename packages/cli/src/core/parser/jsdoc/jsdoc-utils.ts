@@ -1,14 +1,23 @@
-import { Node, JSDocableNode, JSDoc } from "ts-morph";
+import { flatMap } from "es-toolkit";
+import { isEmpty } from "es-toolkit/compat";
+import { JSDoc, JSDocableNode, Node } from "ts-morph";
+import { ParsedJSDoc, PropertyData } from "../../types/parser.types.js";
+
+export const EMPTY_PARSED_JSDOC: ParsedJSDoc = {
+  examples: [],
+  parameters: [],
+  properties: [],
+  throws: [],
+  typedef: [],
+  see: [],
+  version: [],
+};
 
 export function hasJSDocTag(node: Node, tagName: string): boolean {
   const jsDocableNode = getJSDocableNode(node);
   if (!jsDocableNode) return false;
 
-  return jsDocableNode
-    .getJsDocs()
-    .some((jsDoc) =>
-      jsDoc.getTags().some((tag) => tag.getTagName() === tagName),
-    );
+  return jsDocableNode.getJsDocs().some(jsDoc => jsDoc.getTags().some(tag => tag.getTagName() === tagName));
 }
 
 export function getJSDoc(node: Node): JSDoc | undefined {
@@ -38,4 +47,20 @@ function getJSDocableNode(node: Node): JSDocableNode | undefined {
   }
 
   return undefined;
+}
+
+export function getJSDocPropertyNames(properties: PropertyData[]): string[] {
+  return getJSDocParameterNames(properties);
+}
+
+export function getJSDocParameterNames(properties: PropertyData[]): string[] {
+  const collectNames = (properties: PropertyData[], prefix = ""): string[] => {
+    return flatMap(properties, param => {
+      const fullName = isEmpty(prefix) ? param.name : `${prefix}.${param.name}`;
+
+      return [fullName, ...(param.nested != null ? collectNames(param.nested, fullName) : [])];
+    });
+  };
+
+  return collectNames(properties);
 }

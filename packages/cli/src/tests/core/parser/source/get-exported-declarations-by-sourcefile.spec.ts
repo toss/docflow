@@ -2,10 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { getExportedDeclarationsBySourceFile } from "../../../../core/parser/source/get-exported-declarations-by-sourcefile.js";
 import { getTsProject } from "../../../../core/get-ts-project.js";
 import { getTsConfigPath } from "../../../../core/get-ts-config-path.js";
-import {
-  createE2EWorkspace,
-  E2EWorkspace,
-} from "../../../utils/create-e2e-workspace.js";
+import { createE2EWorkspace, E2EWorkspace } from "../../../utils/create-e2e-workspace.js";
 
 describe("getExportedDeclarationsBySourceFile", () => {
   let workspace: E2EWorkspace;
@@ -22,9 +19,7 @@ describe("getExportedDeclarationsBySourceFile", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const mathFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("math.ts"));
+    const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
     expect(mathFile).toBeDefined();
 
@@ -32,7 +27,7 @@ describe("getExportedDeclarationsBySourceFile", () => {
 
     expect(exportDeclarations.length).toBeGreaterThan(0);
 
-    const symbolNames = exportDeclarations.map((decl) => decl.symbolName);
+    const symbolNames = exportDeclarations.map(decl => decl.symbolName);
     expect(symbolNames).toContain("add");
     expect(symbolNames).toContain("multiply");
     expect(symbolNames).toContain("PI");
@@ -43,15 +38,11 @@ describe("getExportedDeclarationsBySourceFile", () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const mathFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("math.ts"));
+    const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(mathFile!);
 
-    const addDeclaration = exportDeclarations.find(
-      (decl) => decl.symbolName === "add"
-    );
+    const addDeclaration = exportDeclarations.find(decl => decl.symbolName === "add");
     expect(addDeclaration).toBeDefined();
     expect(addDeclaration!.kind).toBe("function");
     expect(addDeclaration!.signature).toContain("function add");
@@ -75,15 +66,11 @@ const internalVariable = "test";
     );
 
     const updatedProject = getTsProject(tsConfigPath);
-    const noExportsFile = updatedProject
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("no-exports.ts"));
+    const noExportsFile = updatedProject.getSourceFiles().find(sf => sf.getFilePath().includes("no-exports.ts"));
 
     expect(noExportsFile).toBeDefined();
 
-    const exportDeclarations = getExportedDeclarationsBySourceFile(
-      noExportsFile!
-    );
+    const exportDeclarations = getExportedDeclarationsBySourceFile(noExportsFile!);
     expect(exportDeclarations).toHaveLength(0);
   });
 
@@ -92,16 +79,14 @@ const internalVariable = "test";
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const indexFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("index.ts"));
+    const indexFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("index.ts"));
 
     expect(indexFile).toBeDefined();
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(indexFile!);
     expect(exportDeclarations.length).toBeGreaterThan(0);
 
-    const symbolNames = exportDeclarations.map((decl) => decl.symbolName);
+    const symbolNames = exportDeclarations.map(decl => decl.symbolName);
     expect(symbolNames).toContain("add");
     expect(symbolNames).toContain("multiply");
     expect(symbolNames).toContain("toUpper");
@@ -112,23 +97,17 @@ const internalVariable = "test";
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
 
-    const mathFile = project
-      .getSourceFiles()
-      .find((sf) => sf.getFilePath().includes("math.ts"));
+    const mathFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("math.ts"));
 
     const exportDeclarations = getExportedDeclarationsBySourceFile(mathFile!);
 
-    const withJSDoc = exportDeclarations.filter(
-      (decl) => decl.jsDoc !== undefined
-    );
-    const withoutJSDoc = exportDeclarations.filter(
-      (decl) => decl.jsDoc === undefined
-    );
+    const withJSDoc = exportDeclarations.filter(decl => decl.jsDoc !== undefined);
+    const withoutJSDoc = exportDeclarations.filter(decl => decl.jsDoc === undefined);
 
     expect(withJSDoc.length).toBeGreaterThan(0);
     expect(withoutJSDoc.length).toBeGreaterThan(0);
 
-    exportDeclarations.forEach((decl) => {
+    exportDeclarations.forEach(decl => {
       expect(decl.kind).toBeDefined();
       expect(decl.signature).toBeDefined();
       expect(decl.filePath).toBeDefined();

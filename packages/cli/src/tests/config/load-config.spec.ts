@@ -1,9 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { loadConfig } from "../../config/load-config.js";
-import {
-  createE2EWorkspace,
-  E2EWorkspace,
-} from "../utils/create-e2e-workspace.js";
+import { createE2EWorkspace, E2EWorkspace } from "../utils/create-e2e-workspace.js";
 
 describe("loadConfig", () => {
   let workspace: E2EWorkspace;
@@ -26,8 +23,6 @@ describe("loadConfig", () => {
   it("should throw error when config file is invalid", async () => {
     await workspace.write("docflow.config.js", "export default {}");
 
-    await expect(loadConfig(workspace.root)).rejects.toThrow(
-      /Invalid config file/
-    );
+    await expect(loadConfig(workspace.root)).rejects.toThrow(/Invalid config file/);
   });
 });

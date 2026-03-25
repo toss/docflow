@@ -1,13 +1,9 @@
 import path from "path";
 import { TestWorkspace, createTestWorkspace } from "./create-test-workspace.js";
 import { execSync } from "child_process";
-import {
-  createCorePackage,
-  createMathPackage,
-  createUtilsPackage,
-  createTypesPackage,
-} from "./package-creators.js";
+import { createCorePackage, createMathPackage, createUtilsPackage, createTypesPackage } from "./package-creators.js";
 import { createDocflowConfig } from "./docflow-config.js";
+import { getWorkingDirectory } from "../../utils/get-working-directory.js";
 
 export type E2EWorkspace = TestWorkspace;
 
@@ -16,7 +12,7 @@ export async function createE2EWorkspace(options?: {
   packageManager?: "yarn" | "pnpm" | "npm";
 }): Promise<TestWorkspace> {
   const workspace = await createTestWorkspace();
-  const root = path.resolve(process.cwd());
+  const root = path.resolve(getWorkingDirectory());
   const packageManager = options?.packageManager ?? "yarn";
 
   await workspace.write("tsconfig.json", {

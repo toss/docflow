@@ -10,7 +10,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
-  "bin": "./dist/cli.js",
+  "bin": "./bin/cli.js",
   "scripts": {
     "prepack": "yarn build",
     "build": "tsdown",
@@ -21,6 +21,7 @@
   },
   "files": [
     "dist",
+    "bin/cli.js",
     "README.md"
   ],
   "engines": {
@@ -45,6 +46,7 @@
     "comment-parser": "^1.4.1",
     "enquirer": "^2.4.1",
     "es-toolkit": "^1.39.5",
+    "find-up": "^8.0.0",
     "minimatch": "^10.0.3",
     "tmp-promise": "^3.0.3",
     "ts-morph": "^22.0.0",

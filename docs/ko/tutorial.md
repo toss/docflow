@@ -45,6 +45,10 @@ Tips:
 - Make sure to add  docs/.vitepress/dist and  docs/.vitepress/cache to your .gitignore file.
 ```
 
+### VitePress 기본 설정
+
+이제 `docs/.vitepress/config.ts` 파일이 생성되어 있을 거예요. 이 파일은 VitePress의 설정 파일로, 문서 사이트의 기본 설정을 포함해요. 더 자세한 VitePress 설정 옵션은 [공식 문서](https://vitepress.dev/guide/getting-started)나 Docflow의 [설정 가이드](/ko/config)를 참고하세요.
+
 ## 2단계: 문서화할 함수 준비하기
 
 문서 설정을 마쳤다면, 다음과 같이 구조를 만들고 문서화할 함수를 만들어 볼게요.
@@ -255,7 +259,7 @@ npx docflow check
   - packages/math/index.ts:calculateVolume
 ```
 
-보시다시피, 새로 추가한 `calculateVolume` 함수에 `@public` 태그가 누락되어 있어요.
+보시다시피, 새로 추가한 `calculateVolume` 함수에 `@public` 태그가 누락되어 있어요. 이처럼 **코드와 문서의 동기화**를 유지하는 것이 Docflow의 핵심 기능이에요.
 
 새로 추가된 함수에 문서를 추가해보세요.
 

@@ -11,10 +11,14 @@ Represents the parsed result of @example tags in JSDoc.
 ## Signature
 
 ```typescript
-interface ExampleData { title?: string; code: string; language?: string }
+interface ExampleData {
+  title?: string;
+  code: string;
+  language?: string;
+}
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

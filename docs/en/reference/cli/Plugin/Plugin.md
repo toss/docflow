@@ -11,16 +11,16 @@ Interface defining the basic structure of a Docflow plugin. Includes plugin name
 ## Signature
 
 ```typescript
-interface Plugin { name: string; hooks: {
-    transformManifest?: (
-      manifest: SidebarItem[],
-      context: PluginContext,
-    ) => SidebarItem[];
+interface Plugin {
+  name: string;
+  hooks: {
+    transformManifest?: (manifest: SidebarItem[], context: PluginContext) => SidebarItem[];
     provideGenerator?: () => MarkdownGenerator;
-  } }
+  };
+}
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
@@ -41,7 +41,7 @@ interface Plugin { name: string; hooks: {
   <li class="post-parameters-li ">
     <span class="post-parameters--name">provideGenerator</span> · <span class="post-parameters--type">function</span>
     <br/>
-    <p class="post-parameters--description">Hook to provide a custom Markdown generator</p>
+    <p class="post-parameters--description">Hook to provide a custom markdown generator</p>
   </li>
     </ul>
   </li>

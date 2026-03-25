@@ -54,8 +54,7 @@ describe("configSchema", () => {
       ...validConfig,
       project: {
         ...validConfig.project,
-        packageManager:
-          "invalid" as unknown as Config["project"]["packageManager"],
+        packageManager: "invalid" as unknown as Config["project"]["packageManager"],
       },
     };
 
@@ -70,8 +69,7 @@ describe("configSchema", () => {
         ...validConfig.project,
         workspace: {
           ...validConfig.project.workspace,
-          include:
-            "not-array" as unknown as Config["project"]["workspace"]["include"],
+          include: "not-array" as unknown as Config["project"]["workspace"]["include"],
         },
       },
     };
@@ -102,6 +100,21 @@ describe("configSchema", () => {
 
     const result = configSchema.safeParse(configWithPlugins);
     expect(result.success).toBe(true);
+  });
+
+  it("should fail validation when plugin.plugin is not a function", () => {
+    const invalidConfig = {
+      ...validConfig,
+      plugins: [
+        {
+          name: "invalid-plugin",
+          plugin: null,
+        },
+      ],
+    };
+
+    const result = configSchema.safeParse(invalidConfig);
+    expect(result.success).toBe(false);
   });
 
   it("should default plugins to empty array", () => {

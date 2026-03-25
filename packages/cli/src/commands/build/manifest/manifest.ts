@@ -12,11 +12,11 @@ interface ManifestOptions {
  * @name SidebarItem
  * @description
  * Represents a sidebar navigation item for the documentation site. Can be a link or a folder containing other items.
- * 
- * @param {string} text Display text for the sidebar item
- * @param {string} [link] Optional link URL for the item
- * @param {SidebarItem[]} [items] Optional array of sub-items for folder-type items
- * @param {boolean} [collapsed] Whether the folder should be collapsed by default
+ *
+ * @property {string} text Display text for the sidebar item
+ * @property {string} [link] Optional link URL for the item
+ * @property {SidebarItem[]} [items] Optional array of sub-items for folder-type items
+ * @property {boolean} [collapsed] Whether the folder should be collapsed by default
  */
 export interface SidebarItem {
   text: string;
@@ -59,9 +59,7 @@ export class Manifest {
 
       let current = result;
       for (const folderName of parts) {
-        let folder = current.find(
-          (item) => item.text === folderName && !item.link,
-        );
+        let folder = current.find(item => item.text === folderName && !item.link);
 
         if (!folder) {
           folder = {

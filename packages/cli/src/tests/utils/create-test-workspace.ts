@@ -1,3 +1,4 @@
+import { realpathSync } from "fs";
 import fs from "fs/promises";
 import path from "path";
 import { dir as tmpDir } from "tmp-promise";
@@ -10,7 +11,8 @@ export interface TestWorkspace {
 }
 
 export async function createTestWorkspace(): Promise<TestWorkspace> {
-  const { path: root, cleanup } = await tmpDir({ unsafeCleanup: true });
+  const { path: tmpPath, cleanup } = await tmpDir({ unsafeCleanup: true });
+  const root = realpathSync(tmpPath);
 
   const write = async (filePath: string, content: unknown): Promise<void> => {
     const absPath = path.join(root, filePath);
@@ -18,9 +20,7 @@ export async function createTestWorkspace(): Promise<TestWorkspace> {
 
     const formatContent = (content: unknown, isJsonFile: boolean) => {
       if (!isJsonFile) return String(content);
-      return typeof content === "string"
-        ? content
-        : JSON.stringify(content, null, 2);
+      return typeof content === "string" ? content : JSON.stringify(content, null, 2);
     };
 
     const isRcFile = /\.?\w*rc$/i.test(filePath);

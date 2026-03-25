@@ -74,10 +74,7 @@ describe("PackageManager integration", () => {
   it("PnpmPackageManager should parse workspaces correctly", async () => {
     const workspace = await createE2EWorkspace({ packageManager: "pnpm" });
     try {
-      await workspace.write(
-        "pnpm-workspace.yaml",
-        "packages:\n  - 'packages/*'\n"
-      );
+      await workspace.write("pnpm-workspace.yaml", "packages:\n  - 'packages/*'\n");
 
       const pnpm = new PnpmPackageManager(workspace.root);
       const result = pnpm.getPackages();
@@ -86,15 +83,19 @@ describe("PackageManager integration", () => {
         expect.arrayContaining([
           expect.objectContaining({
             name: "@libs/core",
+            location: "packages/core",
           }),
           expect.objectContaining({
             name: "@libs/math",
+            location: "packages/math",
           }),
           expect.objectContaining({
             name: "@libs/types",
+            location: "packages/types",
           }),
           expect.objectContaining({
             name: "@libs/utils",
+            location: "packages/utils",
           }),
         ])
       );
@@ -114,7 +115,7 @@ describe("isTargetPackage", () => {
   ];
 
   it("should return all packages when include is empty", () => {
-    const result = mockPackages.filter((pkg) =>
+    const result = mockPackages.filter(pkg =>
       isTargetPackage(pkg, {
         include: [],
         exclude: [],
@@ -125,7 +126,7 @@ describe("isTargetPackage", () => {
   });
 
   it("should filter packages by include patterns", () => {
-    const result = mockPackages.filter((pkg) =>
+    const result = mockPackages.filter(pkg =>
       isTargetPackage(pkg, {
         include: ["packages/*"],
         exclude: [],
@@ -139,7 +140,7 @@ describe("isTargetPackage", () => {
   });
 
   it("should exclude packages by exclude patterns", () => {
-    const result = mockPackages.filter((pkg) =>
+    const result = mockPackages.filter(pkg =>
       isTargetPackage(pkg, {
         include: [],
         exclude: ["apps/*"],
@@ -154,7 +155,7 @@ describe("isTargetPackage", () => {
   });
 
   it("should combine include and exclude patterns", () => {
-    const result = mockPackages.filter((pkg) =>
+    const result = mockPackages.filter(pkg =>
       isTargetPackage(pkg, {
         include: ["packages/*", "apps/*"],
         exclude: ["apps/docs"],
@@ -169,7 +170,7 @@ describe("isTargetPackage", () => {
   });
 
   it("should handle multiple include patterns", () => {
-    const result = mockPackages.filter((pkg) =>
+    const result = mockPackages.filter(pkg =>
       isTargetPackage(pkg, {
         include: ["packages/*", "libs/*"],
         exclude: [],
@@ -184,7 +185,7 @@ describe("isTargetPackage", () => {
   });
 
   it("should handle multiple exclude patterns", () => {
-    const result = mockPackages.filter((pkg) =>
+    const result = mockPackages.filter(pkg =>
       isTargetPackage(pkg, {
         include: [],
         exclude: ["apps/*", "libs/*"],
@@ -198,7 +199,7 @@ describe("isTargetPackage", () => {
   });
 
   it("should return empty array when all packages are excluded", () => {
-    const result = mockPackages.filter((pkg) =>
+    const result = mockPackages.filter(pkg =>
       isTargetPackage(pkg, {
         include: ["packages/*"],
         exclude: ["packages/*"],

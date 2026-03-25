@@ -1,13 +1,16 @@
-import { JSDoc } from "ts-morph";
 import * as commentParser from "comment-parser";
+import { initial, uniq } from "es-toolkit";
+import { isEmpty } from "es-toolkit/compat";
+import { JSDoc } from "ts-morph";
 import {
-  ParsedJSDoc,
+  ExampleData,
   ParameterData,
+  ParsedJSDoc,
+  PropertyData,
   ReturnData,
+  SeeData,
   ThrowsData,
   TypedefData,
-  ExampleData,
-  SeeData,
   VersionData,
 } from "../../types/parser.types.js";
 
@@ -42,6 +45,7 @@ export class JSDocParser {
       deprecated: this.extractDeprecated(block),
       examples: this.extractExamples(block),
       parameters: this.extractParameters(block),
+      properties: this.extractProperties(block),
       returns: this.extractReturns(block),
       throws: this.extractThrows(block),
       typedef: this.extractTypedefs(block),
@@ -54,6 +58,7 @@ export class JSDocParser {
     return {
       examples: [],
       parameters: [],
+      properties: [],
       throws: [],
       typedef: [],
       see: [],
@@ -62,7 +67,7 @@ export class JSDocParser {
   }
 
   private extractDescription(block: commentParser.Block): string | undefined {
-    const descriptionTag = block.tags.find((tag) => tag.tag === "description");
+    const descriptionTag = block.tags.find(tag => tag.tag === "description");
     if (!descriptionTag) return undefined;
 
     const name = descriptionTag.name;
@@ -84,7 +89,7 @@ export class JSDocParser {
   }
 
   private extractDeprecated(block: commentParser.Block): string | undefined {
-    const tag = block.tags.find((t) => t.tag === "deprecated");
+    const tag = block.tags.find(t => t.tag === "deprecated");
     if (!tag) return undefined;
 
     const nameMessage = tag.name;
@@ -95,7 +100,7 @@ export class JSDocParser {
   }
 
   private extractSignature(block: commentParser.Block): string | undefined {
-    const signatureTag = block.tags.find((tag) => tag.tag === "signature");
+    const signatureTag = block.tags.find(tag => tag.tag === "signature");
     if (!signatureTag) return undefined;
 
     const signatureText = signatureTag.description.trim();
@@ -103,73 +108,148 @@ export class JSDocParser {
   }
 
   private extractParameters(block: commentParser.Block): ParameterData[] {
-    const paramTags = block.tags.filter((tag) => tag.tag === "param");
-    const parameters: ParameterData[] = [];
-    const paramMap = new Map<string, ParameterData>();
+    const paramTags = block.tags.filter(tag => tag.tag === "param");
+    const dedupedParamTags = this.dedupeTagsKeepingLastByName(paramTags);
+    const normalizedParamTags = this.appendMissingAncestorPlaceholders(dedupedParamTags);
 
-    for (const tag of paramTags) {
-      const param = this.parseParameterTag(tag);
-      if (!param) continue;
-
-      if (param.name.includes(".")) {
-        this.handleNestedParameter(param, paramMap, parameters);
-      } else {
-        paramMap.set(param.name, param);
-        parameters.push(param);
-      }
-    }
-
-    return parameters;
+    return this.buildTagTree(normalizedParamTags);
   }
 
-  private parseParameterTag(tag: commentParser.Spec): ParameterData {
-    const { type, name, description, optional, default: defaultValue } = tag;
+  private dedupeTagsKeepingLastByName(tags: commentParser.Spec[]): commentParser.Spec[] {
+    const latestByName = new Map<string, commentParser.Spec>();
+    for (const tag of tags) {
+      latestByName.set(tag.name, tag);
+    }
 
+    return [...latestByName.values()];
+  }
+
+  private appendMissingAncestorPlaceholders(tags: commentParser.Spec[]): commentParser.Spec[] {
+    return [...tags, ...this.createMissingAncestorPlaceholderTags(tags)];
+  }
+
+  private buildTagTree(tags: commentParser.Spec[]): ParameterData[] {
+    const childrenByParent = this.groupTagsByParent(tags);
+    const rootTags = this.getRootTags(tags);
+
+    return rootTags.map(tag => this.toParameterData(tag, childrenByParent));
+  }
+
+  private getRootTags(tags: commentParser.Spec[]): commentParser.Spec[] {
+    return tags.filter(tag => this.getParentName(tag.name) == null);
+  }
+
+  private toParameterData(tag: commentParser.Spec, childrenByParent: Map<string, commentParser.Spec[]>): ParameterData {
     return {
-      name,
-      type,
-      description,
-      required: !optional,
-      defaultValue: defaultValue,
-      nested: [],
+      name: this.getLeafName(tag.name),
+      type: tag.type,
+      description: tag.description,
+      required: !tag.optional,
+      defaultValue: tag.default,
+      nested: this.buildNestedTags(tag.name, childrenByParent),
     };
   }
 
-  private handleNestedParameter(
-    param: ParameterData,
-    paramMap: Map<string, ParameterData>,
-    parameters: ParameterData[],
-  ): void {
-    const parts = param.name.split(".");
-    const parentName = parts[0];
-    if (!parentName) return;
+  private buildNestedTags(parentName: string, childrenByParent: Map<string, commentParser.Spec[]>): ParameterData[] {
+    const childTags = childrenByParent.get(parentName) ?? [];
 
-    let parent = paramMap.get(parentName);
+    return childTags.map(tag => this.toParameterData(tag, childrenByParent));
+  }
 
-    if (!parent) {
-      parent = {
-        name: parentName,
-        type: "Object",
-        description: "",
-        required: true,
-        defaultValue: undefined,
-        nested: [],
-      };
-      paramMap.set(parentName, parent);
-      parameters.push(parent);
+  private groupTagsByParent(tags: commentParser.Spec[]): Map<string, commentParser.Spec[]> {
+    const childrenByParent = new Map<string, commentParser.Spec[]>();
+
+    for (const tag of tags) {
+      const parentName = this.getParentName(tag.name);
+      if (parentName == null) {
+        continue;
+      }
+
+      const existingChildren = childrenByParent.get(parentName);
+      if (existingChildren != null) {
+        existingChildren.push(tag);
+
+        continue;
+      }
+
+      childrenByParent.set(parentName, [tag]);
     }
 
-    const nestedParam = { ...param, name: parts.slice(1).join(".") };
-    parent.nested = parent.nested || [];
-    parent.nested.push(nestedParam);
+    return childrenByParent;
+  }
+
+  private createMissingAncestorPlaceholderTags(tags: commentParser.Spec[]): commentParser.Spec[] {
+    const existingNames = new Set(tags.map(tag => tag.name));
+    const ancestorNames = tags.flatMap(tag => this.getAncestorNames(tag.name));
+    const missingNames = uniq(ancestorNames.filter(name => !existingNames.has(name)));
+
+    return missingNames.map(name => this.createPlaceholderTag(name));
+  }
+
+  private getAncestorNames(tagName: string): string[] {
+    const parentName = this.getParentName(tagName);
+    if (parentName == null) {
+      return [];
+    }
+
+    return [parentName, ...this.getAncestorNames(parentName)];
+  }
+
+  private getParentName(tagName: string): string | null {
+    const segments = tagName.split(".");
+    const hasParent = segments.length > 1;
+    if (hasParent) {
+      return initial(segments).join(".");
+    }
+
+    return null;
+  }
+
+  private getLeafName(tagName: string): string {
+    const segments = tagName.split(".");
+
+    return segments.at(-1) ?? tagName;
+  }
+
+  private createPlaceholderTag(name: string): commentParser.Spec {
+    return {
+      tag: "tag",
+      name,
+      type: "Object",
+      description: "",
+      optional: false,
+      default: undefined,
+      source: [],
+      problems: [],
+    };
+  }
+
+  private extractProperties(block: commentParser.Block): PropertyData[] {
+    const propertyTags = block.tags.filter(tag => tag.tag === "property");
+    const dedupedPropertyTags = this.dedupeTagsKeepingLastByName(propertyTags);
+    const normalizedPropertyTags = this.appendMissingAncestorPlaceholders(dedupedPropertyTags);
+    const parameterTree = this.buildTagTree(normalizedPropertyTags);
+
+    return parameterTree.map(param => this.toPropertyData(param));
+  }
+
+  private toPropertyData(param: ParameterData): PropertyData {
+    return {
+      name: param.name,
+      type: param.type,
+      description: param.description,
+      required: param.required,
+      defaultValue: param.defaultValue,
+      nested: param.nested?.map(nested => this.toPropertyData(nested)),
+    };
   }
 
   private extractReturns(block: commentParser.Block): ReturnData | undefined {
-    const returnTag = block.tags.find((tag) => tag.tag === "returns");
+    const returnTag = block.tags.find(tag => tag.tag === "returns");
     if (!returnTag) return undefined;
 
-    const propertyTags = block.tags.filter((tag) => tag.tag === "property");
-    const properties = propertyTags.map((tag) => ({
+    const propertyTags = block.tags.filter(tag => tag.tag === "property");
+    const properties = propertyTags.map(tag => ({
       name: tag.name,
       description: tag.description,
       required: !tag.optional,
@@ -185,9 +265,9 @@ export class JSDocParser {
   }
 
   private extractThrows(block: commentParser.Block): ThrowsData[] {
-    const throwsTags = block.tags.filter((tag) => tag.tag === "throws");
+    const throwsTags = block.tags.filter(tag => tag.tag === "throws");
 
-    return throwsTags.map((tag) => ({
+    return throwsTags.map(tag => ({
       type: tag.type,
       name: tag.name,
       description: tag.description,
@@ -195,15 +275,15 @@ export class JSDocParser {
   }
 
   private extractTypedefs(block: commentParser.Block): TypedefData[] {
-    const typedefTags = block.tags.filter((tag) => tag.tag === "typedef");
-    const propertyTags = block.tags.filter((tag) => tag.tag === "property");
+    const typedefTags = block.tags.filter(tag => tag.tag === "typedef");
+    const propertyTags = block.tags.filter(tag => tag.tag === "property");
 
-    return typedefTags.map((tag) => {
+    return typedefTags.map(tag => {
       const name = tag.name;
       const type = tag.type;
       const description = tag.description;
 
-      const properties = propertyTags.map((tag) => ({
+      const properties = propertyTags.map(tag => ({
         name: tag.name,
         type: tag.type,
         description: tag.description,
@@ -221,9 +301,9 @@ export class JSDocParser {
   }
 
   private extractExamples(block: commentParser.Block): ExampleData[] {
-    const exampleTags = block.tags.filter((tag) => tag.tag === "example");
+    const exampleTags = block.tags.filter(tag => tag.tag === "example");
 
-    return exampleTags.map((tag) => {
+    return exampleTags.map(tag => {
       const content = tag.description;
 
       return {
@@ -234,9 +314,9 @@ export class JSDocParser {
   }
 
   private extractSee(block: commentParser.Block): SeeData[] {
-    const seeTags = block.tags.filter((tag) => tag.tag === "see");
+    const seeTags = block.tags.filter(tag => tag.tag === "see");
 
-    return seeTags.map((tag) => {
+    return seeTags.map(tag => {
       const reference = tag.name || tag.type;
       const description = tag.description;
 
@@ -248,15 +328,13 @@ export class JSDocParser {
   }
 
   private extractVersions(block: commentParser.Block): VersionData[] {
-    const versionTags = block.tags.filter((tag) => tag.tag === "version");
+    const versionTags = block.tags.filter(tag => tag.tag === "version");
 
-    return versionTags.map((tag) => {
+    return versionTags.map(tag => {
       const versionName = tag.name;
       const description = tag.description;
 
-      const platforms = versionName.includes("/")
-        ? versionName.split("/")
-        : undefined;
+      const platforms = versionName.includes("/") ? versionName.split("/") : undefined;
 
       return {
         version: versionName,
@@ -266,16 +344,19 @@ export class JSDocParser {
     });
   }
 
-  private findTagValue(
-    block: commentParser.Block,
-    tagName: string,
-  ): string | undefined {
-    const tag = block.tags.find((t) => t.tag === tagName);
+  private findTagValue(block: commentParser.Block, tagName: string): string | undefined {
+    const tag = block.tags.find(t => t.tag === tagName);
     if (!tag) return undefined;
 
     const name = tag.name;
     const description = tag.description;
 
-    return name || description;
+    // comment-parser destructs @category Foo Bar -> name: Foo, description: Bar
+    const value = [name, description]
+      .filter(x => !isEmpty(x))
+      .join(" ")
+      .trim();
+
+    return value || undefined;
   }
 }

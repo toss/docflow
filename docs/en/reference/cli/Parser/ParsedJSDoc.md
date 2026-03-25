@@ -11,10 +11,25 @@ Represents the parsed result of JSDoc templates used in Docflow.
 ## Signature
 
 ```typescript
-interface ParsedJSDoc { name?: string; description?: string; category?: string; kind?: string; signature?: string; deprecated?: string; examples?: ExampleData[]; parameters?: ParameterData[]; returns?: ReturnData; throws?: ThrowsData[]; typedef?: TypedefData[]; see?: SeeData[]; version?: VersionData[] }
+interface ParsedJSDoc {
+  name?: string;
+  description?: string;
+  category?: string;
+  kind?: string;
+  signature?: string;
+  deprecated?: string;
+  examples?: ExampleData[];
+  parameters?: ParameterData[];
+  properties?: PropertyData[];
+  returns?: ReturnData;
+  throws?: ThrowsData[];
+  typedef?: TypedefData[];
+  see?: SeeData[];
+  version?: VersionData[];
+}
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
@@ -56,6 +71,11 @@ interface ParsedJSDoc { name?: string; description?: string; category?: string; 
     <span class="post-parameters--name">parameters</span> · <span class="post-parameters--type">ParameterData[]</span>
     <br/>
     <p class="post-parameters--description">Array of parameter information</p>
+  </li>
+  <li class="post-parameters-li post-parameters-li-root">
+    <span class="post-parameters--name">properties</span> · <span class="post-parameters--type">PropertyData[]</span>
+    <br/>
+    <p class="post-parameters--description">Array of property information for interface/type declarations</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">returns</span> · <span class="post-parameters--type">ReturnData</span>

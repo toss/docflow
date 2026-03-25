@@ -4,7 +4,9 @@ sourcePath: "packages/cli/src/core/types/parser.types.ts"
 
 # TargetWithJSDoc
 
+ 
 Parsed JSDoc data for document generation, extending the [ExportDeclaration](/en/reference/cli/Parser/ExportDeclaration) interface.
+
 
 ## Signature
 
@@ -14,7 +16,7 @@ interface TargetWithJSDoc extends ExportDeclaration {
 }
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

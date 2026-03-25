@@ -5,16 +5,19 @@ sourcePath: "packages/cli/src/core/types/generator.types.ts"
 # MarkdownDocument
 
  
-Structure representing a complete Markdown document with optional frontmatter and sections.
+Structure representing a complete markdown document with optional frontmatter and sections.
 
 
 ## Signature
 
 ```typescript
-interface MarkdownDocument { frontmatter?: Record<string, unknown>; sections: MarkdownSection[] }
+interface MarkdownDocument {
+  frontmatter?: Record<string, unknown>;
+  sections: MarkdownSection[];
+}
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">

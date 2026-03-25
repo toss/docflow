@@ -5,16 +5,31 @@ sourcePath: "packages/cli/src/core/types/parser.types.ts"
 # ParsedJSDoc
 
  
-Docflow에서 사용하는 JSDoc 템플릿을 파싱한 결과를 나타내요.
+Docflow에서 사용하는 JSDoc 템플릿의 파싱 결과를 나타내요.
 
 
 ## 시그니처
 
 ```typescript
-interface ParsedJSDoc { name?: string; description?: string; category?: string; kind?: string; signature?: string; deprecated?: string; examples?: ExampleData[]; parameters?: ParameterData[]; returns?: ReturnData; throws?: ThrowsData[]; typedef?: TypedefData[]; see?: SeeData[]; version?: VersionData[] }
+interface ParsedJSDoc {
+  name?: string;
+  description?: string;
+  category?: string;
+  kind?: string;
+  signature?: string;
+  deprecated?: string;
+  examples?: ExampleData[];
+  parameters?: ParameterData[];
+  properties?: PropertyData[];
+  returns?: ReturnData;
+  throws?: ThrowsData[];
+  typedef?: TypedefData[];
+  see?: SeeData[];
+  version?: VersionData[];
+}
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
@@ -35,7 +50,7 @@ interface ParsedJSDoc { name?: string; description?: string; category?: string; 
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">kind</span> · <span class="post-parameters--type">string</span>
     <br/>
-    <p class="post-parameters--description">선언의 종류 (function, class, interface 등)</p>
+    <p class="post-parameters--description">선언의 타입 (function, class, interface 등)</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">signature</span> · <span class="post-parameters--type">string</span>
@@ -45,17 +60,22 @@ interface ParsedJSDoc { name?: string; description?: string; category?: string; 
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">deprecated</span> · <span class="post-parameters--type">string</span>
     <br/>
-    <p class="post-parameters--description">사용 중단 알림 (해당되는 경우)</p>
+    <p class="post-parameters--description">사용 중단 안내 (해당 시)</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">examples</span> · <span class="post-parameters--type">ExampleData[]</span>
     <br/>
-    <p class="post-parameters--description">예제 코드의 배열</p>
+    <p class="post-parameters--description">예시 코드 배열</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">parameters</span> · <span class="post-parameters--type">ParameterData[]</span>
     <br/>
-    <p class="post-parameters--description">매개변수 정보의 배열</p>
+    <p class="post-parameters--description">매개변수 정보 배열</p>
+  </li>
+  <li class="post-parameters-li post-parameters-li-root">
+    <span class="post-parameters--name">properties</span> · <span class="post-parameters--type">PropertyData[]</span>
+    <br/>
+    <p class="post-parameters--description">인터페이스/타입 선언의 속성 정보 배열</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">returns</span> · <span class="post-parameters--type">ReturnData</span>
@@ -65,21 +85,21 @@ interface ParsedJSDoc { name?: string; description?: string; category?: string; 
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">throws</span> · <span class="post-parameters--type">ThrowsData[]</span>
     <br/>
-    <p class="post-parameters--description">예외 정보의 배열</p>
+    <p class="post-parameters--description">예외 정보 배열</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">typedef</span> · <span class="post-parameters--type">TypedefData[]</span>
     <br/>
-    <p class="post-parameters--description">타입 정의의 배열</p>
+    <p class="post-parameters--description">타입 정의 배열</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">see</span> · <span class="post-parameters--type">SeeData[]</span>
     <br/>
-    <p class="post-parameters--description">관련 문서에 대한 참조의 배열</p>
+    <p class="post-parameters--description">관련 문서 참조 배열</p>
   </li>
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">version</span> · <span class="post-parameters--type">VersionData[]</span>
     <br/>
-    <p class="post-parameters--description">버전 정보의 배열</p>
+    <p class="post-parameters--description">버전 정보 배열</p>
   </li>
 </ul>

@@ -1,8 +1,6 @@
 import { TestWorkspace } from "./create-test-workspace.js";
 
-export async function createCorePackage(
-  workspace: TestWorkspace
-): Promise<void> {
+export async function createCorePackage(workspace: TestWorkspace): Promise<void> {
   await workspace.write("packages/core/package.json", {
     name: "@libs/core",
     version: "1.0.0",
@@ -44,6 +42,12 @@ export async function createCorePackage(
  */
 export function fetchData(url: string): Promise<unknown> {
   return fetch(url).then((response) => response.json());
+}
+
+export { UserConfig } from '@libs/types';
+
+export function getDefaultConfig(): UserConfig {
+  return { name: '', email: '', preferences: { theme: 'light', language: 'en', notifications: true } };
 }
 
 export * from './math.js';
@@ -217,9 +221,7 @@ export class SimpleClass {
   );
 }
 
-export async function createMathPackage(
-  workspace: TestWorkspace
-): Promise<void> {
+export async function createMathPackage(workspace: TestWorkspace): Promise<void> {
   await workspace.write("packages/math/package.json", {
     name: "@libs/math",
     version: "1.0.0",
@@ -260,9 +262,7 @@ export function calculateVolume(radius: number, height: number): number {
   );
 }
 
-export async function createUtilsPackage(
-  workspace: TestWorkspace
-): Promise<void> {
+export async function createUtilsPackage(workspace: TestWorkspace): Promise<void> {
   await workspace.write("packages/utils/package.json", {
     name: "@libs/utils",
     version: "1.0.0",
@@ -369,9 +369,7 @@ export function isString(value: unknown): value is string {
   );
 }
 
-export async function createTypesPackage(
-  workspace: TestWorkspace
-): Promise<void> {
+export async function createTypesPackage(workspace: TestWorkspace): Promise<void> {
   await workspace.write("packages/types/package.json", {
     name: "@libs/types",
     version: "1.0.0",
@@ -429,6 +427,68 @@ export interface RequestOptions {
 }
 
 export type ID = string | number;
-export type Handler<T> = (value: T) => void;`
+export type Handler<T> = (value: T) => void;
+
+/**
+ * @public
+ * @name ServerOptions
+ */
+export interface ServerOptions {
+  /** The port to listen on. */
+  port: number;
+  /** The host configuration. */
+  host: {
+    /** The hostname. */
+    name: string;
+    /** The protocol to use. */
+    protocol: 'http' | 'https';
+  };
+  /**
+   * Optional timeout in milliseconds.
+   *
+   * Set to 0 to disable.
+   */
+  timeout?: number;
+}
+
+/**
+ * @public
+ * @name ServerConfig
+ */
+export type ServerConfig = {
+  /** The environment name. */
+  env: string;
+  /** The connection settings. */
+  connection: {
+    /** The database URL. */
+    url: string;
+  };
+};
+
+/**
+ * @public
+ * @name Server
+ */
+export class Server {
+  /** The server name. */
+  name: string;
+
+  /** The current status. */
+  status: string;
+
+  constructor(name: string, status: string) {
+    this.name = name;
+    this.status = status;
+  }
+
+  /**
+   * Starts the server.
+   *
+   * @param message - The startup message
+   */
+  start(message: string): void {
+    console.log(message);
+  }
+}`
   );
 }

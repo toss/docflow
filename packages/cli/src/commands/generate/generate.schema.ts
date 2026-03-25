@@ -10,7 +10,7 @@ export const generateConfigSchema = z
           z.object({
             signature: z.string(),
             prompt: z.string(),
-          }),
+          })
         )
         .returns(z.promise(z.string()))
         .describe("Function to fetch JSDoc from AI service"),

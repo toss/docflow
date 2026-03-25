@@ -5,16 +5,19 @@ sourcePath: "packages/cli/src/plugins/types/plugin.types.ts"
 # PluginContext
 
  
-플러그인 실행 시 전달되는 컨텍스트 정보에요. 워크스페이스 경로와 설정 데이터를 포함해요.
+플러그인 실행 시 전달되는 컨텍스트 정보예요. 워크스페이스 경로와 설정 데이터를 포함해요.
 
 
 ## 시그니처
 
 ```typescript
-interface PluginContext { workspacePath?: string; config?: Config }
+interface PluginContext {
+  workspacePath?: string;
+  config?: ResolvedConfig;
+}
 ```
 
-### 매개변수
+### 속성
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
@@ -25,6 +28,6 @@ interface PluginContext { workspacePath?: string; config?: Config }
   <li class="post-parameters-li post-parameters-li-root">
     <span class="post-parameters--name">config</span> · <span class="post-parameters--type">Config</span>
     <br/>
-    <p class="post-parameters--description">프로젝트, 명령어, 플러그인 설정을 포함하는 완전한 설정 객체</p>
+    <p class="post-parameters--description">프로젝트, 명령어, 플러그인 설정을 포함한 전체 설정 객체</p>
   </li>
 </ul>

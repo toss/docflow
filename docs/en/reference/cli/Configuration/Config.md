@@ -11,10 +11,10 @@ Type for Docflow configuration files. Includes project settings, command setting
 ## Signature
 
 ```typescript
-type Config = z.infer<typeof configSchema>;
+type Config = z.input<typeof configSchema>;
 ```
 
-### Parameters
+### Properties
 
 <ul class="post-parameters-ul">
   <li class="post-parameters-li post-parameters-li-root">
@@ -36,16 +36,18 @@ type Config = z.infer<typeof configSchema>;
     <span class="post-parameters--name">workspace</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">object</span>
     <br/>
     <p class="post-parameters--description">Workspace configuration</p>
-  </li>
+    <ul class="post-parameters-ul">
   <li class="post-parameters-li ">
-    <span class="post-parameters--name">workspace.include</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">string[]</span>
+    <span class="post-parameters--name">include</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">string[]</span>
     <br/>
     <p class="post-parameters--description">Package patterns to include in build</p>
   </li>
   <li class="post-parameters-li ">
-    <span class="post-parameters--name">workspace.exclude</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">string[]</span>
+    <span class="post-parameters--name">exclude</span><span class="post-parameters--required">Required</span> · <span class="post-parameters--type">string[]</span>
     <br/>
     <p class="post-parameters--description">Package patterns to exclude from build</p>
+  </li>
+    </ul>
   </li>
     </ul>
   </li>

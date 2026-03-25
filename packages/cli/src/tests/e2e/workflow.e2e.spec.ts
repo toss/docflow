@@ -1,8 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import {
-  createE2EWorkspace,
-  E2EWorkspace,
-} from "../utils/create-e2e-workspace.js";
+import { createE2EWorkspace, E2EWorkspace } from "../utils/create-e2e-workspace.js";
 import { execSync } from "child_process";
 import type { SidebarItem } from "../../commands/build/manifest/manifest.js";
 
@@ -67,9 +64,7 @@ describe("workflow", () => {
       stdio: "inherit",
     });
 
-    const manifestContent = await workspace.read(
-      "docs/references/manifest.json"
-    );
+    const manifestContent = await workspace.read("docs/references/manifest.json");
     expect(manifestContent).toBeDefined();
 
     const manifest: unknown = JSON.parse(manifestContent);
@@ -83,23 +78,19 @@ describe("workflow", () => {
 
     expect(manifest.length).toBeGreaterThanOrEqual(2);
 
-    const coreSection = manifest.find((section) => section.text === "core");
-    const mathSection = manifest.find((section) => section.text === "math");
+    const coreSection = manifest.find(section => section.text === "core");
+    const mathSection = manifest.find(section => section.text === "math");
     expect(coreSection).toBeDefined();
     expect(mathSection).toBeDefined();
     expect(coreSection?.items?.length).toBeGreaterThanOrEqual(1);
     expect(mathSection?.items?.length).toBeGreaterThanOrEqual(1);
 
-    const fetchDataMd = await workspace.read(
-      "docs/references/core/index/fetchData.md"
-    );
+    const fetchDataMd = await workspace.read("docs/references/core/index/fetchData.md");
     expect(fetchDataMd).toContain("# fetchData");
     expect(fetchDataMd).toContain("data from the given URL");
     expect(fetchDataMd).toContain("@libs/core");
 
-    const calculateAreaMd = await workspace.read(
-      "docs/references/math/index/calculateArea.md"
-    );
+    const calculateAreaMd = await workspace.read("docs/references/math/index/calculateArea.md");
     expect(calculateAreaMd).toContain("# calculateArea");
     expect(calculateAreaMd).toContain("the area of a circle");
     expect(calculateAreaMd).toContain("@libs/math");
