@@ -11,10 +11,13 @@ Interface defining the basic structure of a Docflow plugin. Includes plugin name
 ## Signature
 
 ```typescript
-interface Plugin { name: string; hooks: {
+interface Plugin {
+  name: string;
+  hooks: {
     transformManifest?: (manifest: SidebarItem[], context: PluginContext) => SidebarItem[];
     provideGenerator?: () => MarkdownGenerator;
-  } }
+  };
+}
 ```
 
 ### Properties

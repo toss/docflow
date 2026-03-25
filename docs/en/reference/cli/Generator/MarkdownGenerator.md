@@ -11,7 +11,11 @@ Interface for markdown generators that convert JSDoc data to markdown documents.
 ## Signature
 
 ```typescript
-interface MarkdownGenerator { generate(jsDocData: ParsedJSDoc, sourcePath?: string): MarkdownDocument; serialize(markdownDoc: MarkdownDocument): string; generateDocs(targetsWithJSDoc: TargetWithJSDoc, packagePath: string): GeneratedDoc }
+interface MarkdownGenerator {
+  generate(jsDocData: ParsedJSDoc, sourcePath?: string): MarkdownDocument;
+  serialize(markdownDoc: MarkdownDocument): string;
+  generateDocs(targetsWithJSDoc: TargetWithJSDoc, packagePath: string): GeneratedDoc;
+}
 ```
 
 ### Properties

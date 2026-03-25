@@ -11,7 +11,10 @@ Represents the parsed result of @see tags in JSDoc. Used to provide references t
 ## Signature
 
 ```typescript
-interface SeeData { reference: string; description?: string }
+interface SeeData {
+  reference: string;
+  description?: string;
+}
 ```
 
 ### Properties

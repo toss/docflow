@@ -11,7 +11,10 @@ Structure representing a complete markdown document with optional frontmatter an
 ## Signature
 
 ```typescript
-interface MarkdownDocument { frontmatter?: Record<string, unknown>; sections: MarkdownSection[] }
+interface MarkdownDocument {
+  frontmatter?: Record<string, unknown>;
+  sections: MarkdownSection[];
+}
 ```
 
 ### Properties

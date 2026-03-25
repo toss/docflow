@@ -11,7 +11,12 @@ Represents the parsed result of @returns tags in JSDoc. Used to describe return 
 ## Signature
 
 ```typescript
-interface ReturnData { type: string; name?: string; description: string; properties?: PropertyData[] }
+interface ReturnData {
+  type: string;
+  name?: string;
+  description: string;
+  properties?: PropertyData[];
+}
 ```
 
 ### Properties

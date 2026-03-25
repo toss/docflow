@@ -11,7 +11,11 @@ Represents the parsed result of @throws tags in JSDoc. Used to describe exceptio
 ## Signature
 
 ```typescript
-interface ThrowsData { type: string; name?: string; description: string }
+interface ThrowsData {
+  type: string;
+  name?: string;
+  description: string;
+}
 ```
 
 ### Properties

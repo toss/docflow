@@ -11,7 +11,22 @@ Represents the parsed result of JSDoc templates used in Docflow.
 ## Signature
 
 ```typescript
-interface ParsedJSDoc { name?: string; description?: string; category?: string; kind?: string; signature?: string; deprecated?: string; examples?: ExampleData[]; parameters?: ParameterData[]; properties?: PropertyData[]; returns?: ReturnData; throws?: ThrowsData[]; typedef?: TypedefData[]; see?: SeeData[]; version?: VersionData[] }
+interface ParsedJSDoc {
+  name?: string;
+  description?: string;
+  category?: string;
+  kind?: string;
+  signature?: string;
+  deprecated?: string;
+  examples?: ExampleData[];
+  parameters?: ParameterData[];
+  properties?: PropertyData[];
+  returns?: ReturnData;
+  throws?: ThrowsData[];
+  typedef?: TypedefData[];
+  see?: SeeData[];
+  version?: VersionData[];
+}
 ```
 
 ### Properties

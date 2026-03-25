@@ -11,7 +11,12 @@ Represents a sidebar navigation item for the documentation site. Can be a link o
 ## Signature
 
 ```typescript
-interface SidebarItem { text: string; link?: string; items?: SidebarItem[]; collapsed?: boolean }
+interface SidebarItem {
+  text: string;
+  link?: string;
+  items?: SidebarItem[];
+  collapsed?: boolean;
+}
 ```
 
 ### Properties

@@ -11,7 +11,11 @@ Document generation result containing file path, content, and relative path info
 ## Signature
 
 ```typescript
-interface GeneratedDoc { filePath: StandardizedFilePath; content: string; relativePath: string }
+interface GeneratedDoc {
+  filePath: StandardizedFilePath;
+  content: string;
+  relativePath: string;
+}
 ```
 
 ### Properties

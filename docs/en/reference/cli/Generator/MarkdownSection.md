@@ -11,7 +11,10 @@ Interface representing a section of a markdown document.
 ## Signature
 
 ```typescript
-interface MarkdownSection { type: MarkdownSectionType; content: string }
+interface MarkdownSection {
+  type: MarkdownSectionType;
+  content: string;
+}
 ```
 
 ### Properties

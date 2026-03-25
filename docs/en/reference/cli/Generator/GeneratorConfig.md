@@ -11,7 +11,10 @@ Configuration for the markdown generator. Defines generator name, project root, 
 ## Signature
 
 ```typescript
-interface GeneratorConfig { name: string; projectRoot: string; labels?: {
+interface GeneratorConfig {
+  name: string;
+  projectRoot: string;
+  labels?: {
     parameters?: string;
     returns?: string;
     throws?: string;
@@ -22,7 +25,9 @@ interface GeneratorConfig { name: string; projectRoot: string; labels?: {
     signature?: string;
     typedef?: string;
     properties?: string;
-  }; signatureLanguage?: string }
+  };
+  signatureLanguage?: string;
+}
 ```
 
 ### Properties

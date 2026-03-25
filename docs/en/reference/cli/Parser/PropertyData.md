@@ -11,7 +11,14 @@ Represents property information of an object type. Used to describe object prope
 ## Signature
 
 ```typescript
-interface PropertyData { name: string; type?: string; description: string; required: boolean; defaultValue?: string; nested?: PropertyData[] }
+interface PropertyData {
+  name: string;
+  type?: string;
+  description: string;
+  required: boolean;
+  defaultValue?: string;
+  nested?: PropertyData[];
+}
 ```
 
 ### Properties

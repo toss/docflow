@@ -11,7 +11,14 @@ Represents the parsed result of @param tags in JSDoc.
 ## Signature
 
 ```typescript
-interface ParameterData { name: string; type: string; description: string; required: boolean; defaultValue?: string; nested?: ParameterData[] }
+interface ParameterData {
+  name: string;
+  type: string;
+  description: string;
+  required: boolean;
+  defaultValue?: string;
+  nested?: ParameterData[];
+}
 ```
 
 ### Properties

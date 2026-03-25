@@ -11,7 +11,9 @@ Parsed JSDoc data for document generation, extending the [ExportDeclaration](/en
 ## Signature
 
 ```typescript
-interface TargetWithJSDoc extends ExportDeclaration { parsedJSDoc: ParsedJSDoc }
+interface TargetWithJSDoc extends ExportDeclaration {
+  parsedJSDoc: ParsedJSDoc;
+}
 ```
 
 ### Properties

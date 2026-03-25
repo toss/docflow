@@ -11,7 +11,11 @@ Represents the parsed result of @version tags in JSDoc. Used to display version 
 ## Signature
 
 ```typescript
-interface VersionData { version: string; description: string; platforms?: string[] }
+interface VersionData {
+  version: string;
+  description: string;
+  platforms?: string[];
+}
 ```
 
 ### Properties
