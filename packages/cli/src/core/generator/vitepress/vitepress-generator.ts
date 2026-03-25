@@ -326,7 +326,7 @@ export class VitePressGenerator implements MarkdownGenerator {
       '  <li class="post-parameters-li post-parameters-li-root">',
       `    <span class="post-parameters--type">${this.escapeHtml(returns.type)}</span>`,
       "    <br/>",
-      `    <p class="post-parameters--description">${nameText}${returns.description}</p>`,
+      `    <p class="post-parameters--description">${this.toHTMLCode(`${nameText}${returns.description}`)}</p>`,
       "  </li>",
       "</ul>",
     ];
@@ -355,7 +355,9 @@ export class VitePressGenerator implements MarkdownGenerator {
       content.push('  <li class="post-parameters-li post-parameters-li-root">');
       content.push(`    <span class="post-parameters--type">${this.escapeHtml(throwItem.type)}</span>`);
       content.push("    <br/>");
-      content.push(`    <p class="post-parameters--description">${nameText}${throwItem.description}</p>`);
+      content.push(
+        `    <p class="post-parameters--description">${this.toHTMLCode(`${nameText}${throwItem.description}`)}</p>`
+      );
       content.push("  </li>");
     }
 
@@ -423,7 +425,7 @@ export class VitePressGenerator implements MarkdownGenerator {
 
   private toHTMLCode(text: string): string {
     return text
-      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/`([^`]+)`/g, (_, code) => `<code>${this.escapeHtml(code)}</code>`)
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
   }
 }

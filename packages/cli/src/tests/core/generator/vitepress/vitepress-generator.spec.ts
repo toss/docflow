@@ -134,6 +134,39 @@ export function testNoExamples(input: string): boolean {
     expect(result.content).toContain("A function with no examples");
   });
 
+  it("should escape HTML tags inside inline code in descriptions", async () => {
+    const config = createGeneratorConfig({
+      projectRoot: workspace.root,
+    });
+    const generator = new VitePressGenerator(config);
+    const tsHelper = new TSProjectTestHelper(workspace);
+    await workspace.write(
+      "packages/core/src/test-inline-code.ts",
+      `
+/**
+ * @public
+ * @kind function
+ * @category Test
+ * @name renderSuspense
+ * @description A function that renders \`<Suspense>\` component
+ * @param {string} text - \`<Display />\` text for the sidebar item
+ * @returns {JSX.Element} Returns JSX element wrapping \`<Suspense>\` in client environment. Returns JSX element wrapping \`<fallback>\` in server environment.
+ */
+export function renderSuspense(text: string): any {
+  return text;
+}
+      `
+    );
+
+    const targetWithJSDoc = await tsHelper.getExportWithJSDoc("renderSuspense", "test-inline-code.ts");
+    const result = generator.generateDocs(targetWithJSDoc, "@test/core");
+
+    expect(result.content).toContain("<code>&lt;Suspense&gt;</code>");
+    expect(result.content).toContain("<code>&lt;Display /&gt;</code>");
+    expect(result.content).not.toContain("<code><Suspense></code>");
+    expect(result.content).not.toContain("<code><Display /></code>");
+  });
+
   it("should generate correct file path for different package names", async () => {
     const config = createGeneratorConfig({
       projectRoot: workspace.root,
