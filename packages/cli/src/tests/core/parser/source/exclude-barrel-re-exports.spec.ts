@@ -4,6 +4,7 @@ import { getExportedDeclarationsBySourceFile } from "../../../../core/parser/sou
 import { getTsProject } from "../../../../core/get-ts-project.js";
 import { getTsConfigPath } from "../../../../core/get-ts-config-path.js";
 import { createE2EWorkspace, E2EWorkspace } from "../../../utils/create-e2e-workspace.js";
+import { ExportDeclaration, StandardizedFilePath } from "../../../../core/types/parser.types.js";
 
 describe("excludeBarrelReExports", () => {
   let workspace: E2EWorkspace;
@@ -92,4 +93,19 @@ describe("excludeBarrelReExports", () => {
     expect(filePaths.some(path => path.includes("math.ts"))).toBe(true);
     expect(filePaths.some(path => path.includes("string.ts"))).toBe(true);
   });
+
+  it("should keep both exports when symbolName is same but kind differs", () => {
+    const result = excludeBarrelReExports([
+      mockExport("Foo", "type", "/src/foo.ts"),
+      mockExport("Foo", "function", "/src/foo.ts"),
+    ]);
+
+    expect(result).toHaveLength(2);
+    expect(result.find(exp => exp.kind === "type")).toBeDefined();
+    expect(result.find(exp => exp.kind === "function")).toBeDefined();
+  });
 });
+
+function mockExport(symbolName: string, kind: ExportDeclaration["kind"], filePath: string): ExportDeclaration {
+  return { symbolName, kind, filePath: filePath as StandardizedFilePath } as ExportDeclaration;
+}
