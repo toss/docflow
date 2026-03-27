@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - release
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -30,8 +31,11 @@ jobs:
           node-version-file: .nvmrc
           cache: "yarn"
 
+      - name: Update npm for OIDC trusted publishing
+        run: npm install -g npm@latest
+
       - name: Install Dependencies
-        run: yarn install --immutable
+        run: yarn install
 
       - name: Build
         run: yarn build
