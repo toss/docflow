@@ -1,5 +1,11 @@
 # docflow
 
+## 0.0.3
+
+### Patch Changes
+
+- 6dfd8b9: export PropertyData type
+
 ## 0.0.2
 
 ### Patch Changes
