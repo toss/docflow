@@ -18,6 +18,7 @@ export type {
   StandardizedFilePath,
   ParameterData,
   ReturnData,
+  PropertyData,
   ThrowsData,
   ExampleData,
   SeeData,
