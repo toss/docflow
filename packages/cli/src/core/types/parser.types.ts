@@ -53,6 +53,7 @@ export interface ParsedJSDoc {
  * @property {string} description Description of the property
  * @property {boolean} required Whether the property is required
  * @property {string} [defaultValue] Default value if the property is optional
+ * @property {PropertyData[]} [nested] Nested property data for object properties
  */
 export interface PropertyData {
   name: string;

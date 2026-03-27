@@ -49,4 +49,9 @@ interface PropertyData {
     <br/>
     <p class="post-parameters--description">Default value if the property is optional</p>
   </li>
+  <li class="post-parameters-li post-parameters-li-root">
+    <span class="post-parameters--name">nested</span> · <span class="post-parameters--type">PropertyData[]</span>
+    <br/>
+    <p class="post-parameters--description">Nested property data for object properties</p>
+  </li>
 </ul>
