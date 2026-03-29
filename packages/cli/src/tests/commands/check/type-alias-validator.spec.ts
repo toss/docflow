@@ -176,6 +176,118 @@ describe("TypeAliasValidator", () => {
     });
   });
 
+  describe("nested property with type reference", () => {
+    it("should validate nested properties when property type is an interface reference", () => {
+      const sourceFile = createTSSourceFile(`
+        interface DbConfig {
+          host: string;
+          port: number;
+        }
+
+        /**
+         * @public
+         * @property db - Database config
+         * @property db.host - The host
+         * @property db.port - The port
+         */
+        export type Config = {
+          db: DbConfig;
+        };
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases().find(t => t.getName() === "Config");
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should detect missing nested properties when property type is an interface reference", () => {
+      const sourceFile = createTSSourceFile(`
+        interface DbConfig {
+          host: string;
+          port: number;
+        }
+
+        /**
+         * @public
+         * @property db - Database config
+         */
+        export type Config = {
+          db: DbConfig;
+        };
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases().find(t => t.getName() === "Config");
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "db.host" });
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "db.port" });
+    });
+
+    it("should detect missing nested properties when property type is a type alias reference", () => {
+      const sourceFile = createTSSourceFile(`
+        type DbConfig = {
+          host: string;
+          port: number;
+        };
+
+        /**
+         * @public
+         * @property db - Database config
+         */
+        export type Config = {
+          db: DbConfig;
+        };
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases().find(t => t.getName() === "Config");
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "db.host" });
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "db.port" });
+    });
+
+    it("should validate optional property with type alias reference", () => {
+      const sourceFile = createTSSourceFile(`
+        type DbConfig = {
+          host: string;
+          port: number;
+        };
+
+        /**
+         * @public
+         * @property db - Database config
+         * @property db.host - The host
+         * @property db.port - The port
+         */
+        export type Config = {
+          db?: DbConfig;
+        };
+      `);
+
+      const typeAlias = sourceFile.getTypeAliases().find(t => t.getName() === "Config");
+      assert(typeAlias != null, "Expected type alias");
+
+      const validator = new TypeAliasValidator(typeAlias, parseJSDocFromNode(typeAlias));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
   describe("non-type-literal types", () => {
     it("should skip union types", () => {
       const sourceFile = createTSSourceFile(`
