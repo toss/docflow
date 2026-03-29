@@ -201,6 +201,118 @@ describe("InterfaceValidator", () => {
     });
   });
 
+  describe("nested property with type reference", () => {
+    it("should validate nested properties when property type is an interface reference", () => {
+      const sourceFile = createTSSourceFile(`
+        interface Address {
+          street: string;
+          city: string;
+        }
+
+        /**
+         * @public
+         * @property address - The address
+         * @property address.street - The street
+         * @property address.city - The city
+         */
+        export interface User {
+          address: Address;
+        }
+      `);
+
+      const iface = sourceFile.getInterfaces().find(i => i.getName() === "User");
+      assert(iface != null, "Expected interface");
+
+      const validator = new InterfaceValidator(iface, parseJSDocFromNode(iface));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should detect missing nested properties when property type is an interface reference", () => {
+      const sourceFile = createTSSourceFile(`
+        interface Address {
+          street: string;
+          city: string;
+        }
+
+        /**
+         * @public
+         * @property address - The address
+         */
+        export interface User {
+          address: Address;
+        }
+      `);
+
+      const iface = sourceFile.getInterfaces().find(i => i.getName() === "User");
+      assert(iface != null, "Expected interface");
+
+      const validator = new InterfaceValidator(iface, parseJSDocFromNode(iface));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "address.street" });
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "address.city" });
+    });
+
+    it("should detect missing nested properties when property type is a type alias reference", () => {
+      const sourceFile = createTSSourceFile(`
+        type Address = {
+          street: string;
+          city: string;
+        };
+
+        /**
+         * @public
+         * @property address - The address
+         */
+        export interface User {
+          address: Address;
+        }
+      `);
+
+      const iface = sourceFile.getInterfaces().find(i => i.getName() === "User");
+      assert(iface != null, "Expected interface");
+
+      const validator = new InterfaceValidator(iface, parseJSDocFromNode(iface));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "address.street" });
+      expect(result.errors).toContainEqual({ type: "missing_property", target: "address.city" });
+    });
+
+    it("should validate optional property with interface reference", () => {
+      const sourceFile = createTSSourceFile(`
+        interface Address {
+          street: string;
+          city: string;
+        }
+
+        /**
+         * @public
+         * @property address - The address
+         * @property address.street - The street
+         * @property address.city - The city
+         */
+        export interface User {
+          address?: Address;
+        }
+      `);
+
+      const iface = sourceFile.getInterfaces().find(i => i.getName() === "User");
+      assert(iface != null, "Expected interface");
+
+      const validator = new InterfaceValidator(iface, parseJSDocFromNode(iface));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
   describe("interface methods", () => {
     it("should allow documented method names as valid params", () => {
       const sourceFile = createTSSourceFile(`
