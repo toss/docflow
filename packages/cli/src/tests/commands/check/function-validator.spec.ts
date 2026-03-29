@@ -271,6 +271,151 @@ describe("FunctionValidator", () => {
     });
   });
 
+  describe("destructured param validation", () => {
+    it("should return valid when destructured params are documented with virtual root name", () => {
+      const sourceFile = createTSSourceFile(`
+        interface Options {
+          baseUrl: string;
+        }
+
+        /**
+         * @public
+         * @param path - The path
+         * @param options - The options
+         * @param options.baseUrl - The base URL
+         * @returns The result
+         */
+        export function fetch(path: string, { baseUrl }: Options): string {
+          return baseUrl;
+        }
+      `);
+
+      const fn = sourceFile.getFunctions()[0];
+      assert(fn != null, "Expected function");
+
+      const validator = new FunctionValidator(fn, parseJSDocFromNode(fn));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should detect missing nested param for destructured parameter", () => {
+      const sourceFile = createTSSourceFile(`
+        interface Options {
+          baseUrl: string;
+          timeout: number;
+        }
+
+        /**
+         * @public
+         * @param path - The path
+         * @param options - The options
+         * @param options.baseUrl - The base URL
+         * @returns The result
+         */
+        export function fetch(path: string, { baseUrl }: Options): string {
+          return baseUrl;
+        }
+      `);
+
+      const fn = sourceFile.getFunctions()[0];
+      assert(fn != null, "Expected function");
+
+      const validator = new FunctionValidator(fn, parseJSDocFromNode(fn));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "missing_param", target: "options.timeout" });
+    });
+
+    it("should detect unused param for destructured parameter", () => {
+      const sourceFile = createTSSourceFile(`
+        interface Options {
+          baseUrl: string;
+        }
+
+        /**
+         * @public
+         * @param path - The path
+         * @param options - The options
+         * @param options.baseUrl - The base URL
+         * @param options.removed - No longer exists
+         * @returns The result
+         */
+        export function fetch(path: string, { baseUrl }: Options): string {
+          return baseUrl;
+        }
+      `);
+
+      const fn = sourceFile.getFunctions()[0];
+      assert(fn != null, "Expected function");
+
+      const validator = new FunctionValidator(fn, parseJSDocFromNode(fn));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "unused_param", target: "options.removed" });
+    });
+
+    it("should return valid for destructured param with default value", () => {
+      const sourceFile = createTSSourceFile(`
+        interface Options {
+          baseUrl: string;
+        }
+
+        /**
+         * @public
+         * @param path - The path
+         * @param options - The options
+         * @param options.baseUrl - The base URL
+         * @returns The result
+         */
+        export function fetch(path: string, { baseUrl }: Options = { baseUrl: "" }): string {
+          return baseUrl;
+        }
+      `);
+
+      const fn = sourceFile.getFunctions()[0];
+      assert(fn != null, "Expected function");
+
+      const validator = new FunctionValidator(fn, parseJSDocFromNode(fn));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should return valid for destructured param with type alias", () => {
+      const sourceFile = createTSSourceFile(`
+        type Options = {
+          host: string;
+          port: number;
+        };
+
+        /**
+         * @public
+         * @param options - The options
+         * @param options.host - The host
+         * @param options.port - The port
+         * @returns The result
+         */
+        export function connect({ host, port }: Options): string {
+          return host;
+        }
+      `);
+
+      const fn = sourceFile.getFunctions()[0];
+      assert(fn != null, "Expected function");
+
+      const validator = new FunctionValidator(fn, parseJSDocFromNode(fn));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
   describe("returns validation", () => {
     it("should detect missing returns", () => {
       const sourceFile = createTSSourceFile(`
