@@ -34,7 +34,7 @@ function getParamProperties(param: ParameterDeclaration): PropertySignature[] {
 }
 
 function resolveTypeReferenceProperties(param: ParameterDeclaration): PropertySignature[] {
-  const type = param.getType();
+  const type = param.getType().getNonNullableType();
 
   for (const symbol of [type.getSymbol(), type.getAliasSymbol()]) {
     if (symbol == null) {

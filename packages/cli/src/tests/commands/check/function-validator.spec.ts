@@ -420,6 +420,92 @@ describe("FunctionValidator", () => {
       expect(result.errors).toContainEqual({ type: "missing_param", target: "options.port" });
     });
 
+    it("should validate optional param with interface reference", () => {
+      const sourceFile = createTSSourceFile(`
+        interface Options {
+          host: string;
+          port: number;
+        }
+
+        /**
+         * @public
+         * @param options - The options
+         * @param options.host - The host
+         * @param options.port - The port
+         * @returns The result
+         */
+        export function connect(options?: Options): string {
+          return options?.host ?? "";
+        }
+      `);
+
+      const fn = sourceFile.getFunctions()[0];
+      assert(fn != null, "Expected function");
+
+      const validator = new FunctionValidator(fn, parseJSDocFromNode(fn));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("should detect missing nested params for optional param with interface reference", () => {
+      const sourceFile = createTSSourceFile(`
+        interface Options {
+          host: string;
+          port: number;
+        }
+
+        /**
+         * @public
+         * @param options - The options
+         * @returns The result
+         */
+        export function connect(options?: Options): string {
+          return options?.host ?? "";
+        }
+      `);
+
+      const fn = sourceFile.getFunctions()[0];
+      assert(fn != null, "Expected function");
+
+      const validator = new FunctionValidator(fn, parseJSDocFromNode(fn));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual({ type: "missing_param", target: "options.host" });
+      expect(result.errors).toContainEqual({ type: "missing_param", target: "options.port" });
+    });
+
+    it("should validate optional param with type alias reference", () => {
+      const sourceFile = createTSSourceFile(`
+        type Options = {
+          host: string;
+          port: number;
+        };
+
+        /**
+         * @public
+         * @param options - The options
+         * @param options.host - The host
+         * @param options.port - The port
+         * @returns The result
+         */
+        export function connect(options?: Options): string {
+          return options?.host ?? "";
+        }
+      `);
+
+      const fn = sourceFile.getFunctions()[0];
+      assert(fn != null, "Expected function");
+
+      const validator = new FunctionValidator(fn, parseJSDocFromNode(fn));
+      const result = validator.validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
     it("should detect missing params in arrow function", () => {
       const sourceFile = createTSSourceFile(`
         /**
