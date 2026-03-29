@@ -1,5 +1,12 @@
 # docflow
 
+## 0.0.4
+
+### Patch Changes
+
+- 3e5d873: Fix resolve optional and type-reference property paths in JSDoc validator
+  Fix match JSDoc params with destructured parameters
+
 ## 0.0.3
 
 ### Patch Changes
