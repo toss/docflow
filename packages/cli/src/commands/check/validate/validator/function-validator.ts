@@ -10,7 +10,7 @@ import {
 } from "ts-morph";
 import { getJSDocParameterNames } from "../../../../core/parser/jsdoc/jsdoc-utils.js";
 import { ValidationError } from "../validate.types.js";
-import { collectParameterPaths } from "./utils/collect-parameter-paths.js";
+import { collectParameterPaths, ParameterPathEntry } from "./utils/collect-parameter-paths.js";
 import { findMissingDocs } from "./utils/find-missing-docs.js";
 import { findUnusedDocs } from "./utils/find-unused-docs.js";
 import { Validator } from "./validator.js";
@@ -24,9 +24,9 @@ export class FunctionValidator extends Validator<FunctionLikeNode> {
   }
 
   private validateParams(): ValidationError[] {
-    const parameters = this.getParameters();
-    const allParamPaths = collectParameterPaths(parameters);
+    const paramEntries = collectParameterPaths(this.getParameters());
     const jsDocParamNames = getJSDocParameterNames(this.parsedJSDoc.parameters ?? []);
+    const allParamPaths = this.resolveDestructuredNames(paramEntries, jsDocParamNames);
 
     return [
       ...findMissingDocs({ codeSymbols: allParamPaths, jsDocNames: jsDocParamNames, errorType: "missing_param" }),
@@ -110,5 +110,31 @@ export class FunctionValidator extends Validator<FunctionLikeNode> {
   private areVoidUndefinedEquivalent(a: string, b: string): boolean {
     const voidTypes = ["void", "undefined"];
     return voidTypes.includes(a) && voidTypes.includes(b);
+  }
+
+  /**
+   * Assigns JSDoc root names to destructured parameters by position,
+   * then prefixes their property paths accordingly.
+   */
+  private resolveDestructuredNames(entries: ParameterPathEntry[], jsDocParamNames: string[]): string[] {
+    const namedParamNames = new Set(entries.filter(entry => !entry.destructured).map(entry => entry.name));
+    const jsDocRootsForDestructured = jsDocParamNames
+      .filter(name => !name.includes("."))
+      .filter(name => !namedParamNames.has(name))
+      .values();
+
+    return entries.flatMap(entry => {
+      if (!entry.destructured) {
+        return entry.paths;
+      }
+
+      const { value: rootName } = jsDocRootsForDestructured.next();
+
+      if (rootName == null) {
+        return [];
+      }
+
+      return [rootName, ...entry.paths.map(path => `${rootName}.${path}`)];
+    });
   }
 }
