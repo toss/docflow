@@ -1,5 +1,11 @@
 # docflow
 
+## 0.0.5
+
+### Patch Changes
+
+- 7740dee: resolve absolute import paths in extracted type signatures
+
 ## 0.0.4
 
 ### Patch Changes
