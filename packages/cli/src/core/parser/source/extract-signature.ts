@@ -6,7 +6,20 @@ import {
   FunctionDeclaration,
   TypeAliasDeclaration,
   EnumDeclaration,
+  TypeFormatFlags,
 } from "ts-morph";
+
+/**
+ * Prevents `typeof import("/absolute/path").Foo` for symbols not directly imported in the current scope.
+ * `UseAliasDefinedOutsideCurrentScope` resolves out-of-scope symbols by their alias name instead.
+ *
+ * @see {@link https://github.com/dsherret/ts-morph/issues/453}
+ */
+const TYPE_FORMAT_FLAGS =
+  TypeFormatFlags.NoTruncation |
+  TypeFormatFlags.WriteTypeArgumentsOfSignature |
+  TypeFormatFlags.UseTypeOfFunction |
+  TypeFormatFlags.UseAliasDefinedOutsideCurrentScope;
 
 export function extractSignature(declaration: Node): string | undefined {
   if (Node.isFunctionDeclaration(declaration)) {
@@ -51,7 +64,7 @@ function formatFunctionSignature(node: FunctionDeclaration): string {
     .getParameters()
     .map(p => p.getText())
     .join(", ");
-  const returnType = node.getReturnType().getText(node);
+  const returnType = node.getReturnType().getText(node, TYPE_FORMAT_FLAGS);
 
   return `function ${name}${typeParams ? `<${typeParams}>` : ""}(${params}): ${returnType};`;
 }
@@ -75,7 +88,7 @@ function formatArrowFunctionSignature(node: VariableDeclaration): string {
     .getParameters()
     .map(p => p.getText())
     .join(", ");
-  const returnType = initializer.getReturnType().getText(node);
+  const returnType = initializer.getReturnType().getText(node, TYPE_FORMAT_FLAGS);
 
   return `${declarationKind} ${name}: ${typeParams ? `<${typeParams}>` : ""}(${params}) => ${returnType};`;
 }
@@ -85,7 +98,7 @@ function formatVariableSignature(node: VariableDeclaration): string {
   const name = node.getName();
   const variableStatement = node.getVariableStatement();
   const declarationKind = variableStatement?.getDeclarationKind() ?? "const";
-  const type = node.getType().getText(node);
+  const type = node.getType().getText(node, TYPE_FORMAT_FLAGS);
 
   return `${declarationKind} ${name}: ${type};`;
 }
