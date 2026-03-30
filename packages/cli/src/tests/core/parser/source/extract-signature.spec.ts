@@ -147,6 +147,22 @@ describe("extractSignature", () => {
     expect(signature).toContain("/** The database URL. */");
   });
 
+  it("should not include absolute file paths in nested object variable types", async () => {
+    const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
+    const project = getTsProject(tsConfigPath);
+
+    const toolbarFile = project.getSourceFiles().find(sf => sf.getFilePath().includes("toolbar.ts"));
+
+    const toolbar = toolbarFile?.getVariableDeclaration("Toolbar");
+    expect(toolbar).toBeDefined();
+
+    const signature = extractSignature(toolbar!);
+    expect(signature).not.toMatch(/import\("[^"]*\/[^"]*"\)/);
+    expect(signature).toContain("ToolbarMenu");
+    expect(signature).toContain("CopyAction");
+    expect(signature).toContain("PasteAction");
+  });
+
   it("should not include absolute file paths in return types", async () => {
     const tsConfigPath = getTsConfigPath(workspace.root, "packages/core");
     const project = getTsProject(tsConfigPath);
