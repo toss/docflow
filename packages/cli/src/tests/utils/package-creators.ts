@@ -52,7 +52,8 @@ export function getDefaultConfig(): UserConfig {
 
 export * from './math.js';
 export * from './string.js';
-export * from './classes.js';`
+export * from './classes.js';
+export * from './toolbar.js';`
   );
 
   await workspace.write(
@@ -147,6 +148,52 @@ export function toLower(str: string): string {
  * @public
  */
 export const greet = (name: string) => \`Hello, \${name}!\`;`
+  );
+
+  // Nested object with barrel-exported typeof references (DevTool pattern)
+  // ToolbarMenu is directly imported → in scope → resolved by name
+  // Actions is imported as barrel object, CopyAction/PasteAction inside are NOT directly imported
+  await workspace.write(
+    "packages/core/src/toolbar/copy-action.ts",
+    `export class CopyAction {
+  execute(): void {}
+}`
+  );
+
+  await workspace.write(
+    "packages/core/src/toolbar/paste-action.ts",
+    `export class PasteAction {
+  execute(): void {}
+}`
+  );
+
+  await workspace.write(
+    "packages/core/src/toolbar/actions.ts",
+    `import { CopyAction } from './copy-action';
+import { PasteAction } from './paste-action';
+
+export const Actions = {
+  Copy: CopyAction,
+  Paste: PasteAction,
+};`
+  );
+
+  await workspace.write(
+    "packages/core/src/toolbar/toolbar-menu.ts",
+    `export class ToolbarMenu {
+  open(): void {}
+}`
+  );
+
+  await workspace.write(
+    "packages/core/src/toolbar.ts",
+    `import { ToolbarMenu } from './toolbar/toolbar-menu';
+import { Actions } from './toolbar/actions';
+
+export const Toolbar = {
+  Menu: ToolbarMenu,
+  Actions,
+};`
   );
 
   await workspace.write(
