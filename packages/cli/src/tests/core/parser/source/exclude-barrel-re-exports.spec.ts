@@ -104,8 +104,53 @@ describe("excludeBarrelReExports", () => {
     expect(result.find(exp => exp.kind === "type")).toBeDefined();
     expect(result.find(exp => exp.kind === "function")).toBeDefined();
   });
+
+  it("should keep same-named exports when they originate from different source declarations", () => {
+    const result = excludeBarrelReExports([
+      // `foo` from /src/a/foo.ts, re-exported through barrels
+      mockExport("foo", "variable", "/src/index.ts", "/src/a/foo.ts"),
+      mockExport("foo", "variable", "/src/a/index.ts", "/src/a/foo.ts"),
+      // `foo` from /src/b/bar.ts (different source, same symbol name)
+      mockExport("foo", "variable", "/src/b/bar.ts", "/src/b/bar.ts"),
+      mockExport("foo", "variable", "/src/b/index.ts", "/src/b/bar.ts"),
+    ]);
+
+    expect(result).toHaveLength(2);
+
+    const declFiles = result.map(exp => getDeclFilePath(exp));
+    expect(declFiles).toContain("/src/a/foo.ts");
+    expect(declFiles).toContain("/src/b/bar.ts");
+  });
+
+  it("should prefer non-index.ts file for each source declaration group", () => {
+    const result = excludeBarrelReExports([
+      mockExport("foo", "variable", "/src/lib/impl.ts", "/src/lib/impl.ts"),
+      mockExport("foo", "variable", "/src/lib/index.ts", "/src/lib/impl.ts"),
+    ]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].filePath).toContain("impl.ts");
+  });
 });
 
-function mockExport(symbolName: string, kind: ExportDeclaration["kind"], filePath: string): ExportDeclaration {
-  return { symbolName, kind, filePath: filePath as StandardizedFilePath } as ExportDeclaration;
+function mockExport(
+  symbolName: string,
+  kind: ExportDeclaration["kind"],
+  filePath: string,
+  declFilePath?: string
+): ExportDeclaration {
+  return {
+    symbolName,
+    kind,
+    filePath: filePath as StandardizedFilePath,
+    declaration: {
+      getSourceFile: () => ({
+        getFilePath: () => (declFilePath ?? filePath) as StandardizedFilePath,
+      }),
+    },
+  } as ExportDeclaration;
+}
+
+function getDeclFilePath(exp: ExportDeclaration): string {
+  return exp.declaration.getSourceFile().getFilePath();
 }
