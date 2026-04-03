@@ -1,5 +1,11 @@
 # docflow
 
+## 0.0.6
+
+### Patch Changes
+
+- 5bb22eb: fix: group barrel re-exports by declaration source file to prevent same-named symbols from being incorrectly merged
+
 ## 0.0.5
 
 ### Patch Changes
