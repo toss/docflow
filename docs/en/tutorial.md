@@ -214,7 +214,7 @@ export default defineConfig({
     sidebar: [
       {
         text: "Reference",
-        items: reference,
+        items: manifest,
       },
     ],
   },
